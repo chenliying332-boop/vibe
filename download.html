@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件下载中心</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: #f4f6fa;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #1a2a5e 0%, #2d4a9a 100%);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .header-brand-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-brand-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-search {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      overflow: hidden;
+      width: 320px;
+    }
+
+    .header-search input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 14px;
+      font-size: 13.5px;
+      color: #fff;
+      outline: none;
+    }
+
+    .header-search input::placeholder { color: rgba(255,255,255,0.55); }
+
+    .header-search-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      padding: 8px 14px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.85);
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-search-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+    }
+
+    /* ===== HERO BANNER ===== */
+    .hero {
+      background: linear-gradient(135deg, #1a2a5e 0%, #2d4a9a 60%, #3a6fd8 100%);
+      padding: 48px 40px 56px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .hero-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stats {
+      display: inline-flex;
+      gap: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 22px; font-weight: 700; }
+    .hero-stat-lbl { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    /* ===== CATEGORY TABS ===== */
+    .cat-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .cat-tab {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: 1px solid #e0e4ee;
+      background: #fff;
+      color: #555;
+      transition: all 0.18s;
+      user-select: none;
+      font-weight: 500;
+    }
+
+    .cat-tab:hover {
+      border-color: #2d4a9a;
+      color: #2d4a9a;
+    }
+
+    .cat-tab.active {
+      background: #2d4a9a;
+      border-color: #2d4a9a;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(45,74,154,0.3);
+    }
+
+    .cat-tab-count {
+      font-size: 11px;
+      background: rgba(0,0,0,0.08);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .cat-tab.active .cat-tab-count { background: rgba(255,255,255,0.2); }
+
+    /* ===== TOOLBAR ===== */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-info { font-size: 13px; color: #888; }
+    .result-info strong { color: #333; }
+
+    .sort-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid #e0e4ee;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #e0e4ee;
+      border-radius: 6px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #aaa;
+      transition: all 0.15s;
+    }
+
+    .view-btn:hover, .view-btn.active {
+      border-color: #2d4a9a;
+      color: #2d4a9a;
+      background: #eef1fa;
+    }
+
+    /* ===== FILE LIST ===== */
+    .file-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .file-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      transition: box-shadow 0.18s, transform 0.18s;
+      cursor: default;
+    }
+
+    .file-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+
+    /* File type icon */
+    .ftype-icon {
+      width: 46px;
+      height: 56px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .ftype-icon::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 12px; height: 12px;
+      background: rgba(0,0,0,0.12);
+      clip-path: polygon(0 0, 100% 100%, 100% 0);
+      border-radius: 0 6px 0 0;
+    }
+
+    .ftype-pdf   { background: #fff2f0; color: #cf1322; }
+    .ftype-word  { background: #e6f4ff; color: #0958d9; }
+    .ftype-excel { background: #f6ffed; color: #389e0d; }
+    .ftype-ppt   { background: #fff7e6; color: #d46b08; }
+    .ftype-zip   { background: #f9f0ff; color: #531dab; }
+    .ftype-img   { background: #fff0f6; color: #c41d7f; }
+    .ftype-video { background: #e6fffb; color: #006d75; }
+    .ftype-other { background: #f5f5f5; color: #8c8c8c; }
+
+    .ftype-ext {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    /* File info */
+    .file-info { flex: 1; min-width: 0; }
+
+    .file-name {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-name:hover { color: #2d4a9a; text-decoration: underline; cursor: pointer; }
+
+    .file-meta {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 12px;
+      color: #999;
+      flex-wrap: wrap;
+    }
+
+    .file-meta-sep {
+      margin: 0 8px;
+      color: #ddd;
+    }
+
+    .file-tags { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
+
+    .ftag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: #f0f2f5;
+      color: #666;
+    }
+
+    .ftag-hot { background: #fff2ec; color: #d4380d; }
+    .ftag-new { background: #e6fffb; color: #006d75; }
+
+    /* Stats */
+    .file-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      min-width: 68px;
+      text-align: center;
+    }
+
+    .file-size {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .file-dl-count {
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    /* Download button */
+    .btn-dl {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      background: #2d4a9a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.18s, box-shadow 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-dl:hover {
+      background: #1a3580;
+      box-shadow: 0 3px 10px rgba(45,74,154,0.35);
+    }
+
+    .btn-dl:active { transform: scale(0.98); }
+
+    /* Progress overlay on button */
+    .btn-dl.loading {
+      background: #6b8cd4;
+      pointer-events: none;
+    }
+
+    .btn-dl.done {
+      background: #389e0d;
+    }
+
+    /* ===== PAGINATION ===== */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 36px;
+    }
+
+    .pg-btn {
+      min-width: 34px;
+      height: 34px;
+      border: 1px solid #e0e4ee;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      transition: all 0.15s;
+    }
+
+    .pg-btn:hover {
+      border-color: #2d4a9a;
+      color: #2d4a9a;
+    }
+
+    .pg-btn.active {
+      background: #2d4a9a;
+      border-color: #2d4a9a;
+      color: #fff;
+    }
+
+    .pg-btn.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(30,30,30,0.92);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 24px;
+      font-size: 13.5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.22s, transform 0.22s;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== GRID VIEW ===== */
+    .file-list.grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .file-list.grid-view .file-card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px 18px 16px;
+      gap: 12px;
+    }
+
+    .file-list.grid-view .file-stats { flex-direction: row; min-width: auto; }
+    .file-list.grid-view .btn-dl { width: 100%; justify-content: center; }
+    .file-list.grid-view .ftype-icon { width: 52px; height: 64px; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      display: none;
+    }
+
+    .empty-state.show { display: block; }
+    .empty-icon { font-size: 54px; margin-bottom: 14px; opacity: 0.35; }
+    .empty-text { font-size: 15px; color: #aaa; }
+
+    /* ===== CHECKBOX ===== */
+    .file-cb {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #d0d5e8;
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: #fff;
+      margin-top: 2px;
+    }
+
+    .file-cb:hover { border-color: #2d4a9a; }
+
+    .file-cb.checked {
+      background: #2d4a9a;
+      border-color: #2d4a9a;
+    }
+
+    .file-cb.checked::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    .file-card.selected {
+      background: #f0f3fd;
+      border: 1px solid #b8c8f0;
+    }
+
+    /* ===== SELECT ALL ROW ===== */
+    .select-all-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #fff;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      user-select: none;
+    }
+
+    .select-all-cb {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #d0d5e8;
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: #fff;
+    }
+
+    .select-all-cb:hover { border-color: #2d4a9a; }
+
+    .select-all-cb.checked {
+      background: #2d4a9a;
+      border-color: #2d4a9a;
+    }
+
+    .select-all-cb.checked::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    .select-all-cb.indeterminate {
+      background: #2d4a9a;
+      border-color: #2d4a9a;
+    }
+
+    .select-all-cb.indeterminate::after {
+      content: '';
+      width: 10px;
+      height: 2px;
+      background: #fff;
+      border-radius: 1px;
+    }
+
+    .select-all-label {
+      font-size: 13.5px;
+      color: #444;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .select-all-info {
+      font-size: 12.5px;
+      color: #2d4a9a;
+      font-weight: 500;
+    }
+
+    /* ===== BULK ACTION BAR ===== */
+    .bulk-bar {
+      position: fixed;
+      bottom: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a2a5e;
+      color: #fff;
+      border-radius: 12px;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 8px 28px rgba(26,42,94,0.45);
+      z-index: 800;
+      transition: bottom 0.28s cubic-bezier(0.34,1.56,0.64,1);
+      min-width: 360px;
+      max-width: 90vw;
+    }
+
+    .bulk-bar.show { bottom: 28px; }
+
+    .bulk-bar-info { flex: 1; }
+
+    .bulk-bar-count {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .bulk-bar-size {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 2px;
+    }
+
+    .bulk-bar-actions { display: flex; gap: 10px; }
+
+    .btn-bulk-cancel {
+      padding: 8px 18px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-bulk-cancel:hover { border-color: #fff; color: #fff; }
+
+    .btn-bulk-dl {
+      padding: 8px 22px;
+      border: none;
+      border-radius: 6px;
+      background: #ff6b2b;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-bulk-dl:hover {
+      background: #e55a1e;
+      box-shadow: 0 3px 10px rgba(255,107,43,0.45);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 680px) {
+      .hero { padding: 36px 20px 44px; }
+      .hero-stats { gap: 24px; padding: 12px 20px; }
+      .header-search { display: none; }
+      .file-card { flex-wrap: wrap; }
+      .bulk-bar { min-width: unset; width: calc(100% - 32px); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="header-brand" href="#">
+    <div class="header-brand-icon">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="14,2 14,8 20,8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="18" x2="12" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <polyline points="9,15 12,18 15,15" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="header-brand-name">文件下载中心</span>
+  </a>
+
+  <div class="header-search">
+    <input type="text" id="searchInput" placeholder="搜索文件名称、关键词…" oninput="handleSearch(this.value)">
+    <button class="header-search-btn">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="header-right">
+    <span>共 <strong id="totalCount" style="color:#fff;">0</strong> 个文件</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-title">资料下载中心</div>
+  <div class="hero-sub">汇聚各类实用文档、模板、工具，一键下载，免费使用</div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="statTotal">0</div>
+      <div class="hero-stat-lbl">文件总数</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="statDownloads">0</div>
+      <div class="hero-stat-lbl">累计下载</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">免费</div>
+      <div class="hero-stat-lbl">全部免费</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- Category Tabs -->
+  <div class="cat-tabs" id="catTabs"></div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="result-info">共找到 <strong id="resultCount">0</strong> 个文件</span>
+      <select class="sort-select" onchange="handleSort(this.value)">
+        <option value="date">最新上传</option>
+        <option value="name">按名称</option>
+        <option value="size">按大小</option>
+        <option value="downloads">下载最多</option>
+      </select>
+    </div>
+    <div class="toolbar-right">
+      <button class="view-btn active" id="viewList" onclick="setView('list')" title="列表视图">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="view-btn" id="viewGrid" onclick="setView('grid')" title="网格视图">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+          <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+          <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+          <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Select All Row -->
+  <div class="select-all-row" id="selectAllRow">
+    <div class="select-all-cb" id="selectAllCb" onclick="toggleSelectAll()"></div>
+    <span class="select-all-label" onclick="toggleSelectAll()">全选当前页</span>
+    <span class="select-all-info" id="selectAllInfo"></span>
+  </div>
+
+  <!-- File List -->
+  <div class="file-list" id="fileList"></div>
+
+  <!-- Empty State -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">📂</div>
+    <div class="empty-text">没有找到匹配的文件</div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" id="pagination"></div>
+
+</div>
+
+<!-- Bulk Action Bar -->
+<div class="bulk-bar" id="bulkBar">
+  <div class="bulk-bar-info">
+    <div class="bulk-bar-count">已选 <span id="bulkCount">0</span> 个文件</div>
+    <div class="bulk-bar-size" id="bulkSize"></div>
+  </div>
+  <div class="bulk-bar-actions">
+    <button class="btn-bulk-cancel" onclick="clearSelection()">取消选择</button>
+    <button class="btn-bulk-dl" onclick="bulkDownload()">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      立即下载
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ===== DATA ===== */
+  const FILES = [
+    { id:1,  name:'2024年度工作总结报告模板', ext:'docx', cat:'文档模板', size:'128 KB', bytes:131072,  date:'2024-12-28', downloads:3421, tags:['热门'], desc:'年终总结Word模板，含图表' },
+    { id:2,  name:'项目管理甘特图模板', ext:'xlsx', cat:'表格模板', size:'85 KB',  bytes:87040,   date:'2024-12-25', downloads:2856, tags:['热门','新增'], desc:'Excel甘特图，可直接填写' },
+    { id:3,  name:'公司简介PPT模板（蓝色商务风）', ext:'pptx', cat:'演示模板', size:'4.2 MB', bytes:4404019, date:'2024-12-20', downloads:1987, tags:['热门'] },
+    { id:4,  name:'员工入职培训手册', ext:'pdf',  cat:'行政人事', size:'2.1 MB', bytes:2202009, date:'2024-12-18', downloads:1654, tags:[] },
+    { id:5,  name:'财务报销申请表', ext:'xlsx', cat:'表格模板', size:'48 KB',  bytes:49152,   date:'2024-12-15', downloads:4102, tags:['热门'] },
+    { id:6,  name:'合同协议书通用模板', ext:'docx', cat:'法律合同', size:'95 KB',  bytes:97280,   date:'2024-12-12', downloads:2341, tags:[] },
+    { id:7,  name:'软件产品需求文档（PRD）模板', ext:'docx', cat:'文档模板', size:'210 KB', bytes:215040, date:'2024-12-10', downloads:1879, tags:['新增'] },
+    { id:8,  name:'市场分析报告模板', ext:'pptx', cat:'演示模板', size:'5.8 MB', bytes:6082355, date:'2024-12-08', downloads:1423, tags:[] },
+    { id:9,  name:'UI设计资源素材包', ext:'zip',  cat:'设计素材', size:'32.4 MB',bytes:33976115, date:'2024-12-05', downloads:983,  tags:['新增'] },
+    { id:10, name:'劳动合同标准范本2024版', ext:'docx', cat:'法律合同', size:'76 KB',  bytes:77824,   date:'2024-12-03', downloads:5671, tags:['热门'] },
+    { id:11, name:'商务名片设计模板', ext:'zip',  cat:'设计素材', size:'8.6 MB', bytes:9014067, date:'2024-11-28', downloads:743,  tags:[] },
+    { id:12, name:'产品发布会宣传视频片头', ext:'mp4',  cat:'视频素材', size:'18.3 MB',bytes:19188064, date:'2024-11-25', downloads:612,  tags:['新增'] },
+    { id:13, name:'年度预算规划表', ext:'xlsx', cat:'表格模板', size:'112 KB', bytes:114688, date:'2024-11-20', downloads:3208, tags:['热门'] },
+    { id:14, name:'会议记录模板', ext:'docx', cat:'文档模板', size:'42 KB',  bytes:43008,  date:'2024-11-18', downloads:2104, tags:[] },
+    { id:15, name:'产品Logo设计原稿', ext:'zip',  cat:'设计素材', size:'14.7 MB',bytes:15413248, date:'2024-11-15', downloads:894,  tags:[] },
+    { id:16, name:'培训课件—时间管理', ext:'pptx', cat:'演示模板', size:'3.4 MB', bytes:3565158, date:'2024-11-12', downloads:1356, tags:[] },
+    { id:17, name:'公司组织架构图模板', ext:'xlsx', cat:'表格模板', size:'68 KB',  bytes:69632,  date:'2024-11-10', downloads:1987, tags:[] },
+    { id:18, name:'KV主视觉设计图', ext:'png',  cat:'设计素材', size:'2.8 MB', bytes:2936012, date:'2024-11-08', downloads:521,  tags:['新增'] },
+  ];
+
+  const CATEGORIES = ['全部', ...new Set(FILES.map(f => f.cat))];
+
+  const PAGE_SIZE = 8;
+  let currentCat = '全部';
+  let currentSort = 'date';
+  let currentSearch = '';
+  let currentPage = 1;
+  let currentView = 'list';
+  let selectedIds = new Set();
+  let currentPageIds = [];
+
+  /* ===== INIT ===== */
+  function init() {
+    renderCatTabs();
+    updateStats();
+    render();
+  }
+
+  function updateStats() {
+    document.getElementById('statTotal').textContent = FILES.length;
+    const total = FILES.reduce((s,f) => s + f.downloads, 0);
+    document.getElementById('statDownloads').textContent = (total/1000).toFixed(1) + 'K';
+    document.getElementById('totalCount').textContent = FILES.length;
+  }
+
+  /* ===== CATEGORY TABS ===== */
+  function renderCatTabs() {
+    const el = document.getElementById('catTabs');
+    el.innerHTML = CATEGORIES.map(cat => {
+      const count = cat === '全部' ? FILES.length : FILES.filter(f => f.cat === cat).length;
+      return `<div class="cat-tab ${cat === currentCat ? 'active' : ''}" onclick="selectCat('${cat}')">
+        ${cat}<span class="cat-tab-count">${count}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function selectCat(cat) {
+    currentCat = cat;
+    currentPage = 1;
+    selectedIds.clear();
+    renderCatTabs();
+    render();
+  }
+
+  /* ===== FILTER + SORT ===== */
+  function getFiltered() {
+    let list = FILES.slice();
+    if (currentCat !== '全部') list = list.filter(f => f.cat === currentCat);
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      list = list.filter(f => f.name.toLowerCase().includes(q) || f.cat.toLowerCase().includes(q));
+    }
+    list.sort((a,b) => {
+      if (currentSort === 'date')      return new Date(b.date) - new Date(a.date);
+      if (currentSort === 'name')      return a.name.localeCompare(b.name, 'zh');
+      if (currentSort === 'size')      return b.bytes - a.bytes;
+      if (currentSort === 'downloads') return b.downloads - a.downloads;
+      return 0;
+    });
+    return list;
+  }
+
+  function handleSearch(val) {
+    currentSearch = val.trim();
+    currentPage = 1;
+    render();
+  }
+
+  function handleSort(val) {
+    currentSort = val;
+    currentPage = 1;
+    render();
+  }
+
+  /* ===== VIEW TOGGLE ===== */
+  function setView(v) {
+    currentView = v;
+    document.getElementById('viewList').classList.toggle('active', v === 'list');
+    document.getElementById('viewGrid').classList.toggle('active', v === 'grid');
+    const fl = document.getElementById('fileList');
+    fl.classList.toggle('grid-view', v === 'grid');
+  }
+
+  /* ===== RENDER ===== */
+  function render() {
+    const filtered = getFiltered();
+    document.getElementById('resultCount').textContent = filtered.length;
+
+    const total = Math.ceil(filtered.length / PAGE_SIZE);
+    currentPage = Math.min(currentPage, Math.max(total, 1));
+    const pageItems = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+    currentPageIds = pageItems.map(f => f.id);
+
+    const fl = document.getElementById('fileList');
+    const empty = document.getElementById('emptyState');
+
+    if (pageItems.length === 0) {
+      fl.innerHTML = '';
+      empty.classList.add('show');
+      document.getElementById('selectAllRow').style.display = 'none';
+    } else {
+      empty.classList.remove('show');
+      document.getElementById('selectAllRow').style.display = '';
+      fl.innerHTML = pageItems.map(f => renderCard(f)).join('');
+    }
+
+    renderPagination(total);
+    updateBulkBar();
+    updateSelectAllCb();
+  }
+
+  function renderCard(f) {
+    const iconClass = extToClass(f.ext);
+    const iconSvg = extToSvg(f.ext);
+    const tags = f.tags.map(t => `<span class="ftag ${t==='热门'?'ftag-hot':t==='新增'?'ftag-new':''}">${t}</span>`).join('');
+    const sel = selectedIds.has(f.id);
+    return `
+    <div class="file-card${sel?' selected':''}" id="card-${f.id}" onclick="toggleSelect(${f.id}, event)">
+      <div class="file-cb${sel?' checked':''}" id="cb-${f.id}"></div>
+      <div class="ftype-icon ${iconClass}">
+        ${iconSvg}
+        <span class="ftype-ext">${f.ext.toUpperCase()}</span>
+      </div>
+      <div class="file-info">
+        <div class="file-name" title="${f.name}">${f.name}</div>
+        <div class="file-meta">
+          <span>${f.cat}</span>
+          <span class="file-meta-sep">·</span>
+          <span>上传于 ${f.date}</span>
+          ${f.desc ? `<span class="file-meta-sep">·</span><span>${f.desc}</span>` : ''}
+        </div>
+        ${tags ? `<div class="file-tags">${tags}</div>` : ''}
+      </div>
+      <div class="file-stats">
+        <span class="file-size">${f.size}</span>
+        <span class="file-dl-count">↓ ${f.downloads.toLocaleString()}</span>
+      </div>
+      <button class="btn-dl" id="btn-${f.id}" onclick="event.stopPropagation(); downloadFile(${f.id})">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        下载
+      </button>
+    </div>`;
+  }
+
+  /* ===== PAGINATION ===== */
+  function renderPagination(total) {
+    const el = document.getElementById('pagination');
+    if (total <= 1) { el.innerHTML = ''; return; }
+    let html = '';
+    html += `<button class="pg-btn ${currentPage===1?'disabled':''}" onclick="goPage(${currentPage-1})">‹</button>`;
+    for (let i = 1; i <= total; i++) {
+      if (total > 7 && i > 2 && i < total-1 && Math.abs(i - currentPage) > 1) {
+        if (i === 3 || i === total-2) html += `<span style="color:#ccc;padding:0 4px">…</span>`;
+        continue;
+      }
+      html += `<button class="pg-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    }
+    html += `<button class="pg-btn ${currentPage===total?'disabled':''}" onclick="goPage(${currentPage+1})">›</button>`;
+    el.innerHTML = html;
+  }
+
+  function goPage(p) {
+    currentPage = p;
+    selectedIds.clear();
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ===== SELECTION ===== */
+  function toggleSelect(id, e) {
+    if (e && e.target.closest('.btn-dl')) return;
+    if (selectedIds.has(id)) {
+      selectedIds.delete(id);
+    } else {
+      selectedIds.add(id);
+    }
+    const card = document.getElementById('card-' + id);
+    const cb   = document.getElementById('cb-' + id);
+    if (card) card.classList.toggle('selected', selectedIds.has(id));
+    if (cb)   cb.classList.toggle('checked',  selectedIds.has(id));
+    updateBulkBar();
+    updateSelectAllCb();
+  }
+
+  function toggleSelectAll() {
+    const allSelected = currentPageIds.every(id => selectedIds.has(id));
+    if (allSelected) {
+      currentPageIds.forEach(id => selectedIds.delete(id));
+    } else {
+      currentPageIds.forEach(id => selectedIds.add(id));
+    }
+    currentPageIds.forEach(id => {
+      const card = document.getElementById('card-' + id);
+      const cb   = document.getElementById('cb-' + id);
+      if (card) card.classList.toggle('selected', selectedIds.has(id));
+      if (cb)   cb.classList.toggle('checked',  selectedIds.has(id));
+    });
+    updateBulkBar();
+    updateSelectAllCb();
+  }
+
+  function clearSelection() {
+    selectedIds.clear();
+    document.querySelectorAll('.file-card.selected').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.file-cb.checked').forEach(el => el.classList.remove('checked'));
+    updateBulkBar();
+    updateSelectAllCb();
+  }
+
+  function updateSelectAllCb() {
+    const cb = document.getElementById('selectAllCb');
+    const info = document.getElementById('selectAllInfo');
+    const total = currentPageIds.length;
+    const selCount = currentPageIds.filter(id => selectedIds.has(id)).length;
+    cb.classList.remove('checked', 'indeterminate');
+    if (selCount === 0) {
+      /* unchecked */
+    } else if (selCount === total) {
+      cb.classList.add('checked');
+    } else {
+      cb.classList.add('indeterminate');
+    }
+    info.textContent = selCount > 0 ? `已选 ${selCount} / ${total}` : '';
+  }
+
+  function updateBulkBar() {
+    const bar = document.getElementById('bulkBar');
+    const n = selectedIds.size;
+    if (n === 0) {
+      bar.classList.remove('show');
+      return;
+    }
+    bar.classList.add('show');
+    document.getElementById('bulkCount').textContent = n;
+    const totalBytes = [...selectedIds].reduce((s, id) => {
+      const f = FILES.find(x => x.id === id);
+      return s + (f ? f.bytes : 0);
+    }, 0);
+    document.getElementById('bulkSize').textContent = '共 ' + formatBytes(totalBytes);
+  }
+
+  function formatBytes(b) {
+    if (b >= 1024*1024) return (b/1024/1024).toFixed(1) + ' MB';
+    if (b >= 1024) return Math.round(b/1024) + ' KB';
+    return b + ' B';
+  }
+
+  function bulkDownload() {
+    const ids = [...selectedIds];
+    const btn = document.querySelector('.btn-bulk-dl');
+    btn.disabled = true;
+    btn.textContent = '下载中…';
+    let done = 0;
+    ids.forEach((id, i) => {
+      setTimeout(() => {
+        const f = FILES.find(x => x.id === id);
+        if (f) f.downloads++;
+        done++;
+        if (done === ids.length) {
+          btn.disabled = false;
+          btn.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> 立即下载`;
+          showToast('✅ 已成功下载 ' + ids.length + ' 个文件');
+          clearSelection();
+        }
+      }, i * 200);
+    });
+  }
+
+  /* ===== DOWNLOAD ===== */
+  function downloadFile(id) {
+    const f = FILES.find(x => x.id === id);
+    if (!f) return;
+    const btn = document.getElementById('btn-' + id);
+    btn.classList.add('loading');
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="60" stroke-dashoffset="60" style="animation:spin 1s linear infinite"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg> 下载中…`;
+
+    setTimeout(() => {
+      f.downloads++;
+      btn.classList.remove('loading');
+      btn.classList.add('done');
+      btn.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 完成`;
+      showToast('✅ ' + f.name + ' 下载成功');
+      setTimeout(() => {
+        btn.classList.remove('done');
+        btn.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> 下载`;
+      }, 2500);
+    }, 1400);
+  }
+
+  /* ===== TOAST ===== */
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  /* ===== HELPERS ===== */
+  function extToClass(ext) {
+    const m = { pdf:'ftype-pdf', docx:'ftype-word', doc:'ftype-word', xlsx:'ftype-excel', xls:'ftype-excel', pptx:'ftype-ppt', ppt:'ftype-ppt', zip:'ftype-zip', rar:'ftype-zip', png:'ftype-img', jpg:'ftype-img', mp4:'ftype-video', mov:'ftype-video' };
+    return m[ext] || 'ftype-other';
+  }
+
+  function extToLabel(ext) { return ext.toUpperCase(); }
+
+  function extToSvg(ext) {
+    if (['docx','doc'].includes(ext)) return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="17" x2="16" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+    if (['xlsx','xls'].includes(ext)) return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+    if (['pptx','ppt'].includes(ext)) return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+    if (ext === 'pdf') return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    if (['zip','rar'].includes(ext)) return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="1.8"/></svg>`;
+    if (['png','jpg','jpeg'].includes(ext)) return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="1.5"/><polyline points="21,15 16,10 5,21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    if (['mp4','mov'].includes(ext)) return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><polygon points="23,7 16,12 23,17 23,7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="5" width="15" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>`;
+    return `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
+  init();
+</script>
+</body>
+</html>
