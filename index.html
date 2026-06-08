@@ -835,6 +835,117 @@
 
     .cm-confirm:hover { background: #e55a1e; }
 
+    /* ===== AI推荐-查看联系方式弹窗 ===== */
+    .ai-contact-modal {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      z-index: 600;
+      overflow: hidden;
+    }
+    .ai-contact-modal.show { display: block; }
+
+    .ai-cm-hd {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px 10px;
+    }
+    .ai-cm-hd-title { font-size: 15px; font-weight: 600; color: #222; }
+    .ai-cm-hd-close { font-size: 20px; color: #bbb; cursor: pointer; line-height: 1; }
+    .ai-cm-hd-close:hover { color: #666; }
+
+    .ai-cm-bd { padding: 4px 22px 18px; text-align: center; }
+
+    .ai-cm-avatar {
+      width: 62px; height: 62px;
+      margin: 0 auto 10px;
+      background: #f0f0f0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    .ai-cm-subtitle { font-size: 12.5px; color: #888; margin-bottom: 14px; }
+
+    .ai-cm-table {
+      border: 1px solid #f0f0f0;
+      border-radius: 6px;
+      overflow: hidden;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+    .ai-cm-tr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    .ai-cm-tr + .ai-cm-tr { border-top: 1px solid #f0f0f0; }
+    .ai-cm-tr-label { color: #333; display: flex; align-items: center; gap: 4px; }
+    .ai-cm-tr-val { font-weight: 600; color: #ff4d4f; font-size: 13.5px; }
+    .ai-cm-tip-icon {
+      width: 14px; height: 14px;
+      border: 1px solid #bbb;
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #bbb; cursor: default;
+    }
+
+    .ai-cm-balance { font-size: 12.5px; color: #888; margin-bottom: 14px; }
+    .ai-cm-balance-num { color: #ff6b2b; font-weight: 600; }
+
+    .ai-cm-ft { padding: 0 22px 20px; }
+    .ai-cm-ok {
+      width: 100%;
+      padding: 10px;
+      background: #ff6b2b;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .ai-cm-ok:hover { background: #e55a1e; }
+
+    /* 卡片消失动画 */
+    .ccard.vanishing {
+      overflow: hidden;
+      pointer-events: none;
+      animation: aiCardVanish 0.4s ease forwards;
+    }
+    @keyframes aiCardVanish {
+      0%   { opacity: 1; max-height: 600px; margin-bottom: 10px; }
+      45%  { opacity: 0; max-height: 600px; margin-bottom: 10px; }
+      100% { opacity: 0; max-height: 0;   margin-bottom: 0; border-width: 0; padding: 0; }
+    }
+
+    /* Toast */
+    .ai-toast {
+      position: fixed;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(30,30,30,0.82);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s, transform 0.22s;
+      z-index: 700;
+      white-space: nowrap;
+    }
+    .ai-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
     /* ===== 添加条件弹窗 ===== */
     .cond-overlay {
       display: none;
@@ -1208,7 +1319,7 @@
 
     .rec-tab.active .rec-tab-count { background: #fff2ec; color: #ff6b2b; }
 
-    /* AI推荐 tab special style */
+    /* AI推荐 tab — Gemini 风格 */
     #tab-ai {
       color: #ff6b2b;
       font-weight: 600;
@@ -1220,22 +1331,68 @@
       color: #ff6b2b;
     }
     #tab-ai.active {
-      background: linear-gradient(135deg, #ff6b2b 0%, #ff9547 100%);
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(270deg, #ff4500, #ff6b2b, #ffaa55, #ff7a30, #ff4500);
+      background-size: 300% 100%;
       color: #fff;
       border-radius: 8px 8px 0 0;
       border-bottom-color: transparent;
-      box-shadow: 0 3px 10px rgba(255,107,43,0.35);
       padding: 10px 20px 13px;
+      animation: gemini-flow 3.5s ease infinite, gemini-glow 2.5s ease-in-out infinite;
     }
-    #tab-ai.active .rec-tab-count {
-      background: rgba(255,255,255,0.28);
-      color: #fff;
+    /* 扫光层 */
+    #tab-ai.active::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg,
+        transparent 15%,
+        rgba(255,255,255,0.22) 40%,
+        rgba(255,255,255,0.38) 50%,
+        rgba(255,255,255,0.22) 60%,
+        transparent 85%);
+      background-size: 250% 100%;
+      animation: gemini-sweep 2.6s ease-in-out infinite;
+      pointer-events: none;
+      border-radius: 8px 8px 0 0;
     }
-    #tab-ai.active .ai-tab-icon { opacity: 1; }
     .ai-tab-icon {
-      opacity: 0.7;
+      opacity: 0.8;
       display: flex;
       align-items: center;
+    }
+    #tab-ai.active .ai-tab-icon {
+      opacity: 1;
+      display: flex;
+      align-items: center;
+      animation: gemini-star 3s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes gemini-flow {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes gemini-glow {
+      0%, 100% { box-shadow: 0 3px 10px rgba(255,107,43,0.4); }
+      50%       { box-shadow: 0 4px 26px rgba(255,80,20,0.7), 0 0 32px rgba(255,120,50,0.25); }
+    }
+    @keyframes gemini-sweep {
+      0%        { background-position: -100% 0; opacity: 0; }
+      8%        { opacity: 1; }
+      55%       { background-position: 200% 0; opacity: 1; }
+      65%, 100% { background-position: 200% 0; opacity: 0; }
+    }
+    /* Gemini 4向星：先放大拉伸45°，再还原，类似 Gemini logo 呼吸 */
+    @keyframes gemini-star {
+      0%        { transform: scale(1)    rotate(0deg)  scaleX(1); }
+      20%       { transform: scale(1.28) rotate(45deg) scaleX(0.75); }
+      40%       { transform: scale(1.1)  rotate(90deg) scaleX(1); }
+      60%       { transform: scale(1.25) rotate(135deg) scaleX(0.78); }
+      80%       { transform: scale(1.05) rotate(180deg) scaleX(1); }
+      100%      { transform: scale(1)    rotate(180deg) scaleX(1); }
     }
 
     /* ===== JD 条件筛选栏 ===== */
@@ -1280,15 +1437,20 @@
 
     .jd-cond-tag-prefix { font-weight: 600; margin-right: 3px; }
 
-    .jd-cond-tag-del {
+    .jd-tag-hidden { display: none; }
+
+    .jd-expand-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: #ff6b2b;
       cursor: pointer;
-      opacity: 0.45;
-      font-size: 13px;
-      margin-left: 3px;
-      line-height: 1;
-      font-style: normal;
+      border-radius: 4px;
+      white-space: nowrap;
+      user-select: none;
     }
-    .jd-cond-tag-del:hover { opacity: 1; }
+    .jd-expand-btn:hover { text-decoration: underline; }
 
     .jd-cond-add-btn {
       display: flex;
@@ -1768,6 +1930,169 @@
       transition: background 0.15s;
     }
     .cbtn-chat:hover { background: #fff4ef; }
+
+    /* ===== 下载的简历 tab disabled & AI badge ===== */
+    .dl-tab-disabled { color: #bbb !important; cursor: default !important; pointer-events: none !important; border-bottom-color: transparent !important; }
+    .dl-tab-disabled:hover { color: #bbb !important; }
+    .dl-ai-badge { display:inline-flex; align-items:center; padding:1px 6px; background:#fff4ef; color:#ff6b2b; border:1px solid #ffcfb3; border-radius:3px; font-size:11px; font-weight:500; margin-left:5px; vertical-align:middle; }
+    .dl-ai-filter-label { color: #ff6b2b; font-weight: 500; }
+
+    /* ===== 下载的简历-沟通中 卡片 ===== */
+    .dl-card {
+      background: #fff;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+      overflow: hidden;
+    }
+    .dl-card.dismissed { opacity: 0.4; pointer-events: none; }
+
+    .dl-card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 16px;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 12.5px;
+      color: #888;
+    }
+    .dl-card-pos {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .dl-card-pos-icon { color: #bbb; }
+    .dl-card-pos-val  { color: #ff6b2b; font-weight: 500; }
+
+    .dl-card-body {
+      display: flex;
+      padding: 14px 16px;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .dl-card-left {
+      flex-shrink: 0;
+      width: 230px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .dl-card-avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      color: #fff;
+      font-weight: 600;
+    }
+    .dl-card-info { flex: 1; min-width: 0; }
+    .dl-card-nameline {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+    .dl-card-name { font-size: 14.5px; font-weight: 600; color: #222; }
+    .dl-card-demo {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .dl-card-demo span:not(:last-child)::after {
+      content: ' | ';
+      color: #ddd;
+      margin: 0 2px;
+    }
+    .dl-card-status {
+      font-size: 12px;
+      color: #52c41a;
+      margin-bottom: 7px;
+    }
+    .dl-card-status.passive { color: #faad14; }
+    .dl-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .dl-tag {
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-size: 11.5px;
+      background: #f5f5f5;
+      color: #666;
+      border: 1px solid #e8e8e8;
+    }
+
+    .dl-card-right {
+      flex: 1;
+      min-width: 0;
+    }
+    .dl-exp-list { list-style: none; }
+    .dl-exp-item {
+      display: flex;
+      gap: 12px;
+      font-size: 12.5px;
+      padding: 3px 0;
+      color: #555;
+    }
+    .dl-exp-date {
+      color: #999;
+      flex-shrink: 0;
+      white-space: nowrap;
+      min-width: 160px;
+    }
+    .dl-exp-info { color: #333; line-height: 1.5; }
+
+    .dl-card-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-top: 1px solid #f5f5f5;
+    }
+    .dl-btn-interview {
+      padding: 5px 14px;
+      border: 1px solid #ff6b2b;
+      border-radius: 4px;
+      background: #fff;
+      color: #ff6b2b;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .dl-btn-interview:hover { background: #fff7f4; }
+    .dl-btn-chat {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 14px;
+      border: 1px solid #ff6b2b;
+      border-radius: 4px;
+      background: #fff;
+      color: #ff6b2b;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .dl-btn-chat:hover { background: #fff7f4; }
+    .dl-btn-pass {
+      padding: 5px 14px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      background: #fff;
+      color: #888;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .dl-btn-pass:hover { color: #ff4d4f; border-color: #ff4d4f; }
+    .dl-card[onclick] { cursor: pointer; }
+    .dl-card[onclick]:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
+    @keyframes dlCardAppear { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
     /* ===== 推荐的简历页面 ===== */
     .rec-tab-num {
@@ -2348,6 +2673,19 @@
   .rd-act-btn:hover { background: #fff4ef; border-color: #ffbb96; color: #ff6b2b; }
   .rd-act-btn.act-primary { background: #ff6b2b; color: #fff; border-color: #ff6b2b; }
   .rd-act-btn.act-primary:hover { background: #e55a1e; }
+  #rd-ai-action-bar { display: none; gap: 8px; }
+  .rd-ai-ab-contact {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 0; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;
+    background: #fff; color: #ff6b2b; border: 1px solid #ff6b2b; transition: background 0.15s;
+  }
+  .rd-ai-ab-contact:hover { background: #fff4ef; }
+  .rd-ai-ab-chat {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 0; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;
+    background: #ff6b2b; color: #fff; border: 1px solid #ff6b2b; transition: background 0.15s;
+  }
+  .rd-ai-ab-chat:hover { background: #e55a1e; }
   .rd-contact-box {
     background: #fff; border-radius: 6px; padding: 10px 16px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -2381,10 +2719,29 @@
   .rd-star-empty { color: #e0e0e0; }
   .rd-eval-score-n { font-size: 13px; font-weight: 700; color: #ff6b2b; }
   .rd-wcloud {
-    display: flex; flex-wrap: wrap; gap: 3px 8px;
-    align-content: flex-start; padding-top: 4px;
+    position: relative;
+    height: 155px;
+    overflow: hidden;
   }
-  .rd-wc-item { line-height: 1.6; cursor: default; white-space: nowrap; }
+  .rd-wc-item {
+    position: absolute;
+    line-height: 1.5; cursor: default; white-space: nowrap;
+    display: inline-block;
+    animation: wc-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: var(--wi-d, 0s);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    z-index: 1;
+  }
+  .rd-wc-item:hover {
+    transform: translateY(-3px) scale(1.12);
+    filter: brightness(1.3) drop-shadow(0 2px 6px rgba(0,0,0,0.13));
+    z-index: 10;
+  }
+  @keyframes wc-enter {
+    0%   { opacity: 0; transform: translateY(14px) scale(0.7); filter: blur(4px); }
+    70%  { filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
   .rd-wc-xl { font-size: 20px; font-weight: 700; }
   .rd-wc-lg { font-size: 16px; font-weight: 600; }
   .rd-wc-md { font-size: 13.5px; font-weight: 500; }
@@ -2428,6 +2785,11 @@
     cursor: pointer; font-size: 14px; transition: border-color 0.15s, background 0.15s;
   }
   .rd-vote-btn:hover { border-color: #ff6b2b; background: #fff4ef; }
+  .rd-ai-risk-full {
+    padding: 8px 0 0;
+    border-top: 1px solid #f5e5d8;
+    margin-top: 6px;
+  }
   /* 经历概览（右侧面板） */
   .rd-overview-box {
     background: #fff; border-radius: 6px; padding: 12px 14px;
@@ -2642,7 +3004,7 @@
       <ul class="sub-menu open" id="resume-submenu">
         <li class="sub-item" id="sub-applied" onclick="event.stopPropagation();showPage('applied')">应聘的简历</li>
         <li class="sub-item" id="sub-recommended" onclick="event.stopPropagation();showPage('recommended')">推荐的简历</li>
-        <li class="sub-item" onclick="event.stopPropagation()">下载的简历</li>
+        <li class="sub-item" id="sub-downloaded" onclick="event.stopPropagation();showPage('downloaded')">下载的简历</li>
       </ul>
 
       <li class="nav-item">
@@ -2719,8 +3081,8 @@
       <!-- ===== REC TABS ===== -->
       <div class="rec-tab-bar">
         <div class="rec-tab active" id="tab-ai">
-          <span class="ai-tab-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-          AI推荐 <span class="rec-tab-count" id="cnt-ai">3</span>
+          <span class="ai-tab-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5C12 2.5 13.1 9.2 18.5 12C13.1 14.8 12 21.5 12 21.5C12 21.5 10.9 14.8 5.5 12C10.9 9.2 12 2.5 12 2.5Z"/><path d="M2.5 12C2.5 12 9.2 10.9 12 5.5C14.8 10.9 21.5 12 21.5 12C21.5 12 14.8 13.1 12 18.5C9.2 13.1 2.5 12 2.5 12Z"/></svg></span>
+          AI推荐
         </div>
       </div>
 
@@ -2728,10 +3090,6 @@
       <div class="jd-cond-bar" id="jd-cond-bar">
         <div class="jd-cond-row">
           <div class="jd-cond-tags" id="jd-cond-tags"></div>
-          <button class="jd-cond-add-btn" onclick="openAddCondModal()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            添加条件
-          </button>
         </div>
       </div>
 
@@ -2744,7 +3102,7 @@
 
       <!-- ===== 朱先生 | AI推荐 | 92分 ===== -->
       <div class="ccard" id="ccard-zhu" data-type="ai" data-pos="测试工程师">
-        <div class="ccard-top" onclick="openRD('zhu')">
+        <div class="ccard-top" onclick="openRD('zhu',null,true)">
           <div class="ccard-avatar" style="background:#ff7d45">朱</div>
           <div class="ccard-body">
             <div class="ccard-nameline">
@@ -2784,15 +3142,14 @@
             <span class="ctag ctag-pos">在校背景 ✓</span>
           </div>
           <div class="ccard-btns">
-            <button class="cbtn-contact" onclick="viewContact('朱先生')">查看联系方式</button>
-            <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-zhu')">查看联系方式</button>
           </div>
         </div>
       </div>
 
       <!-- ===== 张先生 | 双重推荐 | 88分 ===== -->
       <div class="ccard" id="ccard-zhang" data-type="both" data-pos="硬件工程师">
-        <div class="ccard-top" onclick="openRD('zhang')">
+        <div class="ccard-top" onclick="openRD('zhang',null,true)">
           <div class="ccard-avatar" style="background:#7c3aed">张</div>
           <div class="ccard-body">
             <div class="ccard-nameline">
@@ -2833,15 +3190,14 @@
             <span class="ctag ctag-pos">在职可谈 ✓</span>
           </div>
           <div class="ccard-btns">
-            <button class="cbtn-contact" onclick="viewContact('张先生')">查看联系方式</button>
-            <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-zhang')">查看联系方式</button>
           </div>
         </div>
       </div>
 
       <!-- ===== 刘先生 | 系统推荐 | 76分 ===== -->
       <div class="ccard" id="ccard-liu" data-type="sys" data-pos="质量工程师">
-        <div class="ccard-top" onclick="openRD('liu')">
+        <div class="ccard-top" onclick="openRD('liu',null,true)">
           <div class="ccard-avatar" style="background:#1677ff">刘</div>
           <div class="ccard-body">
             <div class="ccard-nameline">
@@ -2882,19 +3238,18 @@
             <span class="ctag ctag-neu">跨专业</span>
           </div>
           <div class="ccard-btns">
-            <button class="cbtn-contact" onclick="viewContact('刘先生')">查看联系方式</button>
-            <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-liu')">查看联系方式</button>
           </div>
         </div>
       </div>
 
       <!-- ===== 王佳乐 | 系统推荐 | 71分 ===== -->
       <div class="ccard" id="ccard-wang" data-type="sys" data-pos="测试工程师">
-        <div class="ccard-top" onclick="openRD('wang')">
+        <div class="ccard-top" onclick="openRD('wang',null,true)">
           <div class="ccard-avatar" style="background:#22c55e">王</div>
           <div class="ccard-body">
             <div class="ccard-nameline">
-              <span class="ccard-name">王佳乐</span>
+              <span class="ccard-name">王先生</span>
               <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </div>
             <div class="ccard-demo"><span>大专</span><span>1年</span><span>河北石家庄</span><span>23岁</span></div>
@@ -2930,15 +3285,14 @@
             <span class="ctag ctag-warn">学历偏低</span>
           </div>
           <div class="ccard-btns">
-            <button class="cbtn-contact" onclick="viewContact('王佳乐')">查看联系方式</button>
-            <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-wang')">查看联系方式</button>
           </div>
         </div>
       </div>
 
       <!-- ===== 易先生 | AI推荐 | 65分 ===== -->
       <div class="ccard" id="ccard-yi" data-type="ai" data-pos="测试工程师">
-        <div class="ccard-top" onclick="openRD('yi')">
+        <div class="ccard-top" onclick="openRD('yi',null,true)">
           <div class="ccard-avatar" style="background:#0891b2">易</div>
           <div class="ccard-body">
             <div class="ccard-nameline">
@@ -2978,8 +3332,7 @@
             <span class="ctag ctag-warn">活跃度低</span>
           </div>
           <div class="ccard-btns">
-            <button class="cbtn-contact" onclick="viewContact('易先生')">查看联系方式</button>
-            <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-yi')">查看联系方式</button>
           </div>
         </div>
       </div>
@@ -3038,7 +3391,7 @@
       <div class="ap-list">
 
         <!-- card 1 -->
-        <div class="ccard">
+        <div class="ccard" data-apstatus="待筛选">
           <div class="ap-card-meta">
             <label class="rcard-chk"><input type="checkbox"></label>
             <span class="rcard-pos">应聘职位：<a class="rcard-pos-link">值长-上海 等2个职位</a></span>
@@ -3084,14 +3437,14 @@
               <span class="ctag ctag-pos">华为背景 ✓</span>
             </div>
             <div class="ccard-btns">
-              <button class="cbtn-contact" onclick="viewContact('陈二')">查看联系方式</button>
+              <button class="cbtn-contact" onclick="moveToComm(this,'陈二')">查看联系方式</button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-            </div>
+              </div>
           </div>
         </div>
 
         <!-- card 2 -->
-        <div class="ccard">
+        <div class="ccard" data-apstatus="待筛选">
           <div class="ap-card-meta">
             <label class="rcard-chk"><input type="checkbox"></label>
             <span class="rcard-pos">应聘职位：<a class="rcard-pos-link">测试工程师-上海</a></span>
@@ -3137,9 +3490,9 @@
               <span class="ctag ctag-warn">经验偏少</span>
             </div>
             <div class="ccard-btns">
-              <button class="cbtn-contact" onclick="viewContact('李明辉')">查看联系方式</button>
+              <button class="cbtn-contact" onclick="moveToComm(this,'李明辉')">查看联系方式</button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-            </div>
+              </div>
           </div>
         </div>
 
@@ -3272,7 +3625,7 @@
                 发起沟通
               </button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-            </div>
+              </div>
           </div>
         </div>
 
@@ -3330,7 +3683,7 @@
                 发起沟通
               </button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-            </div>
+              </div>
           </div>
         </div>
 
@@ -3389,7 +3742,7 @@
                 发起沟通
               </button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-            </div>
+              </div>
           </div>
         </div>
 
@@ -3411,6 +3764,390 @@
       </div>
 
     </div><!-- /page-recommended -->
+
+    <!-- ===== PAGE: 下载的简历 ===== -->
+    <div id="page-downloaded" style="display:none">
+
+      <!-- status tabs + search -->
+      <div class="ap-header">
+        <div class="ap-tabs">
+          <span class="ap-tab dl-tab-disabled">待筛选</span>
+          <span class="ap-tab active">沟通中 <span class="rec-tab-num">6</span></span>
+          <span class="ap-tab dl-tab-disabled">已约面 <span class="rec-tab-num">3</span></span>
+          <span class="ap-tab dl-tab-disabled">不合适 <span class="rec-tab-num">0</span></span>
+          <span class="ap-total">共9简历</span>
+        </div>
+        <div class="ap-search-bar">
+          <input class="ap-search-input" placeholder="简历姓名/公司/职位/标签/编号" />
+          <button class="ap-search-btn">搜索</button>
+          <button class="ap-layout-btn" title="切换视图">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- filter bar -->
+      <div class="ap-filter-bar">
+        <button class="ap-filter-drop">工作经验 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="ap-filter-drop">学历 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="ap-filter-drop">阅读状态 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="ap-filter-divider"></div>
+        <label class="ap-filter-check"><input type="checkbox"> 评价过的简历</label>
+        <label class="ap-filter-check"><input type="checkbox"> 有证书</label>
+        <label class="ap-filter-check"><input type="checkbox" id="dl-ai-filter" onchange="filterDlAI(this)"> <span class="dl-ai-filter-label">AI推荐的简历</span></label>
+        <button class="ap-more-filter">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          更多筛选
+        </button>
+        <span class="rec-download-tip">剩余下载点数：<strong>828</strong></span>
+      </div>
+
+      <!-- card list: 已约面 (1 card) -->
+      <div class="rec-list" id="dl-yymian-list">
+
+        <!-- 王先生 (来源: AI推荐) -->
+        <div class="dl-card" data-ai="true" data-rdkey="dl_wang" onclick="handleDlCardClick(event,'dl_wang','下载的简历')">
+          <div class="dl-card-meta">
+            <div class="dl-card-pos">
+              <svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              关联职位：<span class="dl-card-pos-val">硬件工程师·广东深圳</span>
+            </div>
+            <span>处理时间：2026-05-29 10:30</span>
+          </div>
+          <div class="dl-card-body">
+            <div class="dl-card-left">
+              <div class="dl-card-avatar" style="background:#2563eb">王</div>
+              <div class="dl-card-info">
+                <div class="dl-card-nameline">
+                  <span class="dl-card-name">王晓华</span>
+                  <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="dl-ai-badge">AI推荐</span>
+                </div>
+                <div class="dl-card-demo">
+                  <span>本科</span><span>8年</span><span>广东深圳</span><span>31岁</span>
+                </div>
+                <div class="dl-card-status">正在求职</div>
+                <div class="dl-card-tags">
+                  <span class="dl-tag">电路设计</span>
+                  <span class="dl-tag">嵌入式系统</span>
+                  <span class="dl-tag">PCB Layout</span>
+                </div>
+              </div>
+            </div>
+            <div class="dl-card-right">
+              <ul class="dl-exp-list">
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2021.06-至今(4年11个月)</span>
+                  <span class="dl-exp-info">大疆创新科技有限公司 · 硬件工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2018.07-2021.05(2年10个月)</span>
+                  <span class="dl-exp-info">华为技术有限公司 · 硬件研发</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2014.09-2018.06</span>
+                  <span class="dl-exp-info">华中科技大学 · 电子信息工程 · 本科</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="dl-card-footer">
+            <button class="dl-btn-interview">面试TA</button>
+            <button class="dl-btn-chat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              发起沟通
+            </button>
+            <button class="dl-btn-pass" onclick="this.closest('.dl-card').classList.add('dismissed')">不合适</button>
+          </div>
+        </div>
+
+        <!-- 陈女士 (无AI推荐) -->
+        <div class="dl-card" data-ai="false">
+          <div class="dl-card-meta">
+            <div class="dl-card-pos">
+              <svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              关联职位：<span class="dl-card-pos-val">质量工程师·上海浦东</span>
+            </div>
+            <span>处理时间：2026-05-28 14:20</span>
+          </div>
+          <div class="dl-card-body">
+            <div class="dl-card-left">
+              <div class="dl-card-avatar" style="background:#d97706">陈</div>
+              <div class="dl-card-info">
+                <div class="dl-card-nameline">
+                  <span class="dl-card-name">陈青云</span>
+                  <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+                <div class="dl-card-demo">
+                  <span>本科</span><span>6年</span><span>上海浦东</span><span>29岁</span>
+                </div>
+                <div class="dl-card-status">正在求职</div>
+                <div class="dl-card-tags">
+                  <span class="dl-tag">IATF16949</span>
+                  <span class="dl-tag">8D报告</span>
+                  <span class="dl-tag">SPC</span>
+                </div>
+              </div>
+            </div>
+            <div class="dl-card-right">
+              <ul class="dl-exp-list">
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2022.03-至今(4年3个月)</span>
+                  <span class="dl-exp-info">大众汽车（中国）有限公司 · 质量工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2020.07-2022.02(1年7个月)</span>
+                  <span class="dl-exp-info">上汽通用汽车 · 质量专员</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2016.09-2020.06</span>
+                  <span class="dl-exp-info">同济大学 · 车辆工程 · 本科</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="dl-card-footer">
+            <button class="dl-btn-interview">面试TA</button>
+            <button class="dl-btn-chat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              发起沟通
+            </button>
+            <button class="dl-btn-pass" onclick="this.closest('.dl-card').classList.add('dismissed')">不合适</button>
+          </div>
+        </div>
+
+        <!-- 李先生 (来源: AI推荐) -->
+        <div class="dl-card" data-ai="true" onclick="handleDlCardClick(event,'dl_li','下载的简历')">
+          <div class="dl-card-meta">
+            <div class="dl-card-pos">
+              <svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              关联职位：<span class="dl-card-pos-val">嵌入式工程师·北京朝阳</span>
+            </div>
+            <span>处理时间：2026-05-27 16:45</span>
+          </div>
+          <div class="dl-card-body">
+            <div class="dl-card-left">
+              <div class="dl-card-avatar" style="background:#059669">李</div>
+              <div class="dl-card-info">
+                <div class="dl-card-nameline">
+                  <span class="dl-card-name">李宇洲</span>
+                  <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="dl-ai-badge">AI推荐</span>
+                </div>
+                <div class="dl-card-demo">
+                  <span>硕士</span><span>4年</span><span>北京朝阳</span><span>27岁</span>
+                </div>
+                <div class="dl-card-status passive">有机会可以考虑</div>
+                <div class="dl-card-tags">
+                  <span class="dl-tag">STM32</span>
+                  <span class="dl-tag">FreeRTOS</span>
+                  <span class="dl-tag">CAN总线</span>
+                </div>
+              </div>
+            </div>
+            <div class="dl-card-right">
+              <ul class="dl-exp-list">
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2022.07-至今(3年11个月)</span>
+                  <span class="dl-exp-info">小米科技有限责任公司 · 嵌入式工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2018.09-2022.06</span>
+                  <span class="dl-exp-info">北京航空航天大学 · 电子工程 · 硕士</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="dl-card-footer">
+            <button class="dl-btn-interview">面试TA</button>
+            <button class="dl-btn-chat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              发起沟通
+            </button>
+            <button class="dl-btn-pass" onclick="this.closest('.dl-card').classList.add('dismissed')">不合适</button>
+          </div>
+        </div>
+
+        <!-- 张先生 (无AI推荐) -->
+        <div class="dl-card" data-ai="false">
+          <div class="dl-card-meta">
+            <div class="dl-card-pos">
+              <svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              关联职位：<span class="dl-card-pos-val">软件测试工程师·杭州滨江</span>
+            </div>
+            <span>处理时间：2026-05-27 09:12</span>
+          </div>
+          <div class="dl-card-body">
+            <div class="dl-card-left">
+              <div class="dl-card-avatar" style="background:#dc2626">张</div>
+              <div class="dl-card-info">
+                <div class="dl-card-nameline">
+                  <span class="dl-card-name">张建松</span>
+                  <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+                <div class="dl-card-demo">
+                  <span>本科</span><span>5年</span><span>浙江杭州</span><span>28岁</span>
+                </div>
+                <div class="dl-card-status">正在求职</div>
+                <div class="dl-card-tags">
+                  <span class="dl-tag">自动化测试</span>
+                  <span class="dl-tag">Selenium</span>
+                  <span class="dl-tag">Python</span>
+                </div>
+              </div>
+            </div>
+            <div class="dl-card-right">
+              <ul class="dl-exp-list">
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2021.03-至今(5年3个月)</span>
+                  <span class="dl-exp-info">阿里巴巴（中国）有限公司 · 测试工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2019.07-2021.02(1年7个月)</span>
+                  <span class="dl-exp-info">网易有道 · 软件测试</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2015.09-2019.06</span>
+                  <span class="dl-exp-info">浙江大学 · 软件工程 · 本科</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="dl-card-footer">
+            <button class="dl-btn-interview">面试TA</button>
+            <button class="dl-btn-chat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              发起沟通
+            </button>
+            <button class="dl-btn-pass" onclick="this.closest('.dl-card').classList.add('dismissed')">不合适</button>
+          </div>
+        </div>
+
+        <!-- 刘女士 (无AI推荐) -->
+        <div class="dl-card" data-ai="false">
+          <div class="dl-card-meta">
+            <div class="dl-card-pos">
+              <svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              关联职位：<span class="dl-card-pos-val">机械设计工程师·苏州工业园区</span>
+            </div>
+            <span>处理时间：2026-05-26 15:30</span>
+          </div>
+          <div class="dl-card-body">
+            <div class="dl-card-left">
+              <div class="dl-card-avatar" style="background:#7c3aed">刘</div>
+              <div class="dl-card-info">
+                <div class="dl-card-nameline">
+                  <span class="dl-card-name">刘明慧</span>
+                  <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+                <div class="dl-card-demo">
+                  <span>本科</span><span>7年</span><span>江苏苏州</span><span>31岁</span>
+                </div>
+                <div class="dl-card-status passive">有机会可以考虑</div>
+                <div class="dl-card-tags">
+                  <span class="dl-tag">SolidWorks</span>
+                  <span class="dl-tag">ANSYS</span>
+                  <span class="dl-tag">结构设计</span>
+                </div>
+              </div>
+            </div>
+            <div class="dl-card-right">
+              <ul class="dl-exp-list">
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2019.08-至今(6年10个月)</span>
+                  <span class="dl-exp-info">博世汽车部件（苏州）有限公司 · 机械工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2017.07-2019.07(2年)</span>
+                  <span class="dl-exp-info">西门子（中国）有限公司 · 设计工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2013.09-2017.06</span>
+                  <span class="dl-exp-info">东南大学 · 机械工程 · 本科</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="dl-card-footer">
+            <button class="dl-btn-interview">面试TA</button>
+            <button class="dl-btn-chat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              发起沟通
+            </button>
+            <button class="dl-btn-pass" onclick="this.closest('.dl-card').classList.add('dismissed')">不合适</button>
+          </div>
+        </div>
+
+        <!-- 赵先生 (来源: AI推荐) -->
+        <div class="dl-card" data-ai="true" onclick="handleDlCardClick(event,'dl_zhao','下载的简历')">
+          <div class="dl-card-meta">
+            <div class="dl-card-pos">
+              <svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              关联职位：<span class="dl-card-pos-val">算法工程师·北京海淀</span>
+            </div>
+            <span>处理时间：2026-05-26 11:05</span>
+          </div>
+          <div class="dl-card-body">
+            <div class="dl-card-left">
+              <div class="dl-card-avatar" style="background:#0891b2">赵</div>
+              <div class="dl-card-info">
+                <div class="dl-card-nameline">
+                  <span class="dl-card-name">赵宇翔</span>
+                  <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="dl-ai-badge">AI推荐</span>
+                </div>
+                <div class="dl-card-demo">
+                  <span>硕士</span><span>3年</span><span>北京海淀</span><span>26岁</span>
+                </div>
+                <div class="dl-card-status">正在求职</div>
+                <div class="dl-card-tags">
+                  <span class="dl-tag">计算机视觉</span>
+                  <span class="dl-tag">PyTorch</span>
+                  <span class="dl-tag">目标检测</span>
+                </div>
+              </div>
+            </div>
+            <div class="dl-card-right">
+              <ul class="dl-exp-list">
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2023.07-至今(2年11个月)</span>
+                  <span class="dl-exp-info">商汤科技有限公司 · 算法工程师</span>
+                </li>
+                <li class="dl-exp-item">
+                  <span class="dl-exp-date">2019.09-2023.06</span>
+                  <span class="dl-exp-info">北京理工大学 · 计算机科学与技术 · 硕士</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="dl-card-footer">
+            <button class="dl-btn-interview">面试TA</button>
+            <button class="dl-btn-chat">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              发起沟通
+            </button>
+            <button class="dl-btn-pass" onclick="this.closest('.dl-card').classList.add('dismissed')">不合适</button>
+          </div>
+        </div>
+
+      </div><!-- /rec-list -->
+
+      <!-- page footer -->
+      <div class="ap-footer">
+        <div class="ap-footer-left">
+          <div class="ap-footer-links">
+            <a>关于我们</a><span>|</span><a>产品服务</a><span>|</span><a>成功案例</a><span>|</span>
+            <a>联系我们</a><span>|</span><a>加入我们</a><span>|</span><a>帮助中心</a>
+          </div>
+          <div class="ap-footer-copy">Copyright © 1999-2026 北极星招聘 All Rights Reserved.</div>
+        </div>
+        <div class="ap-footer-right">
+          <svg width="34" height="34" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="40" fill="#ffe4cc"/><circle cx="40" cy="30" r="13" fill="#ff9a5c"/><ellipse cx="40" cy="60" rx="18" ry="12" fill="#ff9a5c"/><circle cx="33" cy="26" r="3.5" fill="#fff" opacity=".9"/><circle cx="47" cy="26" r="3.5" fill="#fff" opacity=".9"/><path d="M32 34 Q40 40 48 34" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          <span class="ap-footer-hotline">服务热线：010-85860056</span>
+        </div>
+      </div>
+
+    </div><!-- /page-downloaded -->
 
     </div><!-- /content-main -->
   </div><!-- /content-wrap -->
@@ -3479,6 +4216,35 @@
   </div>
 </div>
 
+<!-- ===== 下载简历底部固定操作栏 ===== -->
+<div class="ap-bottom-bar" id="dl-bottom-bar" style="display:none">
+  <div class="ap-bb-left">
+    <label class="ap-bb-chk"><input type="checkbox"> </label>
+    <button class="ap-bb-btn ap-bb-contact">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.12.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.91-1.91a2 2 0 0 1 2.11-.45c.91.37 1.85.59 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      查看联系方式
+    </button>
+    <button class="ap-bb-btn ap-bb-pass">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      不合适
+    </button>
+    <button class="ap-bb-btn ap-bb-save">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      保存到电脑
+    </button>
+  </div>
+  <div class="ap-bb-right">
+    <span class="ap-bb-total">共1页3条</span>
+    <select class="ap-bb-pagesize"><option>10条/页</option><option>20条/页</option><option>50条/页</option></select>
+    <button class="ap-bb-nav" disabled>&lt;</button>
+    <button class="ap-bb-nav ap-bb-nav-cur">1</button>
+    <button class="ap-bb-nav">&gt;</button>
+    <span class="ap-bb-goto">前往</span>
+    <input class="ap-bb-goto-inp" value="1" />
+    <span class="ap-bb-goto">页</span>
+  </div>
+</div>
+
 <!-- ===== 添加标签弹窗（系统推荐） ===== -->
 <!-- ===== 简历详情页 ===== -->
 <div class="rd-overlay" id="rd-overlay" onclick="closeRD()">
@@ -3515,20 +4281,16 @@
         <div class="rd-ai-block" id="rd-ai-block">
           <div class="rd-eval-col">
             <div class="rd-eval-title">简历评估</div>
-            <div class="rd-eval-pos">与「<span id="rd-eval-pos-name"></span>」</div>
-            <div class="rd-stars-row">
-              <div class="rd-stars" id="rd-stars"></div>
-              <span class="rd-eval-score-n" id="rd-eval-score-n"></span>
-            </div>
+            <div class="rd-eval-pos">与「<span id="rd-eval-pos-name"></span>」匹配度 <span class="rd-eval-score-n" id="rd-eval-score-n"></span></div>
             <div class="rd-wcloud" id="rd-wcloud"></div>
           </div>
           <div class="rd-ai-col">
             <div class="rd-ai-col-hd">
-              <span class="rd-ai-col-title">Hi，我是你的AI伴侣</span>
-              <span class="rd-ai-expand-btn">展开 ↓</span>
+              <span class="rd-ai-col-title">AI推荐理由</span>
             </div>
             <div class="rd-ai-summary-p" id="rd-ai-summary"></div>
             <div class="rd-ai-dgrid" id="rd-ai-dgrid"></div>
+            <div class="rd-ai-risk-full" id="rd-ai-risk-full"></div>
             <div class="rd-ai-foot">
               <div class="rd-vote-grp">
                 <button class="rd-vote-btn" title="有帮助">👍</button>
@@ -3554,7 +4316,7 @@
     <!-- 右：操作 + AI评分 + 评价 -->
     <div class="rd-right">
       <div class="rd-action-grid">
-        <button class="rd-act-btn act-primary">
+        <button class="rd-act-btn act-primary" id="rd-act-interview">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           面试TA
         </button>
@@ -3579,7 +4341,17 @@
           拉黑
         </button>
       </div>
-      <div class="rd-contact-box">
+      <div id="rd-ai-action-bar">
+        <button class="rd-ai-ab-contact" onclick="rdContactAI()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.5 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.44 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          联系方式
+        </button>
+        <button class="rd-ai-ab-chat">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          发起沟通<span id="rd-ai-ab-balance">(80)</span>
+        </button>
+      </div>
+      <div id="rd-contact-box" class="rd-contact-box">
         <div class="rd-contact-row">
           <svg class="rd-contact-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.5 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.44 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <span id="rd-phone"></span>
@@ -3799,6 +4571,47 @@
   </div>
 </div>
 
+<!-- ===== AI推荐-查看联系方式弹窗 ===== -->
+<div class="modal-overlay" id="ai-contact-overlay" onclick="closeAIContact()"></div>
+<div class="ai-contact-modal" id="ai-contact-modal">
+  <div class="ai-cm-hd">
+    <span class="ai-cm-hd-title">查看联系方式</span>
+    <span class="ai-cm-hd-close" onclick="closeAIContact()">×</span>
+  </div>
+  <div class="ai-cm-bd">
+    <div class="ai-cm-avatar">
+      <svg width="42" height="46" viewBox="0 0 42 46" fill="none">
+        <circle cx="21" cy="13" r="10" fill="#ccc"/>
+        <ellipse cx="21" cy="13" rx="8" ry="8" fill="#d4a97a"/>
+        <path d="M1 44c0-11 8.95-20 20-20s20 8.95 20 20" fill="#ccc"/>
+        <rect x="19" y="32" width="4" height="7" rx="1" fill="#ff6b2b"/>
+        <polygon points="21,31 18,37 21,36 24,37" fill="#ff6b2b"/>
+      </svg>
+    </div>
+    <p class="ai-cm-subtitle">查看联系方式将扣除以下点数</p>
+    <div class="ai-cm-table">
+      <div class="ai-cm-tr">
+        <span class="ai-cm-tr-label">普通简历</span>
+        <span></span>
+      </div>
+      <div class="ai-cm-tr">
+        <span class="ai-cm-tr-label">
+          总计扣点
+          <span class="ai-cm-tip-icon">?</span>
+        </span>
+        <span class="ai-cm-tr-val">1点</span>
+      </div>
+    </div>
+    <div class="ai-cm-balance">剩余点数 <span class="ai-cm-balance-num" id="ai-cm-balance-num">829</span></div>
+  </div>
+  <div class="ai-cm-ft">
+    <button class="ai-cm-ok" onclick="confirmAIContact()">确定</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="ai-toast" id="ai-toast">候选人已加入 下载的简历，沟通中列表</div>
+
 <script>
   /* 侧边栏简历管理展开 */
   function toggleResume() {
@@ -3941,6 +4754,8 @@
     return activeTab ? activeTab.textContent.trim() : '';
   }
 
+  var COND_MAX_VISIBLE = 5;
+
   function renderCondBar(pos) {
     if (!jdCondState[pos]) {
       var preset = jdCondData[pos] || [];
@@ -3950,15 +4765,33 @@
     }
     var container = document.getElementById('jd-cond-tags');
     container.innerHTML = '';
-    jdCondState[pos].forEach(function(c) {
+    var conds = jdCondState[pos];
+    var needCollapse = conds.length > COND_MAX_VISIBLE;
+
+    conds.forEach(function(c, i) {
       var typeClass = c.type === 'must' ? 'jd-cond-tag--must' : c.type === 'prefer' ? 'jd-cond-tag--prefer' : 'jd-cond-tag--exclude';
       var typeLabel = c.type === 'must' ? '必须' : c.type === 'prefer' ? '优先' : '不要';
       var span = document.createElement('span');
-      span.className = 'jd-cond-tag ' + typeClass;
+      span.className = 'jd-cond-tag ' + typeClass + (needCollapse && i >= COND_MAX_VISIBLE ? ' jd-tag-hidden' : '');
       span.dataset.id = c.id;
-      span.innerHTML = '<span class="jd-cond-tag-prefix">' + typeLabel + '</span>' + escHtml(c.text) + '<i class="jd-cond-tag-del" onclick="removeCondTag(' + c.id + ')">×</i>';
+      span.innerHTML = '<span class="jd-cond-tag-prefix">' + typeLabel + '</span>' + escHtml(c.text);
       container.appendChild(span);
     });
+
+    if (needCollapse) {
+      var expanded = false;
+      var btn = document.createElement('span');
+      btn.className = 'jd-expand-btn';
+      btn.textContent = '展开 ▾';
+      btn.onclick = function() {
+        expanded = !expanded;
+        container.querySelectorAll('.jd-tag-hidden').forEach(function(t) {
+          t.style.display = expanded ? '' : 'none';
+        });
+        btn.textContent = expanded ? '收起 ▴' : '展开 ▾';
+      };
+      container.appendChild(btn);
+    }
   }
 
   function escHtml(s) {
@@ -4030,7 +4863,7 @@
   /* ===== 简历详情页 ===== */
   var rdData = {
     zhu: {
-      name:'朱先生', ch:'朱', color:'#ff7d45',
+      name:'朱明远', ch:'朱', color:'#ff7d45', gender:'M',
       phone:'138****5678', email:'zhu***@qq.com', code:'9A3B4C5D6E7F8012',
       meta:['40岁（1985年6月）','3年','本科'],
       loc:'我正在找工作 · 现居地：甘肃兰州 · 户口：河北石家庄',
@@ -4048,12 +4881,12 @@
         {t:'运维检修',s:'sm',c:'#4a6fa5'},{t:'产品管理',s:'sm',c:'#8faed5'},{t:'跨行业背景',s:'xs',c:'#c5d1e2'},{t:'求职活跃',s:'xs',c:'#aaa'}
       ],
       aiSummary:'候选人凭借本科电气工程背景及超过3年新能源行业实战经验，专业与岗位高度匹配，符合核心要求。简历近期活跃，求职意向明确，响应快速，跨行业经历多元。',
-      aiGrid:{posMatch:'通信设备安装、电气运维',edu:'本科',company:'新能源企业、教育科技公司',skills:'风电运维、设备检修、产品规划',years:'3年',risk:null},
+      aiGrid:{posMatch:'通信设备安装、电气运维',edu:'本科',company:'新能源企业、教育科技公司',skills:'风电运维、设备检修、产品规划',industry:'电气行业',years:'3年',risk:null},
       dims:[{label:'专业匹配',val:95,lv:'lv-high'},{label:'工作经验',val:80,lv:'lv-mid'},{label:'学历背景',val:88,lv:'lv-def'},{label:'求职活跃度',val:92,lv:'lv-high'}],
       highlights:['本科电气工程背景，专业与岗位高度匹配，符合核心要求','超过3年新能源行业实战经验，风电/值长经验丰富','简历近期活跃（昨天活跃），求职意向明确、响应快','跨行业经历多元，产品管理+技术双维度背景']
     },
     zhang: {
-      name:'张先生', ch:'张', color:'#7c3aed',
+      name:'张建国', ch:'张', color:'#7c3aed', gender:'M',
       phone:'137****9012', email:'zhang***@163.com', code:'B2CF3D4E5F601234',
       meta:['36岁','10年以上','本科'],
       loc:'现居地：江苏南京',
@@ -4071,12 +4904,12 @@
         {t:'电子设备',s:'sm',c:'#8faed5'},{t:'技术支持',s:'sm',c:'#8faed5'},{t:'东南大学',s:'xs',c:'#aabfdb'},{t:'今日活跃',s:'xs',c:'#aaa'}
       ],
       aiSummary:'候选人拥有华为硬件工程师背景及10年以上行业经验，专业深度突出，AI与系统双重推荐，综合匹配度高，今日活跃，沟通响应快速。',
-      aiGrid:{posMatch:'硬件工程师、测试工程师',edu:'本科（东南大学）',company:'华为、科技公司',skills:'硬件测试验证、通信电路',years:'10年以上',risk:null},
+      aiGrid:{posMatch:'硬件工程师、测试工程师',edu:'本科（东南大学）',company:'华为、科技公司',skills:'硬件测试验证、通信电路',industry:'通信行业',years:'10年以上',risk:null},
       dims:[{label:'专业匹配',val:90,lv:'lv-high'},{label:'工作经验',val:92,lv:'lv-high'},{label:'学历背景',val:88,lv:'lv-def'},{label:'求职活跃度',val:85,lv:'lv-def'}],
       highlights:['华为硬件工程师背景，顶级企业经历增强岗位信任度','10年以上行业经验，专业深度突出','AI+系统双重推荐，综合匹配评价高','今日活跃，沟通响应速度预期较快']
     },
     liu: {
-      name:'刘先生', ch:'刘', color:'#1677ff',
+      name:'刘浩然', ch:'刘', color:'#1677ff', gender:'M',
       phone:'139****3456', email:'liu***@qq.com', code:'C3D04E5F607A1234',
       meta:['33岁','6年','本科'],
       loc:'现居地：山西吕梁',
@@ -4094,12 +4927,12 @@
         {t:'质检追溯',s:'sm',c:'#8faed5'},{t:'过程管控',s:'sm',c:'#aabfdb'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'跨专业',s:'xs',c:'#c5d1e2'}
       ],
       aiSummary:'候选人在新能源行业从事质量管理和测试工作6年，实践能力突出，求职意向积极，今日活跃，跨专业背景建议面试重点评估技术能力。',
-      aiGrid:{posMatch:'质量工程师、测试工程师',edu:'本科',company:'新能源企业、光伏设备',skills:'质量追溯、性能测试、过程管控',years:'6年',risk:'专业跨度较大'},
+      aiGrid:{posMatch:'质量工程师、测试工程师',edu:'本科',company:'新能源企业、光伏设备',skills:'质量追溯、性能测试、过程管控',industry:'新能源行业',years:'6年',risk:'专业跨度较大'},
       dims:[{label:'专业匹配',val:70,lv:'lv-mid'},{label:'工作经验',val:82,lv:'lv-def'},{label:'学历背景',val:75,lv:'lv-mid'},{label:'求职活跃度',val:88,lv:'lv-high'}],
       highlights:['新能源行业6年测试&质量经验，实践能力突出','质量管理背景可迁移至测试岗位，综合管控能力强','今日活跃，求职意向积极，可快速响应','跨专业背景，实践经验弥补专业差距，建议面试评估']
     },
     wang: {
-      name:'王佳乐', ch:'王', color:'#22c55e',
+      name:'王佳乐', ch:'王', color:'#22c55e', gender:'M',
       phone:'135****7890', email:'wang***@126.com', code:'D4E15F607B8C2345',
       meta:['23岁','1年','大专'],
       loc:'现居地：河北石家庄',
@@ -4114,12 +4947,12 @@
         {t:'绝缘测试',s:'sm',c:'#aabfdb'},{t:'电力系统',s:'xs',c:'#aabfdb'},{t:'年轻潜力',s:'xs',c:'#aaa'},{t:'今日活跃',s:'xs',c:'#c5d1e2'}
       ],
       aiSummary:'候选人为在职电气测试工程师，岗位背景直接匹配，上手快，年轻可塑性强，求职意向积极，今日活跃，适合作为培养型潜力人才引进。',
-      aiGrid:{posMatch:'测试工程师、电气设备',edu:'大专',company:'电气设备企业',skills:'出厂测试、耐压测试、绝缘测试',years:'1年',risk:'学历偏低'},
+      aiGrid:{posMatch:'测试工程师、电气设备',edu:'大专',company:'电气设备企业',skills:'出厂测试、耐压测试、绝缘测试',industry:'电气行业',years:'1年',risk:'学历偏低'},
       dims:[{label:'专业匹配',val:75,lv:'lv-mid'},{label:'工作经验',val:60,lv:'lv-low'},{label:'学历背景',val:60,lv:'lv-low'},{label:'求职活跃度',val:90,lv:'lv-high'}],
       highlights:['在职电气测试工程师，岗位背景直接匹配，上手快','主动求职意向强烈，今日活跃，响应速度快','年轻可塑性强，适合作为培养型潜力人才引进','学历偏低但实践经验真实，建议面试重点考察技术潜力']
     },
     yi: {
-      name:'易先生', ch:'易', color:'#0891b2',
+      name:'易晓峰', ch:'易', color:'#0891b2', gender:'M',
       phone:'136****2345', email:'yi***@hotmail.com', code:'E5F26A7B8C9D3456',
       meta:['36岁','8年','本科'],
       loc:'现居地：湖北武汉',
@@ -4134,12 +4967,12 @@
         {t:'电子行业',s:'sm',c:'#aabfdb'},{t:'本科',s:'sm',c:'#aabfdb'},{t:'SOP规范',s:'xs',c:'#c5d1e2'},{t:'活跃度低',s:'xs',c:'#ffa39e'}
       ],
       aiSummary:'候选人具备8年测试工程师经验，测试规范能力强，华中科技大学本科，但电子行业背景与电气岗位存在差距，近期3周未更新，建议主动联系确认求职意向。',
-      aiGrid:{posMatch:'测试工程师、电子设备',edu:'本科（华中科技大学）',company:'武汉光谷科技',skills:'功能测试、可靠性测试、认证测试',years:'8年',risk:'行业匹配度低'},
+      aiGrid:{posMatch:'测试工程师、电子设备',edu:'本科（华中科技大学）',company:'武汉光谷科技',skills:'功能测试、可靠性测试、认证测试',industry:'电子行业',years:'8年',risk:'行业匹配度低'},
       dims:[{label:'专业匹配',val:65,lv:'lv-low'},{label:'工作经验',val:85,lv:'lv-def'},{label:'学历背景',val:88,lv:'lv-def'},{label:'求职活跃度',val:40,lv:'lv-low'}],
       highlights:['8年测试工程师经验，测试深度和流程规范能力强','华中科技大学本科，知名院校背景','行业匹配度偏低，电子行业背景与电气岗位存在差距','近期活跃度低（3周未更新），建议主动联系确认求职意向']
     },
     chen: {
-      name:'陈二', ch:'陈', color:'#5b8dd9',
+      name:'陈二', ch:'陈', color:'#5b8dd9', gender:'M',
       phone:'131****6789', email:'chen***@qq.com', code:'F6A37B8C9D0E4567',
       meta:['36岁','10年以上','本科'],
       loc:'我正在找工作 · 现居地：北京',
@@ -4154,12 +4987,12 @@
         {t:'配电系统',s:'sm',c:'#8faed5'},{t:'应急响应',s:'sm',c:'#aabfdb'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'99.99%可用',s:'xs',c:'#c5d1e2'}
       ],
       aiSummary:'候选人清华大学本科，13年数据中心值长经验，配电系统运维深度不可替代，正积极求职，今日活跃，是优先级极高的候选人。',
-      aiGrid:{posMatch:'值长、运维工程师',edu:'本科（清华大学）',company:'数据中心',skills:'配电巡检、故障处理、应急响应',years:'13年以上',risk:null},
+      aiGrid:{posMatch:'值长、运维工程师',edu:'本科（清华大学）',company:'数据中心',skills:'配电巡检、故障处理、应急响应',industry:'数据中心',years:'13年以上',risk:null},
       dims:[{label:'专业匹配',val:90,lv:'lv-high'},{label:'工作经验',val:95,lv:'lv-high'},{label:'学历背景',val:92,lv:'lv-high'},{label:'求职活跃度',val:88,lv:'lv-def'}],
       highlights:['清华大学本科学历，顶级院校背景显著增强候选人信任度','13年值长经验，数据中心运维深度不可替代','正在积极求职，今日活跃，可快速响应面试邀约','专业背景与岗位高度契合，建议作为优先候选人联系']
     },
     li: {
-      name:'李明辉', ch:'李', color:'#22c55e',
+      name:'李明辉', ch:'李', color:'#22c55e', gender:'M',
       phone:'132****4567', email:'li***@163.com', code:'A7B48C9D0E1F5678',
       meta:['29岁','5年','本科'],
       loc:'我正在找工作 · 现居地：上海',
@@ -4174,12 +5007,12 @@
         {t:'配电设备',s:'sm',c:'#8faed5'},{t:'型式试验',s:'sm',c:'#aabfdb'},{t:'本地求职',s:'xs',c:'#aaa'},{t:'今日活跃',s:'xs',c:'#c5d1e2'}
       ],
       aiSummary:'候选人上海交通大学电气工程本科，4年以上电气测试一线经验，岗位直接对口，上海本地求职，今日活跃，入职便利。',
-      aiGrid:{posMatch:'电气测试工程师',edu:'本科（上海交通大学）',company:'电气设备企业',skills:'型式试验、出厂测试、IEC/GB标准',years:'4年以上',risk:null},
+      aiGrid:{posMatch:'电气测试工程师',edu:'本科（上海交通大学）',company:'电气设备企业',skills:'型式试验、出厂测试、IEC/GB标准',industry:'电气行业',years:'4年以上',risk:null},
       dims:[{label:'专业匹配',val:85,lv:'lv-def'},{label:'工作经验',val:72,lv:'lv-mid'},{label:'学历背景',val:88,lv:'lv-def'},{label:'求职活跃度',val:82,lv:'lv-def'}],
       highlights:['上海交通大学电气工程本科，专业背景扎实','4年以上电气测试一线经验，岗位直接对口','上海本地求职，无需异地成本，入职便利','经验年限略偏少，但专业能力可通过面试重点考察']
     },
     song: {
-      name:'宋兴民', ch:'宋', color:'#4a90d9',
+      name:'宋兴民', ch:'宋', color:'#4a90d9', gender:'M',
       phone:'138****1122', email:'song***@sina.com', code:'B8C59D0E1F2A6789',
       meta:['39岁','10年以上','本科'],
       loc:'现居地：北京',
@@ -4197,12 +5030,12 @@
         {t:'电厂改造',s:'sm',c:'#8faed5'},{t:'资质证书',s:'sm',c:'#aabfdb'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'行业荣誉',s:'xs',c:'#c5d1e2'}
       ],
       aiSummary:'候选人拥有10年以上电力行业项目管理经验，资质证书完备，今日活跃，正积极求职，综合能力经多项权威认证，响应速度有保障。',
-      aiGrid:{posMatch:'项目经理、工程管理',edu:'本科',company:'电力设备企业、技术公司',skills:'项目全周期管理、方案设计、客户验收',years:'10年以上',risk:null},
+      aiGrid:{posMatch:'项目经理、工程管理',edu:'本科',company:'电力设备企业、技术公司',skills:'项目全周期管理、方案设计、客户验收',industry:'电力行业',years:'10年以上',risk:null},
       dims:[{label:'专业匹配',val:88,lv:'lv-def'},{label:'工作经验',val:95,lv:'lv-high'},{label:'学历背景',val:82,lv:'lv-def'},{label:'求职活跃度',val:90,lv:'lv-high'}],
       highlights:['10年以上电力行业项目管理经验，资历深厚','三建市政+一建电机证书，资质完备','今日活跃，正积极求职，响应速度有保障','多项行业荣誉，综合能力经权威认证']
     },
     yang: {
-      name:'杨川', ch:'杨', color:'#f5a623',
+      name:'杨川', ch:'杨', color:'#f5a623', gender:'M',
       phone:'133****3344', email:'yang***@qq.com', code:'C9D60E1F2A3B7890',
       meta:['39岁','10年以上','本科'],
       loc:'现居地：浙江',
@@ -4220,12 +5053,12 @@
         {t:'停机率降低',s:'sm',c:'#8faed5'},{t:'检修计划',s:'sm',c:'#aabfdb'},{t:'资质证书',s:'xs',c:'#aaa'},{t:'行业荣誉',s:'xs',c:'#c5d1e2'}
       ],
       aiSummary:'候选人华北电力大学热能专业，锅炉点检经验丰富，技改能力突出，荣誉资质完备，与岗位高度吻合。',
-      aiGrid:{posMatch:'锅炉工程师、点检工程师',edu:'本科（华北电力大学）',company:'京能能源集团',skills:'锅炉点检、技改项目、检修管理',years:'10年以上',risk:null},
+      aiGrid:{posMatch:'锅炉工程师、点检工程师',edu:'本科（华北电力大学）',company:'京能能源集团',skills:'锅炉点检、技改项目、检修管理',industry:'能源行业',years:'10年以上',risk:null},
       dims:[{label:'专业匹配',val:92,lv:'lv-high'},{label:'工作经验',val:88,lv:'lv-def'},{label:'学历背景',val:90,lv:'lv-high'},{label:'求职活跃度',val:78,lv:'lv-mid'}],
       highlights:['华北电力大学热能专业，行业顶级院校背景','锅炉点检经验丰富，与岗位要求高度吻合','获十大杰出青年等荣誉，行业内具有较高认可度','中级工程师+一建电机证书，资质完备']
     },
     ma: {
-      name:'马月佳', ch:'马', color:'#9b59b6',
+      name:'马月佳', ch:'马', color:'#9b59b6', gender:'F',
       phone:'136****5566', email:'ma***@126.com', code:'D0E71F2A3B4C8901',
       meta:['34岁','10年以上','本科'],
       loc:'现居地：江苏',
@@ -4243,23 +5076,230 @@
         {t:'设备巡检',s:'sm',c:'#8faed5'},{t:'调度证',s:'sm',c:'#aabfdb'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'专业偏差',s:'xs',c:'#ffa39e'}
       ],
       aiSummary:'候选人调度证+高压电工证齐全，能源行业值长经验4年以上，实操能力充分验证，今日活跃，可快速进入面试，但专业（行政管理）存在偏差需重点考察。',
-      aiGrid:{posMatch:'值长、电气专工',edu:'本科（南京大学）',company:'生物质发电、再生能源',skills:'DCS操作、设备巡检、机组启停',years:'7年以上',risk:'专业偏差'},
+      aiGrid:{posMatch:'值长、电气专工',edu:'本科（南京大学）',company:'生物质发电、再生能源',skills:'DCS操作、设备巡检、机组启停',industry:'能源行业',years:'7年以上',risk:'专业偏差'},
       dims:[{label:'专业匹配',val:72,lv:'lv-mid'},{label:'工作经验',val:85,lv:'lv-def'},{label:'学历背景',val:75,lv:'lv-mid'},{label:'求职活跃度',val:82,lv:'lv-def'}],
       highlights:['持有调度证+高压电工证，资质完备，可直接上岗','能源行业值长经验4年以上，实操能力充分验证','今日活跃，可快速进入面试流程','专业偏差（行政管理），建议面试重点考察技术能力']
+    },
+    dl_wang: {
+      name:'王晓华', ch:'王', color:'#2563eb', gender:'M',
+      phone:'137****1234', email:'wangxh***@qq.com', code:'W1A2B3C4D5E6F001',
+      meta:['31岁','8年','本科'],
+      loc:'正在求职 · 现居地：广东深圳',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'硬件工程师', salary:'2万-3万', tags:['消费电子','PCB设计','深圳']},
+      exp:[
+        {co:'大疆创新科技有限公司', period:'2021.06-至今（4年11个月）', role:'硬件工程师 | 消费电子 | 22000元/月', desc:'负责无人机核心硬件模块电路设计与验证，完成多款产品PCB Layout及DVT测试，主导量产问题归零。'},
+        {co:'华为技术有限公司', period:'2018.07-2021.05（2年10个月）', role:'硬件研发 | 通信设备 | 15000元/月', desc:'参与通信设备硬件模块研发，负责电路调试与问题定位。'}
+      ],
+      edu:[{school:'华中科技大学', period:'2014.09-2018.06', major:'电子信息工程 | 本科'}],
+      score:91, pos:'硬件工程师',
+      cloud:[
+        {t:'大疆',s:'xl',c:'#1a2a5e'},{t:'硬件工程',s:'lg',c:'#2c4a8a'},{t:'8年',s:'lg',c:'#1a2a5e'},
+        {t:'PCB Layout',s:'md',c:'#4a6fa5'},{t:'电路设计',s:'md',c:'#6b8fc7'},{t:'嵌入式系统',s:'sm',c:'#8faed5'},
+        {t:'本科',s:'sm',c:'#8faed5'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'AI推荐',s:'xs',c:'#c5d1e2'}
+      ],
+      aiSummary:'候选人在大疆、华为均有核心硬件岗位经历，8年深圳一线硬件经验，PCB Layout与电路设计能力突出，来源AI智能推荐，今日活跃，综合匹配度高。',
+      aiGrid:{posMatch:'硬件工程师',edu:'本科（华中科技大学）',company:'大疆创新、华为技术',skills:'电路设计、PCB Layout、嵌入式系统',industry:'消费电子',years:'8年',risk:null},
+      dims:[{label:'专业匹配',val:93,lv:'lv-high'},{label:'工作经验',val:88,lv:'lv-def'},{label:'学历背景',val:85,lv:'lv-def'},{label:'求职活跃度',val:90,lv:'lv-high'}],
+      highlights:['大疆+华为双重顶级企业背景，经历含金量高','8年一线硬件工程师经验，技术深度扎实','PCB Layout与电路设计能力全面','今日活跃，AI推荐来源，综合匹配度高']
+    },
+    dl_chen: {
+      name:'陈青云', ch:'陈', color:'#d97706', gender:'M',
+      phone:'138****2345', email:'chenqy***@163.com', code:'C2B3A4D5E6F7G002',
+      meta:['29岁','6年','本科'],
+      loc:'正在求职 · 现居地：上海浦东',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'质量工程师', salary:'1.2万-1.8万', tags:['汽车行业','IATF16949','上海']},
+      exp:[
+        {co:'大众汽车（中国）有限公司', period:'2022.03-至今（4年3个月）', role:'质量工程师 | 汽车制造 | 15000元/月', desc:'负责总装线质量管控，建立零件质量追溯体系，主导供应商质量审核及8D问题改善。'},
+        {co:'上汽通用汽车有限公司', period:'2020.07-2022.02（1年7个月）', role:'质量专员 | 汽车零部件', desc:'参与整车出厂检验，制定SPC控制图，完成质量KPI月度报告。'}
+      ],
+      edu:[{school:'同济大学', period:'2016.09-2020.06', major:'车辆工程 | 本科'}],
+      score:85, pos:'质量工程师',
+      cloud:[
+        {t:'大众汽车',s:'xl',c:'#1a2a5e'},{t:'质量管理',s:'lg',c:'#2c4a8a'},{t:'IATF16949',s:'lg',c:'#4a6fa5'},
+        {t:'8D报告',s:'md',c:'#4a6fa5'},{t:'SPC',s:'md',c:'#6b8fc7'},{t:'供应商审核',s:'sm',c:'#8faed5'},
+        {t:'本科',s:'sm',c:'#8faed5'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'同济大学',s:'xs',c:'#c5d1e2'}
+      ],
+      aiSummary:'候选人同济大学车辆工程本科，6年汽车质量管理经验，大众+上汽背景可信，IATF16949体系熟练，上海本地求职，入职便利，今日活跃。',
+      aiGrid:{posMatch:'质量工程师',edu:'本科（同济大学）',company:'大众汽车、上汽通用',skills:'质量追溯、8D改善、SPC控制',industry:'汽车行业',years:'6年',risk:null},
+      dims:[{label:'专业匹配',val:88,lv:'lv-def'},{label:'工作经验',val:82,lv:'lv-def'},{label:'学历背景',val:90,lv:'lv-high'},{label:'求职活跃度',val:85,lv:'lv-def'}],
+      highlights:['同济大学车辆工程本科，专业背景精准匹配','大众+上汽双汽车巨头经历，行业认可度高','IATF16949+8D+SPC质量体系能力全面','上海本地求职，今日活跃，响应速度快']
+    },
+    dl_li: {
+      name:'李宇洲', ch:'李', color:'#059669', gender:'M',
+      phone:'139****3456', email:'liyz***@qq.com', code:'L3C4B5A6D7E8F003',
+      meta:['27岁','4年','硕士'],
+      loc:'有机会可以考虑 · 现居地：北京朝阳',
+      time:'简历刷新时间：3天内 · 人才活跃时间：昨天',
+      intention:{titles:'嵌入式工程师 | 固件工程师', salary:'1.5万-2.2万', tags:['消费电子','嵌入式','北京']},
+      exp:[
+        {co:'小米科技有限责任公司', period:'2022.07-至今（3年11个月）', role:'嵌入式工程师 | 消费电子 | 18000元/月', desc:'负责智能家居产品固件开发，基于STM32平台，完成CAN总线通信协议栈及FreeRTOS任务调度优化。'}
+      ],
+      edu:[{school:'北京航空航天大学', period:'2018.09-2022.06', major:'电子工程 | 硕士'}],
+      score:82, pos:'嵌入式工程师',
+      cloud:[
+        {t:'小米',s:'xl',c:'#1a2a5e'},{t:'嵌入式',s:'lg',c:'#2c4a8a'},{t:'STM32',s:'lg',c:'#4a6fa5'},
+        {t:'FreeRTOS',s:'md',c:'#4a6fa5'},{t:'CAN总线',s:'md',c:'#6b8fc7'},{t:'硕士',s:'sm',c:'#8faed5'},
+        {t:'北航',s:'sm',c:'#8faed5'},{t:'昨日活跃',s:'xs',c:'#aaa'},{t:'AI推荐',s:'xs',c:'#c5d1e2'}
+      ],
+      aiSummary:'候选人北航电子工程硕士，小米嵌入式工程师4年，STM32+FreeRTOS+CAN总线技术栈完整，来源AI推荐，技术深度适配，昨日活跃。',
+      aiGrid:{posMatch:'嵌入式工程师、固件工程师',edu:'硕士（北京航空航天大学）',company:'小米科技',skills:'STM32、FreeRTOS、CAN总线、固件开发',industry:'消费电子',years:'4年',risk:null},
+      dims:[{label:'专业匹配',val:87,lv:'lv-def'},{label:'工作经验',val:78,lv:'lv-mid'},{label:'学历背景',val:90,lv:'lv-high'},{label:'求职活跃度',val:72,lv:'lv-mid'}],
+      highlights:['北航电子工程硕士，学历背景扎实','小米核心嵌入式岗位4年，项目实战能力强','STM32/FreeRTOS/CAN总线技术栈完整','AI推荐来源，昨日活跃，可介入面试']
+    },
+    dl_zhang: {
+      name:'张建松', ch:'张', color:'#dc2626', gender:'M',
+      phone:'135****4567', email:'zhangjs***@163.com', code:'Z4D5C6B7A8E9F004',
+      meta:['28岁','5年','本科'],
+      loc:'正在求职 · 现居地：浙江杭州',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'软件测试工程师 | 测试开发工程师', salary:'1.2万-1.8万', tags:['互联网','自动化测试','杭州']},
+      exp:[
+        {co:'阿里巴巴（中国）有限公司', period:'2021.03-至今（5年3个月）', role:'测试工程师 | 电商平台 | 17000元/月', desc:'负责交易核心链路自动化测试框架搭建，基于Selenium+Python覆盖回归测试，故障覆盖率提升40%。'},
+        {co:'网易有道信息技术有限公司', period:'2019.07-2021.02（1年7个月）', role:'软件测试 | 教育产品 | 10000元/月', desc:'负责Web端与移动端功能测试，维护Jira缺陷管理系统，参与接口测试规范制定。'}
+      ],
+      edu:[{school:'浙江大学', period:'2015.09-2019.06', major:'软件工程 | 本科'}],
+      score:79, pos:'软件测试工程师',
+      cloud:[
+        {t:'阿里巴巴',s:'xl',c:'#1a2a5e'},{t:'自动化测试',s:'lg',c:'#2c4a8a'},{t:'5年',s:'lg',c:'#4a6fa5'},
+        {t:'Selenium',s:'md',c:'#4a6fa5'},{t:'Python',s:'md',c:'#6b8fc7'},{t:'浙大',s:'sm',c:'#8faed5'},
+        {t:'本科',s:'sm',c:'#8faed5'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'接口测试',s:'xs',c:'#c5d1e2'}
+      ],
+      aiSummary:'候选人浙江大学软件工程本科，阿里+网易5年测试经验，自动化框架建设能力突出，今日活跃，正积极求职，综合匹配度良好。',
+      aiGrid:{posMatch:'软件测试工程师、测试开发工程师',edu:'本科（浙江大学）',company:'阿里巴巴、网易有道',skills:'Selenium、Python自动化、接口测试',industry:'互联网行业',years:'5年',risk:null},
+      dims:[{label:'专业匹配',val:80,lv:'lv-def'},{label:'工作经验',val:78,lv:'lv-mid'},{label:'学历背景',val:85,lv:'lv-def'},{label:'求职活跃度',val:88,lv:'lv-high'}],
+      highlights:['浙江大学软件工程本科，专业对口','阿里巴巴核心测试岗位经历，含金量高','自动化测试框架建设能力突出','今日活跃，主动求职，响应快']
+    },
+    dl_liu: {
+      name:'刘明慧', ch:'刘', color:'#7c3aed', gender:'F',
+      phone:'136****5678', email:'liumh***@qq.com', code:'L5E6D7C8B9A0F005',
+      meta:['31岁','7年','本科'],
+      loc:'有机会可以考虑 · 现居地：江苏苏州',
+      time:'简历刷新时间：一周内 · 人才活跃时间：3天内',
+      intention:{titles:'机械设计工程师 | 产品工程师', salary:'1.5万-2万', tags:['汽车零部件','机械设计','苏州']},
+      exp:[
+        {co:'博世汽车部件（苏州）有限公司', period:'2019.08-至今（6年10个月）', role:'机械工程师 | 汽车零部件 | 17000元/月', desc:'主导多款传感器产品结构设计，完成FMEA分析及DV测试，产品良率提升15%。'},
+        {co:'西门子（中国）有限公司', period:'2017.07-2019.07（2年）', role:'设计工程师 | 工业设备', desc:'使用SolidWorks完成工业设备结构件设计，参与ANSYS有限元分析及工程变更管理。'}
+      ],
+      edu:[{school:'东南大学', period:'2013.09-2017.06', major:'机械工程 | 本科'}],
+      score:87, pos:'机械设计工程师',
+      cloud:[
+        {t:'博世',s:'xl',c:'#1a2a5e'},{t:'机械设计',s:'lg',c:'#2c4a8a'},{t:'7年',s:'lg',c:'#4a6fa5'},
+        {t:'SolidWorks',s:'md',c:'#4a6fa5'},{t:'ANSYS',s:'md',c:'#6b8fc7'},{t:'FMEA',s:'sm',c:'#8faed5'},
+        {t:'本科',s:'sm',c:'#8faed5'},{t:'3天内活跃',s:'xs',c:'#aaa'},{t:'东南大学',s:'xs',c:'#c5d1e2'}
+      ],
+      aiSummary:'候选人东南大学机械工程本科，7年博世+西门子机械设计经验，SolidWorks/ANSYS/FMEA能力完整，综合匹配度高，3天内活跃。',
+      aiGrid:{posMatch:'机械设计工程师、产品工程师',edu:'本科（东南大学）',company:'博世、西门子',skills:'SolidWorks、ANSYS、结构设计、FMEA',industry:'制造业',years:'7年',risk:null},
+      dims:[{label:'专业匹配',val:90,lv:'lv-high'},{label:'工作经验',val:85,lv:'lv-def'},{label:'学历背景',val:88,lv:'lv-def'},{label:'求职活跃度',val:75,lv:'lv-mid'}],
+      highlights:['博世+西门子双重国际制造业背景','7年机械设计一线经验，产品全链路能力','SolidWorks/ANSYS/FMEA工具链完整','东南大学机械工程本科，专业对口']
+    },
+    dl_zhao: {
+      name:'赵宇翔', ch:'赵', color:'#0891b2', gender:'M',
+      phone:'133****6789', email:'zhaoyx***@126.com', code:'Z6F7E8D9C0B1A006',
+      meta:['26岁','3年','硕士'],
+      loc:'正在求职 · 现居地：北京海淀',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'算法工程师 | 视觉算法工程师', salary:'2万-3万', tags:['人工智能','计算机视觉','北京']},
+      exp:[
+        {co:'商汤科技有限公司', period:'2023.07-至今（2年11个月）', role:'算法工程师 | 计算机视觉 | 24000元/月', desc:'负责工业质检场景目标检测算法研发，基于PyTorch优化YOLO系列模型，mAP提升8%，推理速度提升30%。'}
+      ],
+      edu:[{school:'北京理工大学', period:'2019.09-2023.06', major:'计算机科学与技术 | 硕士'}],
+      score:88, pos:'算法工程师',
+      cloud:[
+        {t:'商汤科技',s:'xl',c:'#1a2a5e'},{t:'计算机视觉',s:'lg',c:'#2c4a8a'},{t:'PyTorch',s:'lg',c:'#4a6fa5'},
+        {t:'目标检测',s:'md',c:'#4a6fa5'},{t:'YOLO',s:'md',c:'#6b8fc7'},{t:'硕士',s:'sm',c:'#8faed5'},
+        {t:'北理工',s:'sm',c:'#8faed5'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'AI推荐',s:'xs',c:'#c5d1e2'}
+      ],
+      aiSummary:'候选人北京理工大学计算机硕士，商汤科技算法工程师3年，目标检测和视觉算法能力突出，来源AI推荐，综合实力强，今日活跃。',
+      aiGrid:{posMatch:'算法工程师、视觉算法工程师',edu:'硕士（北京理工大学）',company:'商汤科技',skills:'计算机视觉、PyTorch、目标检测、YOLO',industry:'人工智能',years:'3年',risk:null},
+      dims:[{label:'专业匹配',val:92,lv:'lv-high'},{label:'工作经验',val:75,lv:'lv-mid'},{label:'学历背景',val:90,lv:'lv-high'},{label:'求职活跃度',val:88,lv:'lv-high'}],
+      highlights:['商汤科技核心算法岗位，业界顶级AI企业背景','北理工计算机硕士，学历扎实','目标检测算法实战能力强，mAP和推理优化经验','今日活跃，AI推荐来源，可快速响应']
     }
   };
 
-  function openRD(key) {
+  var _rdAICardId = null;
+
+  /* 词云螺旋布局 — 从中心向外螺旋尝试每个词的无碰撞位置 */
+  function layoutCloud(container, words) {
+    var W = container.offsetWidth || 280;
+    var H = container.offsetHeight || 155;
+    var fsMap = {xl:20, lg:16, md:13.5, sm:12, xs:11};
+    var placed = [];
+    container.innerHTML = '';
+    words.forEach(function(w, i) {
+      var span = document.createElement('span');
+      span.className = 'rd-wc-item rd-wc-' + w.s;
+      span.style.color = w.c;
+      span.style.setProperty('--wi-d', (i * 0.08).toFixed(2) + 's');
+      span.textContent = w.t;
+      var fs = fsMap[w.s] || 12;
+      var tw = Math.ceil(w.t.length * fs * 1.05 + 4);
+      var th = Math.ceil(fs * 1.55);
+      var cx = W / 2, cy = H / 2;
+      /* 黄金角起始，让每个词从不同方向展开 */
+      var angle = i * 2.399; /* 2π × 0.618 (golden ratio) */
+      var r = 0, placed_ok = false;
+      for (var step = 0; step < 900; step++) {
+        var x = Math.round(cx + r * Math.cos(angle) - tw / 2);
+        var y = Math.round(cy + r * Math.sin(angle) - th / 2);
+        x = Math.max(0, Math.min(W - tw, x));
+        y = Math.max(0, Math.min(H - th, y));
+        var collide = false;
+        for (var j = 0; j < placed.length; j++) {
+          var p = placed[j];
+          if (x < p[2] + 3 && x + tw > p[0] - 3 && y < p[3] + 2 && y + th > p[1] - 2) {
+            collide = true; break;
+          }
+        }
+        if (!collide) {
+          placed.push([x, y, x + tw, y + th]);
+          span.style.left = x + 'px';
+          span.style.top  = y + 'px';
+          placed_ok = true; break;
+        }
+        angle += 0.38;
+        r = angle * 2.8;
+      }
+      if (!placed_ok) {
+        span.style.position = 'static';
+        span.style.display  = 'inline-block';
+        span.style.margin   = '2px 4px';
+      }
+      container.appendChild(span);
+    });
+  }
+
+  function rdContactAI() {
+    document.getElementById('rd-overlay').classList.remove('show');
+    document.body.style.overflow = '';
+    if (_rdAICardId) viewContactAI(_rdAICardId);
+  }
+
+  function openRD(key, pageLabel, isAI) {
     var d = rdData[key]; if (!d) return;
+    var crumbPage = pageLabel || '应聘简历';
+    if (isAI) {
+      _rdAICardId = null;
+      for (var k in _ccard2rd) { if (_ccard2rd.hasOwnProperty(k) && _ccard2rd[k] === key) { _rdAICardId = k; break; } }
+    } else {
+      _rdAICardId = null;
+    }
+
+    /* 右侧面板：AI推荐模式切换 */
+    document.getElementById('rd-act-interview').style.display = isAI ? 'none' : '';
+    document.getElementById('rd-contact-box').style.display = isAI ? 'none' : '';
+    document.getElementById('rd-ai-action-bar').style.display = isAI ? 'flex' : 'none';
 
     /* 顶部面包屑 */
+    var displayName = isAI ? (d.name.charAt(0) + (d.gender === 'F' ? '女士' : '先生')) : d.name;
     document.getElementById('rd-breadcrumb').innerHTML =
-      '应聘简历 <span class="rd-bc-status">沟通中</span> | ' + d.name + ' | 简历编号: ' + d.code;
+      crumbPage + ' <span class="rd-bc-status">沟通中</span> | ' + displayName + ' | 简历编号: ' + d.code;
 
     /* 基本信息 */
     var av = document.getElementById('rd-av');
     av.textContent = d.ch; av.style.background = d.color;
-    document.getElementById('rd-name').textContent = d.name;
+    document.getElementById('rd-name').textContent = displayName;
     document.getElementById('rd-meta').innerHTML = d.meta.join('<span class="rd-meta-sep">|</span>');
     document.getElementById('rd-loc').textContent = d.loc;
     document.getElementById('rd-time').textContent = d.time;
@@ -4285,40 +5325,31 @@
 
     /* ===== AI 评分块 ===== */
     document.getElementById('rd-eval-pos-name').textContent = d.pos || '';
+    document.getElementById('rd-eval-score-n').textContent = d.score + '分';
 
-    /* 星级 + 分数 */
-    var sc = d.score;
-    var fullStars = Math.floor(sc / 20);
-    var halfStar  = (sc % 20) >= 8 ? 1 : 0;
-    var emptyStars = 5 - fullStars - halfStar;
-    var starsHtml = '';
-    for (var i = 0; i < fullStars; i++)  starsHtml += '<span class="rd-star rd-star-full">★</span>';
-    if (halfStar)                         starsHtml += '<span class="rd-star rd-star-half">★</span>';
-    for (var i = 0; i < emptyStars; i++) starsHtml += '<span class="rd-star rd-star-empty">☆</span>';
-    document.getElementById('rd-stars').innerHTML = starsHtml;
-    document.getElementById('rd-eval-score-n').textContent = sc + '分';
-
-    /* 词云 */
+    /* 词云 — overlay 显示后再布局，确保容器有真实宽度 */
     var cloud = d.cloud || [];
-    document.getElementById('rd-wcloud').innerHTML = cloud.map(function(w){
-      return '<span class="rd-wc-item rd-wc-' + w.s + '" style="color:' + w.c + '">' + escHtml(w.t) + '</span>';
-    }).join('');
+    document.getElementById('rd-wcloud').innerHTML = '';
 
     /* AI 摘要 */
     document.getElementById('rd-ai-summary').textContent = d.aiSummary || '';
 
     /* AI 详细网格 */
     var g = d.aiGrid || {};
+    document.getElementById('rd-ai-dgrid').innerHTML =
+      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">技能覆盖率</div><div class="rd-ai-dval">' + escHtml(g.skills||'') + '</div></div>' +
+      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">教育背景</div><div class="rd-ai-dval">' + escHtml(g.edu||'') + '</div></div>' +
+      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">职位相关性</div><div class="rd-ai-dval">' + escHtml(g.posMatch||'') + '</div></div>' +
+      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">行业相关性</div><div class="rd-ai-dval">' + escHtml(g.industry||'') + '</div></div>' +
+      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">工作年限</div><div class="rd-ai-dval">' + escHtml(g.years||'') + '</div></div>' +
+      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">求职意向</div><div class="rd-ai-dval">' + escHtml((d.intention&&d.intention.titles)||'') + '</div></div>';
+
+    /* 风险提示（全宽行） */
     var riskHtml = g.risk
       ? '<span class="rd-ai-risk rd-ai-risk-warn">' + escHtml(g.risk) + '</span>'
       : '<span style="color:#52c41a;font-weight:500">无明显风险</span>';
-    document.getElementById('rd-ai-dgrid').innerHTML =
-      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">职位相关性</div><div class="rd-ai-dval">' + escHtml(g.posMatch||'') + '</div></div>' +
-      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">教育背景</div><div class="rd-ai-dval">' + escHtml(g.edu||'') + '</div></div>' +
-      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">公司背景</div><div class="rd-ai-dval">' + escHtml(g.company||'') + '</div></div>' +
-      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">技能相关性</div><div class="rd-ai-dval">' + escHtml(g.skills||'') + '</div></div>' +
-      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">候选人工作年限</div><div class="rd-ai-dval">' + escHtml(g.years||'') + '</div></div>' +
-      '<div class="rd-ai-dcell"><div class="rd-ai-dlabel">风险提示</div><div class="rd-ai-dval">' + riskHtml + '</div></div>';
+    document.getElementById('rd-ai-risk-full').innerHTML =
+      '<div class="rd-ai-dlabel">风险提示</div><div class="rd-ai-dval" style="margin-top:3px">' + riskHtml + '</div>';
 
     /* 经历概览（右侧）*/
     document.getElementById('rd-overview-exp').innerHTML = d.exp.map(function(e){
@@ -4337,6 +5368,14 @@
 
     document.getElementById('rd-overlay').classList.add('show');
     document.body.style.overflow = 'hidden';
+    /* 双帧等浏览器完成布局后再计算词云位置 */
+    (function(words) {
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          layoutCloud(document.getElementById('rd-wcloud'), words);
+        });
+      });
+    })(cloud);
   }
 
   function closeRD() {
@@ -4453,7 +5492,48 @@
     closeCondModal();
   }
 
-  /* 查看联系方式 */
+  /* 待筛选-查看联系方式：直接流转沟通中，不弹弹窗 */
+  function moveToComm(btn, name) {
+    var card = btn.closest('.ccard');
+    if (!card) return;
+
+    /* 更新卡片状态 */
+    card.dataset.apstatus = '沟通中';
+
+    /* 按钮改为已完成状态 */
+    btn.textContent = '沟通中';
+    btn.disabled = true;
+    btn.style.cssText = 'background:#e6f7ee;color:#52c41a;border-color:#b7eb8f;cursor:default;';
+
+    /* 待筛选计数 -1 */
+    var pendingTab = document.querySelector('#page-applied .ap-tab.active');
+    if (pendingTab) {
+      var cntEl = pendingTab.querySelector('.ap-tab-cnt');
+      if (cntEl) cntEl.textContent = Math.max(0, (parseInt(cntEl.textContent)||0) - 1);
+    }
+
+    /* 切换到沟通中 tab */
+    var allTabs = document.querySelectorAll('#page-applied .ap-tab');
+    var commTab = null;
+    allTabs.forEach(function(t) {
+      t.classList.remove('active');
+      if (t.textContent.trim().startsWith('沟通中')) commTab = t;
+    });
+    if (commTab) commTab.classList.add('active');
+
+    /* 过滤：只显示沟通中的卡片 */
+    document.querySelectorAll('#page-applied .ap-list .ccard').forEach(function(c) {
+      c.style.display = (c.dataset.apstatus === '沟通中') ? '' : 'none';
+    });
+
+    /* Toast */
+    var toast = document.getElementById('ai-toast');
+    toast.textContent = name + ' 已进入沟通中';
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2600);
+  }
+
+  /* 查看联系方式（其他 tab） */
   function viewContact(name) {
     document.getElementById('cm-name-text').textContent = name;
     document.getElementById('contact-overlay').classList.add('show');
@@ -4470,6 +5550,107 @@
     alert('已进入"沟通中"阶段，可在简历管理 → 下载的简历 中查看');
   }
 
+  /* ===== AI推荐-查看联系方式 ===== */
+  var _aiContactBalance = 829;
+  var _aiContactCardId = null;
+
+  var _ccard2rd = {
+    'ccard-zhu':'zhu', 'ccard-zhang':'zhang', 'ccard-liu':'liu',
+    'ccard-wang':'wang', 'ccard-yi':'yi'
+  };
+
+  function buildDlCard(cardId) {
+    var rdKey = _ccard2rd[cardId];
+    if (!rdKey || !rdData[rdKey]) return null;
+    var d = rdData[rdKey];
+    var ccardEl = document.getElementById(cardId);
+    var pos = (ccardEl && ccardEl.dataset.pos) || d.intention.titles.split('|')[0].trim();
+    var cityM = d.loc.match(/现居地[：:]\s*([^\s·，,]+)/);
+    var city = cityM ? cityM[1] : '';
+    var statusText = d.loc.indexOf('正在找工作') >= 0 ? '正在求职' : '有机会可以考虑';
+    var statusCls = statusText === '正在求职' ? '' : ' passive';
+    var tags = d.cloud.filter(function(c){ return c.s==='md'; }).slice(0,3)
+      .map(function(c){ return '<span class="dl-tag">'+c.t+'</span>'; }).join('');
+    var expHtml = d.exp.slice(0,3).map(function(e){
+      return '<li class="dl-exp-item"><span class="dl-exp-date">'+e.period.replace(/（.*?）/,'')+'</span><span class="dl-exp-info">'+e.co+' · '+e.role.split('|')[0].trim()+'</span></li>';
+    }).join('');
+    if (d.edu && d.edu[0]) {
+      var ed = d.edu[0];
+      expHtml += '<li class="dl-exp-item"><span class="dl-exp-date">'+ed.period+'</span><span class="dl-exp-info">'+ed.school+' · '+ed.major.split('|')[0].trim()+'</span></li>';
+    }
+    var now = new Date();
+    var dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    var metaHtml = d.meta.map(function(m){ return '<span>'+m.replace(/（[^）]*）/,'')+'</span>'; }).join('');
+    if (city) metaHtml += '<span>'+city+'</span>';
+    var svgBag = '<svg class="dl-card-pos-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>';
+    var svgChk = '<svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var svgChat = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+    return '<div class="dl-card" data-ai="true" style="animation:dlCardAppear 0.35s ease" onclick="handleDlCardClick(event,\''+rdKey+'\',\'下载的简历\')">' +
+      '<div class="dl-card-meta"><div class="dl-card-pos">'+svgBag+'关联职位：<span class="dl-card-pos-val">'+pos+(city?'·'+city:'')+'</span></div><span>处理时间：'+dateStr+'</span></div>' +
+      '<div class="dl-card-body"><div class="dl-card-left">' +
+        '<div class="dl-card-avatar" style="background:'+d.color+'">'+d.ch+'</div>' +
+        '<div class="dl-card-info">' +
+          '<div class="dl-card-nameline"><span class="dl-card-name">'+d.name+'</span><span class="verified-badge">'+svgChk+'</span><span class="dl-ai-badge">AI推荐</span></div>' +
+          '<div class="dl-card-demo">'+metaHtml+'</div>' +
+          '<div class="dl-card-status'+statusCls+'">'+statusText+'</div>' +
+          '<div class="dl-card-tags">'+tags+'</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="dl-card-right"><ul class="dl-exp-list">'+expHtml+'</ul></div></div>' +
+      '<div class="dl-card-footer">' +
+        '<button class="dl-btn-interview">面试TA</button>' +
+        '<button class="dl-btn-chat">'+svgChat+'发起沟通</button>' +
+        '<button class="dl-btn-pass" onclick="this.closest(\'.dl-card\').classList.add(\'dismissed\')">不合适</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function viewContactAI(cardId) {
+    _aiContactCardId = cardId;
+    document.getElementById('ai-cm-balance-num').textContent = _aiContactBalance;
+    document.getElementById('ai-contact-overlay').classList.add('show');
+    document.getElementById('ai-contact-modal').classList.add('show');
+  }
+
+  function closeAIContact() {
+    document.getElementById('ai-contact-overlay').classList.remove('show');
+    document.getElementById('ai-contact-modal').classList.remove('show');
+  }
+
+  function confirmAIContact() {
+    _aiContactBalance = Math.max(0, _aiContactBalance - 1);
+    closeAIContact();
+    var confirmedId = _aiContactCardId;
+    if (confirmedId) {
+      var card = document.getElementById(confirmedId);
+      if (card) {
+        card.classList.add('vanishing');
+        card.addEventListener('animationend', function() {
+          card.style.display = 'none';
+        }, { once: true });
+      }
+      _aiContactCardId = null;
+    }
+    /* 注入候选人到 下载的简历-沟通中 */
+    var newHtml = buildDlCard(confirmedId);
+    if (newHtml) {
+      var list = document.getElementById('dl-yymian-list');
+      if (list) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = newHtml;
+        list.insertBefore(tmp.firstChild, list.firstChild);
+        /* 更新 tab 计数 */
+        var cntEl = document.querySelector('#page-downloaded .ap-tab.active .rec-tab-num');
+        if (cntEl) cntEl.textContent = (parseInt(cntEl.textContent) || 0) + 1;
+        var totalEl = document.querySelector('#page-downloaded .ap-total');
+        if (totalEl) { var m = totalEl.textContent.match(/\d+/); if (m) totalEl.textContent = '共'+(parseInt(m[0])+1)+'简历'; }
+      }
+    }
+    var toast = document.getElementById('ai-toast');
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2800);
+  }
+
   /* 不合适 */
   function markUnsuitable(cardId) {
     var card = document.getElementById(cardId);
@@ -4477,16 +5658,17 @@
   }
 
   /* ===== 页面切换 ===== */
-  var pageTitles = { home: '首页', applied: '应聘的简历', recommended: '推荐的简历' };
+  var pageTitles = { home: '首页', applied: '应聘的简历', recommended: '推荐的简历', downloaded: '下载的简历' };
 
   function showPage(page) {
-    ['home', 'applied', 'recommended'].forEach(function(p) {
+    ['home', 'applied', 'recommended', 'downloaded'].forEach(function(p) {
       var el = document.getElementById('page-' + p);
       if (el) el.style.display = p === page ? '' : 'none';
     });
 
     document.getElementById('ap-bottom-bar').style.display  = page === 'applied'     ? 'flex' : 'none';
     document.getElementById('rec-bottom-bar').style.display = page === 'recommended' ? 'flex' : 'none';
+    document.getElementById('dl-bottom-bar').style.display  = page === 'downloaded'  ? 'flex' : 'none';
 
     /* header title / search bar */
     var titleEl  = document.querySelector('.header-page-title');
@@ -4503,14 +5685,40 @@
     document.querySelectorAll('.nav-item, .sub-item').forEach(function(el) {
       el.classList.remove('active');
     });
-    var activeIds = { home: 'nav-home', applied: 'sub-applied', recommended: 'sub-recommended' };
+    var activeIds = { home: 'nav-home', applied: 'sub-applied', recommended: 'sub-recommended', downloaded: 'sub-downloaded' };
     var activeEl = document.getElementById(activeIds[page]);
     if (activeEl) activeEl.classList.add('active');
   }
 
   function switchApTab(el, name) {
-    document.querySelectorAll('.ap-tab').forEach(function(t) { t.classList.remove('active'); });
+    var tabBar = el.closest('.ap-tabs');
+    (tabBar ? tabBar : document).querySelectorAll('.ap-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
+    /* page-applied：按状态过滤卡片 */
+    if (el.closest('#page-applied')) {
+      document.querySelectorAll('#page-applied .ap-list .ccard').forEach(function(c) {
+        var st = c.dataset.apstatus || '待筛选';
+        c.style.display = (st === name) ? '' : 'none';
+      });
+    }
+  }
+
+  function handleDlCardClick(e, rdKey, pageLabel) {
+    if (e.target.closest('.dl-card-footer')) return;
+    openRD(rdKey, pageLabel);
+  }
+
+  function filterDlAI(cb) {
+    var list = document.getElementById('dl-yymian-list');
+    if (!list) return;
+    var cards = list.querySelectorAll('.dl-card');
+    cards.forEach(function(card) {
+      if (cb.checked) {
+        card.style.display = card.dataset.ai === 'true' ? '' : 'none';
+      } else {
+        card.style.display = '';
+      }
+    });
   }
 
   function toggleSortDrop() {
@@ -4535,6 +5743,18 @@
     var btn = document.getElementById('rec-sort-label');
     btn.childNodes[0].textContent = label + ' ';
     document.getElementById('rec-sort-dropdown').classList.remove('show');
+  }
+
+  function toggleDlSort() {
+    document.getElementById('dl-sort-dropdown').classList.toggle('show');
+  }
+
+  function selectDlSort(el, label) {
+    document.querySelectorAll('#dl-sort-dropdown .ap-sort-opt').forEach(function(o) { o.classList.remove('selected'); });
+    el.classList.add('selected');
+    var btn = document.getElementById('dl-sort-label');
+    btn.childNodes[0].textContent = label + ' ';
+    document.getElementById('dl-sort-dropdown').classList.remove('show');
   }
 
   document.addEventListener('click', function(e) {
