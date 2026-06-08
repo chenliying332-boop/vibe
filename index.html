@@ -1867,6 +1867,13 @@
 
     .creason-btn:hover { color: #1677ff; border-color: #4096ff; }
 
+    /* 沟通中状态：隐藏匹配分、AI推荐理由、标签行；按钮靠右 */
+    .ccard[data-apstatus="沟通中"] .ccard-scorecol,
+    .ccard[data-apstatus="沟通中"] .creason-sep,
+    .ccard[data-apstatus="沟通中"] .creason,
+    .ccard[data-apstatus="沟通中"] .ctags { display: none; }
+    .ccard[data-apstatus="沟通中"] .ccard-footer { justify-content: flex-end; }
+
     /* Card footer */
     .ccard-footer {
       padding: 8px 16px 12px;
@@ -3347,7 +3354,7 @@
       <div class="ap-header">
         <div class="ap-tabs">
           <span class="ap-tab active" onclick="switchApTab(this,'待筛选')">待筛选 <span class="ap-tab-cnt">2</span></span>
-          <span class="ap-tab" onclick="switchApTab(this,'沟通中')">沟通中</span>
+          <span class="ap-tab" onclick="switchApTab(this,'沟通中')">沟通中 <span class="ap-tab-cnt" id="ap-comm-cnt" style="display:none">0</span></span>
           <span class="ap-tab" onclick="switchApTab(this,'已约面')">已约面</span>
           <span class="ap-tab" onclick="switchApTab(this,'不合适')">不合适</span>
           <span class="ap-tab" onclick="switchApTab(this,'黑名单')">黑名单</span>
@@ -5500,16 +5507,24 @@
     /* 更新卡片状态 */
     card.dataset.apstatus = '沟通中';
 
-    /* 按钮改为已完成状态 */
-    btn.textContent = '沟通中';
-    btn.disabled = true;
-    btn.style.cssText = 'background:#e6f7ee;color:#52c41a;border-color:#b7eb8f;cursor:default;';
+    /* 按钮改为面试TA */
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>面试TA';
+    btn.disabled = false;
+    btn.style.cssText = '';
 
     /* 待筛选计数 -1 */
     var pendingTab = document.querySelector('#page-applied .ap-tab.active');
     if (pendingTab) {
       var cntEl = pendingTab.querySelector('.ap-tab-cnt');
       if (cntEl) cntEl.textContent = Math.max(0, (parseInt(cntEl.textContent)||0) - 1);
+    }
+
+    /* 沟通中计数 +1 */
+    var commCnt = document.getElementById('ap-comm-cnt');
+    if (commCnt) {
+      var cur = parseInt(commCnt.textContent) || 0;
+      commCnt.textContent = cur + 1;
+      commCnt.style.display = '';
     }
 
     /* 切换到沟通中 tab */
