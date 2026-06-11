@@ -217,6 +217,12 @@
       background: rgba(255,255,255,0.06);
     }
 
+    .sub-item-disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     .sub-item.active {
       color: #fff;
       background: rgba(255,255,255,0.1);
@@ -1862,12 +1868,26 @@
 
     .creason-btn:hover { color: #1677ff; border-color: #4096ff; }
 
+    /* 首页AI推荐：隐藏标签行和点赞/踩，按钮居右 */
+    #page-home .ctags { display: none; }
+    #page-home .creason-actions { display: none; }
+    #page-home .ccard-footer { justify-content: flex-end; }
+    /* 兜底卡放宽标签始终可见（置于姓名行） */
+    #page-home .ccard[data-type="fallback"] .ctag-relax {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+
     /* 沟通中状态：隐藏匹配分、AI推荐理由、标签行；按钮靠右 */
     .ccard[data-apstatus="沟通中"] .ccard-scorecol,
     .ccard[data-apstatus="沟通中"] .creason-sep,
     .ccard[data-apstatus="沟通中"] .creason,
     .ccard[data-apstatus="沟通中"] .ctags { display: none; }
     .ccard[data-apstatus="沟通中"] .ccard-footer { justify-content: flex-end; }
+    /* 下载的简历：AI推荐卡片保留推荐理由 */
+    #page-downloaded .ccard[data-ai="true"] .creason-sep { display: block; }
+    #page-downloaded .ccard[data-ai="true"] .creason { display: flex; }
 
     /* Card footer */
     .ccard-footer {
@@ -1888,9 +1908,11 @@
       cursor: default;
     }
 
-    .ctag-pos  { background: #f6ffed; color: #389e0d; }
-    .ctag-warn { background: #fff2f0; color: #cf1322; }
-    .ctag-neu  { background: #f5f5f5; color: #888; }
+    .ctag-pos    { background: #f6ffed; color: #389e0d; }
+    .ctag-warn   { background: #fff2f0; color: #cf1322; }
+    .ctag-neu    { background: #f5f5f5; color: #888; }
+    .ctag-notice { background: #fff7e6; color: #d48806; }
+    .ctag-relax  { background: #eff6ff; color: #1d4ed8; }
 
     .ccard-btns { display: flex; gap: 8px; flex-shrink: 0; }
 
@@ -2050,6 +2072,24 @@
       min-width: 160px;
     }
     .dl-exp-info { color: #333; line-height: 1.5; }
+
+    .dl-ai-reason {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 8px 16px 10px;
+      background: #f0f5ff;
+      border-top: 1px solid #bae0ff;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .dl-ai-reason-label {
+      flex-shrink: 0;
+      color: #1677ff;
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+    .dl-ai-reason-text { color: #444; }
 
     .dl-card-footer {
       display: flex;
@@ -2700,18 +2740,9 @@
   .rd-contact-row + .rd-contact-row { border-top: 1px solid #f5f5f5; }
   .rd-contact-ic { color: #bbb; flex-shrink: 0; }
   /* ===== AI 综合评分块（嵌入简历卡内） ===== */
-  .rd-ai-block {
-    border: 1.5px solid #ffe0cc; border-radius: 8px; overflow: hidden;
-    margin-bottom: 20px; display: flex; background: #fff;
-  }
-  /* 左列：简历评估 + 词云 */
-  .rd-eval-col {
-    width: 42%; flex-shrink: 0;
-    padding: 14px 14px 14px 16px;
-    border-right: 1px solid #f5e5d8;
-    background: #fffaf7;
-    display: flex; flex-direction: column; gap: 6px;
-  }
+  .rd-ai-block { display: none; }
+  /* 左列：简历评估 + 词云（隐藏） */
+  .rd-eval-col { display: none; }
   .rd-eval-title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
   .rd-eval-pos { font-size: 12px; color: #888; }
   .rd-stars-row { display: flex; align-items: center; gap: 8px; }
@@ -2905,6 +2936,122 @@
   .dislike-submit:disabled { background: #f0f0f0; color: #bbb; cursor: not-allowed; }
   .dislike-submit:not(:disabled):hover { background: #e55a1e; }
   .creason-btn.dislike-open { border-color: #ff6b2b; color: #ff6b2b; }
+
+  /* ===== 场景切换按钮 ===== */
+  .scenario-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+  .scenario-btn {
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #ff6b2b;
+    background: white;
+    color: #ff6b2b;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+    box-shadow: 0 1px 4px rgba(255,107,43,0.12);
+  }
+  .scenario-btn.active {
+    background: #ff6b2b;
+    color: white;
+  }
+  .scenario-btn:hover:not(.active) { background: #fff4ef; }
+
+  /* ===== AI推荐状态条 ===== */
+  #ai-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 4px;
+    padding: 9px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #444;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .ai-status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #52c41a;
+    flex-shrink: 0;
+  }
+  .ai-status-label {
+    color: #333;
+    font-weight: 500;
+  }
+  .ai-status-count {
+    color: #ff6b2b;
+    font-weight: 600;
+  }
+
+  /* ===== 信息流底部文案 ===== */
+  .feed-bottom-tip {
+    text-align: center;
+    padding: 18px 16px 10px;
+    font-size: 12.5px;
+    color: #aaa;
+  }
+  .feed-bottom-tip-link {
+    color: #ff6b2b;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .feed-bottom-tip-link:hover { color: #e55a1e; }
+
+  /* ===== 兜底放宽分界线 ===== */
+  .home-fallback-sep {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0 4px;
+    color: #aaa;
+    font-size: 12px;
+  }
+  .home-fallback-sep::before,
+  .home-fallback-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ebebeb;
+  }
+  .home-fallback-sep-text {
+    white-space: nowrap;
+    padding: 0 4px;
+    letter-spacing: 0.01em;
+  }
+
+  /* ===== JD更新提示栏 ===== */
+  #jd-updated-notice {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: #fff9f5;
+    border: 1px solid #ffe0cc;
+    border-radius: 4px;
+    padding: 8px 14px;
+    margin-bottom: 10px;
+    font-size: 12.5px;
+    color: #c84b1a;
+  }
+  .jd-notice-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #ff6b2b;
+    flex-shrink: 0;
+  }
+  .jd-notice-time {
+    margin-left: auto;
+    color: #999;
+    font-size: 12px;
+  }
   </style>
 </head>
 <body>
@@ -3032,7 +3179,7 @@
         职位中心
       </li>
 
-      <li class="nav-item">
+      <li class="nav-item" id="nav-search">
         <span class="nav-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -3052,8 +3199,8 @@
         <span class="nav-arrow" id="resume-arrow">▾</span>
       </li>
       <ul class="sub-menu open" id="resume-submenu">
-        <li class="sub-item" id="sub-applied" onclick="event.stopPropagation();showPage('applied')">应聘的简历</li>
-        <li class="sub-item" id="sub-recommended" onclick="event.stopPropagation();showPage('recommended')">推荐的简历</li>
+        <li class="sub-item sub-item-disabled" id="sub-applied">应聘的简历</li>
+        <li class="sub-item sub-item-disabled" id="sub-recommended">推荐的简历</li>
         <li class="sub-item" id="sub-downloaded" onclick="event.stopPropagation();showPage('downloaded')">下载的简历</li>
       </ul>
 
@@ -3126,6 +3273,12 @@
           <div class="pos-tab" onclick="selectPosTab(this,'质量工程师')">质量工程师</div>
         </div>
 
+        <!-- 场景切换 -->
+        <div class="scenario-switcher">
+          <button class="scenario-btn active" id="scen-btn-1" onclick="switchScenario(1)">状态1：首次触发</button>
+          <button class="scenario-btn" id="scen-btn-2" onclick="switchScenario(2)">状态2：修改JD后</button>
+        </div>
+
       </div>
 
       <!-- ===== REC TABS ===== -->
@@ -3141,6 +3294,19 @@
         <div class="jd-cond-row">
           <div class="jd-cond-tags" id="jd-cond-tags"></div>
         </div>
+      </div>
+
+      <!-- JD更新提示 -->
+      <div id="jd-updated-notice">
+        <div class="jd-notice-dot"></div>
+        <span>JD已更新（工作年限要求调整为3年+，电力行业背景优先），以下为重新匹配结果</span>
+        <span class="jd-notice-time">刚刚</span>
+      </div>
+
+      <!-- AI推荐状态条 -->
+      <div id="ai-status-bar">
+        <div class="ai-status-dot"></div>
+        <span class="ai-status-label">AI推荐已完成 · 共</span><span class="ai-status-count" id="ai-status-count">5</span><span class="ai-status-label">份推荐简历</span>
       </div>
 
       <!-- ===== Candidate cards ===== -->
@@ -3385,6 +3551,206 @@
             <button class="cbtn-contact" onclick="viewContactAI('ccard-yi')">查看联系方式</button>
           </div>
         </div>
+      </div>
+
+      <!-- ===== 测试工程师 · 兜底放宽分界线 ===== -->
+      <div class="home-fallback-sep" data-pos="测试工程师">
+        <span class="home-fallback-sep-text">JD要求较为严格，以下为放宽条件后推荐简历</span>
+      </div>
+
+      <!-- ===== 陈先生 | 测试工程师 fallback | 58分 ===== -->
+      <div class="ccard" id="ccard-chen" data-type="fallback" data-pos="测试工程师">
+        <div class="ccard-top" onclick="">
+          <div class="ccard-avatar" style="background:#d97706">陈</div>
+          <div class="ccard-body">
+            <div class="ccard-nameline">
+              <span class="ccard-name">陈先生</span>
+              <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="ctag ctag-relax">相似度阈值降至0.20</span>
+            </div>
+            <div class="ccard-demo"><span>大专</span><span>3年</span><span>陕西西安</span><span>27岁</span></div>
+            <ul class="ccard-explist">
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>西安电力设备有限公司 · 测试工程师 · 2022.8-2025.6（2年10个月）</span></li>
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>西安职业技术学院 · 电气工程 · 2019.9-2022.6</span></li>
+            </ul>
+          </div>
+          <div class="ccard-scorecol">
+            <div class="cscore-num" style="color:#ff4d4f">58</div>
+            <div class="cscore-label">匹配分</div>
+            <div class="cscore-underline" style="background:#ff4d4f"></div>
+          </div>
+        </div>
+        <div class="creason-sep"></div>
+        <div class="creason">
+          <div class="creason-content">
+            <div class="creason-label">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              AI 推荐理由
+            </div>
+            <div class="creason-text">电力行业测试经验近3年，专业方向对口，学历大专低于岗位本科要求，综合实践能力可评估。</div>
+          </div>
+          <div class="creason-actions"></div>
+        </div>
+        <div class="ccard-footer">
+          <div class="ctags">
+            <span class="ctag ctag-pos">电力背景 ✓</span>
+            <span class="ctag ctag-warn">学历不足</span>
+            <span class="ctag ctag-pos">在职可谈 ✓</span>
+          </div>
+          <div class="ccard-btns">
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-chen')">查看联系方式</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 孙先生 | 测试工程师 fallback | 54分 ===== -->
+      <div class="ccard" id="ccard-sun" data-type="fallback" data-pos="测试工程师">
+        <div class="ccard-top" onclick="">
+          <div class="ccard-avatar" style="background:#6d28d9">孙</div>
+          <div class="ccard-body">
+            <div class="ccard-nameline">
+              <span class="ccard-name">孙先生</span>
+              <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="ctag ctag-relax">年限区间放宽</span>
+            </div>
+            <div class="ccard-demo"><span>本科</span><span>1年</span><span>江苏南京</span><span>23岁</span></div>
+            <ul class="ccard-explist">
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>南京智能电气有限公司 · 测试助理 · 2024.7-至今（11个月）</span></li>
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>南京工业大学 · 电气工程及自动化 · 2020.9-2024.6</span></li>
+            </ul>
+          </div>
+          <div class="ccard-scorecol">
+            <div class="cscore-num" style="color:#ff4d4f">54</div>
+            <div class="cscore-label">匹配分</div>
+            <div class="cscore-underline" style="background:#ff4d4f"></div>
+          </div>
+        </div>
+        <div class="creason-sep"></div>
+        <div class="creason">
+          <div class="creason-content">
+            <div class="creason-label">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              AI 推荐理由
+            </div>
+            <div class="creason-text">本科电气背景专业对口，在职工作不满1年，经验年限明显不足JD要求，可作为潜力候选人长线考察。</div>
+          </div>
+          <div class="creason-actions"></div>
+        </div>
+        <div class="ccard-footer">
+          <div class="ctags">
+            <span class="ctag ctag-pos">专业对口 ✓</span>
+            <span class="ctag ctag-warn">年限不足</span>
+            <span class="ctag ctag-notice">应届背景</span>
+          </div>
+          <div class="ccard-btns">
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-sun')">查看联系方式</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 硬件工程师 · 兜底放宽分界线 ===== -->
+      <div class="home-fallback-sep" data-pos="硬件工程师">
+        <span class="home-fallback-sep-text">JD要求较为严格，以下为放宽条件后推荐简历</span>
+      </div>
+
+      <!-- ===== 吴先生 | 硬件工程师 fallback | 62分 ===== -->
+      <div class="ccard" id="ccard-wu" data-type="fallback" data-pos="硬件工程师">
+        <div class="ccard-top" onclick="">
+          <div class="ccard-avatar" style="background:#0284c7">吴</div>
+          <div class="ccard-body">
+            <div class="ccard-nameline">
+              <span class="ccard-name">吴先生</span>
+              <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="ctag ctag-relax">跳过行业匹配</span>
+            </div>
+            <div class="ccard-demo"><span>大专</span><span>5年</span><span>江苏苏州</span><span>30岁</span></div>
+            <ul class="ccard-explist">
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>苏州精锐电子科技有限公司 · 硬件调试工程师 · 2020.3-至今（5年3个月）</span></li>
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>苏州工业园区职业技术学院 · 电子信息技术 · 2017.9-2020.6</span></li>
+            </ul>
+          </div>
+          <div class="ccard-scorecol">
+            <div class="cscore-num" style="color:#ff4d4f">62</div>
+            <div class="cscore-label">匹配分</div>
+            <div class="cscore-underline" style="background:#ff4d4f"></div>
+          </div>
+        </div>
+        <div class="creason-sep"></div>
+        <div class="creason">
+          <div class="creason-content">
+            <div class="creason-label">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              AI 推荐理由
+            </div>
+            <div class="creason-text">5年电子硬件调试经验，PCB操作与信号测量能力具备，学历大专低于岗位本科要求，建议结合实际能力综合评估。</div>
+          </div>
+          <div class="creason-actions"></div>
+        </div>
+        <div class="ccard-footer">
+          <div class="ctags">
+            <span class="ctag ctag-pos">硬件调试 ✓</span>
+            <span class="ctag ctag-warn">学历不足</span>
+            <span class="ctag ctag-pos">行业匹配 ✓</span>
+          </div>
+          <div class="ccard-btns">
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-wu')">查看联系方式</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 质量工程师 · 兜底放宽分界线 ===== -->
+      <div class="home-fallback-sep" data-pos="质量工程师">
+        <span class="home-fallback-sep-text">JD要求较为严格，以下为放宽条件后推荐简历</span>
+      </div>
+
+      <!-- ===== 郑先生 | 质量工程师 fallback | 56分 ===== -->
+      <div class="ccard" id="ccard-zheng" data-type="fallback" data-pos="质量工程师">
+        <div class="ccard-top" onclick="">
+          <div class="ccard-avatar" style="background:#059669">郑</div>
+          <div class="ccard-body">
+            <div class="ccard-nameline">
+              <span class="ccard-name">郑先生</span>
+              <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="ctag ctag-relax">薪资容忍放宽到×0.8</span>
+            </div>
+            <div class="ccard-demo"><span>本科</span><span>2年</span><span>广东广州</span><span>26岁</span></div>
+            <ul class="ccard-explist">
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>广州金力机械制造有限公司 · 质检员 · 2023.7-2025.4（1年9个月）</span></li>
+              <li class="ccard-expitem"><div class="ccard-bullet"></div><span>广州工业大学 · 机械工程 · 2019.9-2023.6</span></li>
+            </ul>
+          </div>
+          <div class="ccard-scorecol">
+            <div class="cscore-num" style="color:#ff4d4f">56</div>
+            <div class="cscore-label">匹配分</div>
+            <div class="cscore-underline" style="background:#ff4d4f"></div>
+          </div>
+        </div>
+        <div class="creason-sep"></div>
+        <div class="creason">
+          <div class="creason-content">
+            <div class="creason-label">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              AI 推荐理由
+            </div>
+            <div class="creason-text">制造业2年质检工作经历，主修机械非电气方向，ISO体系接触有限，作为兜底备选可综合评估质量意识。</div>
+          </div>
+          <div class="creason-actions"></div>
+        </div>
+        <div class="ccard-footer">
+          <div class="ctags">
+            <span class="ctag ctag-pos">质检经验 ✓</span>
+            <span class="ctag ctag-warn">专业跨界</span>
+            <span class="ctag ctag-warn">年限偏短</span>
+          </div>
+          <div class="ccard-btns">
+            <button class="cbtn-contact" onclick="viewContactAI('ccard-zheng')">查看联系方式</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 信息流底部提示 -->
+      <div class="feed-bottom-tip">
+        已加载全部推荐简历，请去<span class="feed-bottom-tip-link" onclick="document.getElementById('nav-search').click()">搜索人才</span>查看更多
       </div>
 
       </div> <!-- /ccard-list-wrap -->
@@ -3878,6 +4244,13 @@
               </ul>
             </div>
           </div>
+          <div class="creason-sep"></div>
+          <div class="creason">
+            <div class="creason-content">
+              <div class="creason-label">✦ AI推荐理由</div>
+              <div class="creason-text">候选人在大疆、华为均有核心硬件岗位经历，8年深圳一线硬件经验，PCB Layout与电路设计能力突出，来源AI智能推荐，今日活跃，综合匹配度高。</div>
+            </div>
+          </div>
           <div class="ccard-footer">
             <div class="ctags">
               <span class="ctag ctag-pos">电路设计 ✓</span>
@@ -3948,6 +4321,13 @@
                 <li class="ccard-expitem"><div class="ccard-bullet"></div><span>小米科技有限责任公司 · 嵌入式工程师 · 2022.07-至今（3年11个月）</span></li>
                 <li class="ccard-expitem"><div class="ccard-bullet"></div><span>北京航空航天大学 · 电子工程 · 硕士 · 2018.09-2022.06</span></li>
               </ul>
+            </div>
+          </div>
+          <div class="creason-sep"></div>
+          <div class="creason">
+            <div class="creason-content">
+              <div class="creason-label">✦ AI推荐理由</div>
+              <div class="creason-text">候选人北航电子工程硕士，小米嵌入式工程师4年，STM32+FreeRTOS+CAN总线技术栈完整，来源AI推荐，技术深度适配，昨日活跃。</div>
             </div>
           </div>
           <div class="ccard-footer">
@@ -4126,6 +4506,13 @@
                 <li class="ccard-expitem"><div class="ccard-bullet"></div><span>商汤科技有限公司 · 算法工程师 · 2023.07-至今（2年11个月）</span></li>
                 <li class="ccard-expitem"><div class="ccard-bullet"></div><span>北京理工大学 · 计算机科学与技术 · 硕士 · 2019.09-2023.06</span></li>
               </ul>
+            </div>
+          </div>
+          <div class="creason-sep"></div>
+          <div class="creason">
+            <div class="creason-content">
+              <div class="creason-label">✦ AI推荐理由</div>
+              <div class="creason-text">候选人北京理工大学计算机硕士，商汤科技算法工程师3年，目标检测和视觉算法能力突出，来源AI推荐，综合实力强，今日活跃。</div>
             </div>
           </div>
           <div class="ccard-footer">
@@ -4788,6 +5175,13 @@
     closeAddCondInline();
     filterHomeCards(pos);
     renderCondBar(pos);
+    updateAiStatusCount(pos);
+  }
+
+  function updateAiStatusCount(pos) {
+    var count = document.querySelectorAll('#ccard-list-wrap .ccard[data-pos="' + pos + '"]').length;
+    var el = document.getElementById('ai-status-count');
+    if (el) el.textContent = count;
   }
 
   function filterHomeCards(pos) {
@@ -4805,6 +5199,10 @@
         show = cardPos === pos;
       }
       card.style.display = show ? '' : 'none';
+    });
+    /* 同步分界线显隐 */
+    document.querySelectorAll('#page-home .home-fallback-sep').forEach(function(sep) {
+      sep.style.display = (pos !== '全部职位' && sep.dataset.pos === pos) ? '' : 'none';
     });
   }
 
@@ -5332,6 +5730,66 @@
       dims:[{label:'专业匹配',val:88,lv:'lv-def'},{label:'工作经验',val:85,lv:'lv-def'},{label:'学历背景',val:82,lv:'lv-def'},{label:'求职活跃度',val:90,lv:'lv-high'}],
       highlights:['振华重工+西门子双重制造业背景，行业认可度高','7年PLC工程经验，西门子S7技术栈扎实','同济大学电气工程本科，专业精准对口','上海本地求职，今日活跃，入职便利']
     },
+    chen_fb: {
+      name:'陈先生', ch:'陈', color:'#d97706', gender:'M',
+      phone:'131****0001', email:'chen_fb***@qq.com', code:'FB01CHEN00000001',
+      meta:['大专','3年','陕西西安'],
+      loc:'我正在找工作 · 现居地：陕西西安',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'测试工程师', salary:'6千-1万', tags:['电力行业','西安']},
+      exp:[{co:'西安电力设备有限公司', period:'2022.8-2025.6（2年10个月）', role:'测试工程师 | 电力设备', desc:'负责配电设备出厂测试，耐压、绝缘电阻及功能测试，输出测试记录。'}],
+      edu:[{school:'西安职业技术学院', period:'2019.9-2022.6', major:'电气工程 | 大专'}],
+      score:58, pos:'测试工程师',
+      cloud:[{t:'电力测试',s:'md',c:'#4a6fa5'},{t:'在职求职',s:'md',c:'#6b8fc7'},{t:'大专学历',s:'md',c:'#8faed5'}],
+      aiSummary:'电力行业测试经验近3年，专业方向对口，学历大专低于岗位本科要求，综合实践能力可评估。',
+      dims:[{label:'专业匹配',val:60,lv:'lv-low'},{label:'工作经验',val:58,lv:'lv-low'},{label:'学历背景',val:45,lv:'lv-low'},{label:'求职活跃度',val:80,lv:'lv-def'}],
+      highlights:['电力行业3年测试经验，专业背景基本对口','学历大专低于岗位本科要求，存在差距','正在积极求职，今日活跃']
+    },
+    sun_fb: {
+      name:'孙先生', ch:'孙', color:'#6d28d9', gender:'M',
+      phone:'131****0002', email:'sun_fb***@qq.com', code:'FB02SUN000000002',
+      meta:['本科','1年','江苏南京'],
+      loc:'我正在找工作 · 现居地：江苏南京',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'测试工程师', salary:'5千-8千', tags:['电气工程','南京']},
+      exp:[{co:'南京智能电气有限公司', period:'2024.7-至今（11个月）', role:'测试助理 | 电气设备', desc:'协助完成电气设备功能测试与出厂检验，输出测试文档。'}],
+      edu:[{school:'南京工业大学', period:'2020.9-2024.6', major:'电气工程及自动化 | 本科'}],
+      score:54, pos:'测试工程师',
+      cloud:[{t:'专业对口',s:'md',c:'#4a6fa5'},{t:'应届背景',s:'md',c:'#6b8fc7'},{t:'本科学历',s:'md',c:'#8faed5'}],
+      aiSummary:'本科电气背景专业对口，在职工作不满1年，经验年限明显不足JD要求，可作为潜力候选人长线考察。',
+      dims:[{label:'专业匹配',val:72,lv:'lv-mid'},{label:'工作经验',val:35,lv:'lv-low'},{label:'学历背景',val:75,lv:'lv-mid'},{label:'求职活跃度',val:85,lv:'lv-def'}],
+      highlights:['本科电气工程专业，背景对口','工作年限仅1年，远低于JD要求','正在求职，今日活跃，可作潜力候选']
+    },
+    wu_fb: {
+      name:'吴先生', ch:'吴', color:'#0284c7', gender:'M',
+      phone:'131****0003', email:'wu_fb***@qq.com', code:'FB03WU0000000003',
+      meta:['大专','5年','江苏苏州'],
+      loc:'我正在找工作 · 现居地：江苏苏州',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'硬件工程师', salary:'8千-1.5万', tags:['电子制造','苏州']},
+      exp:[{co:'苏州精锐电子科技有限公司', period:'2020.3-至今（5年3个月）', role:'硬件调试工程师 | 电子设备', desc:'负责PCB板调试、信号测量及硬件故障排查，累计调试设备500+台。'}],
+      edu:[{school:'苏州工业园区职业技术学院', period:'2017.9-2020.6', major:'电子信息技术 | 大专'}],
+      score:62, pos:'硬件工程师',
+      cloud:[{t:'硬件调试',s:'md',c:'#4a6fa5'},{t:'PCB操作',s:'md',c:'#6b8fc7'},{t:'大专学历',s:'md',c:'#8faed5'}],
+      aiSummary:'5年电子硬件调试经验，PCB操作与信号测量能力具备，学历大专低于本科要求，建议结合实际能力综合评估。',
+      dims:[{label:'专业匹配',val:65,lv:'lv-low'},{label:'工作经验',val:70,lv:'lv-mid'},{label:'学历背景',val:45,lv:'lv-low'},{label:'求职活跃度',val:80,lv:'lv-def'}],
+      highlights:['5年硬件调试经验，PCB与信号测量能力具备','学历大专低于岗位要求，存在差距','正在求职，今日活跃']
+    },
+    zheng_fb: {
+      name:'郑先生', ch:'郑', color:'#059669', gender:'M',
+      phone:'131****0004', email:'zheng_fb***@qq.com', code:'FB04ZHENG0000004',
+      meta:['本科','2年','广东广州'],
+      loc:'我正在找工作 · 现居地：广东广州',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'质量工程师', salary:'6千-1万', tags:['制造业','广州']},
+      exp:[{co:'广州金力机械制造有限公司', period:'2023.7-2025.4（1年9个月）', role:'质检员 | 制造业', desc:'负责产品出厂质检，参与ISO体系建设，输出质量报告。'}],
+      edu:[{school:'广州工业大学', period:'2019.9-2023.6', major:'机械工程 | 本科'}],
+      score:56, pos:'质量工程师',
+      cloud:[{t:'质检经验',s:'md',c:'#4a6fa5'},{t:'制造业背景',s:'md',c:'#6b8fc7'},{t:'机械工程',s:'md',c:'#8faed5'}],
+      aiSummary:'制造业2年质检工作经历，主修机械非电气方向，ISO体系接触有限，作为备选可综合评估质量意识。',
+      dims:[{label:'专业匹配',val:50,lv:'lv-low'},{label:'工作经验',val:55,lv:'lv-low'},{label:'学历背景',val:70,lv:'lv-mid'},{label:'求职活跃度',val:78,lv:'lv-mid'}],
+      highlights:['制造业2年质检经验，质量意识有基础','主修机械非电气专业，跨界差距较大','正在求职，活跃度良好']
+    },
     dl_zheng: {
       name:'郑伟', ch:'郑', color:'#ea580c', gender:'M',
       phone:'152****3456', email:'zhengwei***@163.com', code:'Z8H9I0J1K2L3M008',
@@ -5733,7 +6191,9 @@
 
   var _ccard2rd = {
     'ccard-zhu':'zhu', 'ccard-zhang':'zhang', 'ccard-liu':'liu',
-    'ccard-wang':'wang', 'ccard-yi':'yi'
+    'ccard-wang':'wang', 'ccard-yi':'yi',
+    'ccard-chen':'chen_fb', 'ccard-sun':'sun_fb',
+    'ccard-wu':'wu_fb', 'ccard-zheng':'zheng_fb'
   };
 
   function buildDlCard(cardId) {
@@ -5774,6 +6234,7 @@
         '</div>' +
       '</div>' +
       '<div class="dl-card-right"><ul class="dl-exp-list">'+expHtml+'</ul></div></div>' +
+      (d.aiSummary ? '<div class="dl-ai-reason"><span class="dl-ai-reason-label">✦ AI推荐理由</span><span class="dl-ai-reason-text">'+d.aiSummary+'</span></div>' : '') +
       '<div class="dl-card-footer">' +
         '<button class="dl-btn-interview">面试TA</button>' +
         '<button class="dl-btn-chat">'+svgChat+'发起沟通</button>' +

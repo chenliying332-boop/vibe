@@ -1698,6 +1698,7 @@
       margin-bottom: 10px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       overflow: hidden;
+      position: relative;
       transition: box-shadow 0.18s;
     }
 
@@ -2382,6 +2383,249 @@
       padding: 4px 6px;
     }
     .ap-more-filter:hover { color: #ff6b2b; }
+
+    /* ===== AI帮筛 ===== */
+    /* 待筛选初始隐藏 AI 内容 */
+    #page-applied .creason,
+    #page-applied .creason-sep { display: none; }
+    #page-applied .ap-list .ccard[data-apstatus="待筛选"] .ctags { display: none; }
+    #page-applied .ap-list .ccard[data-apstatus="待筛选"] .ccard-btns { margin-left: auto; }
+
+    /* ── 悬浮球 Shell + Circle 双层结构 ── */
+    .ai-fab-shell {
+      position: fixed;
+      right: 0; top: 38%;
+      width: 44px;
+      background: #fff;
+      border-radius: 22px 0 0 22px;
+      border: 1px solid #f0e8e0;
+      border-right: none;
+      box-shadow: -3px 0 16px rgba(0,0,0,.1);
+      padding: 10px 0 10px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      cursor: pointer;
+      z-index: 300;
+      user-select: none;
+      transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+      /* Tooltip 定位容器 */
+      position: fixed;
+    }
+    .ai-fab-shell:hover { box-shadow: -4px 0 20px rgba(0,0,0,.15); }
+    .ai-fab-shell.fab-open {
+      background: linear-gradient(180deg, #f0fdf4 0%, #fff 100%);
+      border-color: #bbf7d0;
+    }
+    .ai-fab-shell.fab-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* 圆形按钮 */
+    .ai-fab-circle {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: #fff;
+      flex-shrink: 0;
+      transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    }
+    .ai-fab-shell:hover .ai-fab-circle { transform: scale(1.08); }
+    .ai-fab-shell.fab-disabled:hover .ai-fab-circle { transform: none; }
+
+    /* 默认：橙色渐变 + 呼吸光晕 */
+    .ai-fab-circle.circle-default {
+      background: linear-gradient(135deg, #FF8C42 0%, #F26B1D 60%, #e05a0a 100%);
+      box-shadow: 0 3px 10px rgba(242,107,29,.4);
+      animation: aiFabGlow 2.6s ease-in-out infinite;
+    }
+    @keyframes aiFabGlow {
+      0%,100% { box-shadow: 0 3px 10px rgba(242,107,29,.35); }
+      50%      { box-shadow: 0 3px 18px rgba(242,107,29,.7), 0 0 0 6px rgba(242,107,29,.08); }
+    }
+
+    /* 加载：灰色旋转圆 */
+    .ai-fab-circle.circle-loading {
+      background: #E5E7EB;
+      box-shadow: none;
+      font-size: 16px;
+      color: #9CA3AF;
+      animation: aiFabSpin 1s linear infinite;
+    }
+    @keyframes aiFabSpin { to { transform: rotate(360deg); } }
+    /* hover 时不缩放 loading 状态 */
+    .ai-fab-shell:hover .ai-fab-circle.circle-loading { transform: none; }
+
+    /* 已开启：绿色渐变 */
+    .ai-fab-circle.circle-open {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      box-shadow: 0 3px 10px rgba(22,163,74,.4);
+      animation: none;
+    }
+
+    /* 不可用：灰色 */
+    .ai-fab-circle.circle-disabled {
+      background: #ccc;
+      box-shadow: none;
+      animation: none;
+    }
+
+    /* 竖排文字 */
+    .ai-fab-vt {
+      writing-mode: vertical-rl;
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 6px;
+      letter-spacing: 1px;
+      line-height: 1;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+    .ai-fab-vt.vt-orange { color: #F26B1D; }
+    .ai-fab-vt.vt-green  { color: #16A34A; }
+    .ai-fab-vt.vt-gray   { color: #9CA3AF; }
+
+    /* Tooltip */
+    .ai-fab-tooltip {
+      position: absolute;
+      right: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: #1F2937;
+      color: #fff;
+      font-size: 12px;
+      white-space: nowrap;
+      padding: 6px 10px;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+    .ai-fab-tooltip::after {
+      content: '';
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-left-color: #1F2937;
+    }
+    .ai-fab-shell:hover .ai-fab-tooltip { opacity: 1; }
+
+    /* AI 状态条 */
+    .ap-ai-statusbar {
+      background: linear-gradient(90deg, #fff7f3 0%, #fffcf8 100%);
+      border: 1px solid #ffd0b0;
+      border-radius: 6px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      margin-bottom: 0;
+      transition: max-height 0.3s ease, opacity 0.25s ease,
+                  padding 0.3s ease, margin-bottom 0.3s ease;
+    }
+    .ap-ai-statusbar.show {
+      max-height: 70px; opacity: 1;
+      padding: 10px 16px; margin-bottom: 10px;
+    }
+    .ap-ai-sb-title { font-size: 13px; font-weight: 600; color: #cc4a00; }
+    .ap-ai-sb-sub   { font-size: 11.5px; color: #999; margin-top: 2px; }
+    .ap-ai-pills    { display: flex; gap: 8px; flex-shrink: 0; }
+    .ap-ai-pill {
+      padding: 4px 12px; border-radius: 20px;
+      border: 1.5px solid #e0e0e0;
+      background: #fff; font-size: 12px; color: #666;
+      cursor: pointer; transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .ap-ai-pill:hover { border-color: #aaa; }
+    .ap-ai-pill.pill-active { border-color: #ff6b2b; color: #ff6b2b; font-weight: 600; }
+
+    /* 筛选条锁定态 */
+    .ap-filter-bar.ai-locked .ap-filter-drop,
+    .ap-filter-bar.ai-locked .ap-filter-check,
+    .ap-filter-bar.ai-locked .ap-more-filter { opacity: 0.45; pointer-events: none; }
+    .ap-filter-bar.ai-locked #ap-sort-label { display: none; }
+    .ap-ai-sort-tag {
+      display: none; align-items: center; gap: 4px;
+      height: 28px; padding: 0 10px;
+      font-size: 12.5px; color: #888;
+      background: #fafafa; border: 1px solid #e0e0e0;
+      border-radius: 4px; white-space: nowrap;
+      pointer-events: none; user-select: none;
+    }
+    .ap-filter-bar.ai-locked .ap-ai-sort-tag { display: flex; }
+    .ap-ai-lock-hint {
+      display: none; align-items: center; gap: 5px;
+      font-size: 12px; color: #aaa; white-space: nowrap;
+      margin-left: auto;
+    }
+    .ap-filter-bar.ai-locked .ap-ai-lock-hint { display: flex; }
+    .ap-filter-bar.ai-locked .ap-more-filter { margin-left: 0; }
+
+    /* 卡片左侧色条 */
+    .ccard-ai-bar {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .ccard-ai-bar.bar-show  { opacity: 1; }
+    .ccard-ai-bar.bar-green  { background: #22c55e; }
+    .ccard-ai-bar.bar-yellow { background: #faad14; }
+
+    /* 姓名行 AI badge */
+    .ai-name-badge {
+      display: none; font-size: 11px; font-weight: 600;
+      padding: 2px 7px; border-radius: 3px; line-height: 1.5;
+    }
+    .ai-name-badge.badge-show { display: inline-flex; align-items: center; }
+    .ai-name-badge.badge-green  { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
+    .ai-name-badge.badge-yellow { background: #fffbe6; color: #d46b08; border: 1px solid #ffe58f; }
+
+    /* 骨架屏 */
+    .creason-skeleton {
+      margin: 0 16px 10px; padding: 12px 14px;
+      background: #f9f9f9; border-radius: 4px;
+    }
+    .sk-line {
+      height: 11px; border-radius: 3px;
+      background: linear-gradient(90deg, #efefef 25%, #e0e0e0 50%, #efefef 75%);
+      background-size: 400% 100%;
+      animation: skShimmer 1.4s ease-in-out infinite;
+      margin-bottom: 7px;
+    }
+    .sk-line:last-child { width: 60%; margin-bottom: 0; }
+    @keyframes skShimmer {
+      0%   { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* creason 颜色变体 */
+    .creason.ai-reco { background: #f6ffed; border-left-color: #52c41a; }
+    .creason.ai-reco .creason-label { color: #389e0d; }
+    .creason.ai-cons { background: #fffbe6; border-left-color: #faad14; }
+    .creason.ai-cons .creason-label { color: #d46b08; }
+
+    /* ctag 黄色变体 */
+    .ctag-notice { background: #fffbe6; color: #d46b08; }
+
+    /* AI 过滤隐藏 */
+    .ccard.ai-hidden { display: none !important; }
+
+    /* creason 展开动画 */
+    @keyframes creasonIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .creason.ai-in { animation: creasonIn 0.25s ease both; }
 
     /* card list */
     .ap-list { padding-top: 10px; display: flex; flex-direction: column; gap: 10px; }
@@ -3393,6 +3637,13 @@
     <!-- ===== PAGE: 应聘的简历 ===== -->
     <div id="page-applied" style="display:none">
 
+      <!-- AI帮筛 悬浮球 -->
+      <div id="ap-ai-fab" class="ai-fab-shell" onclick="toggleApAi()">
+        <div id="ap-ai-circle" class="ai-fab-circle circle-default">✦</div>
+        <div id="ap-ai-vt" class="ai-fab-vt vt-orange">AI帮筛</div>
+        <div class="ai-fab-tooltip" id="ap-ai-tooltip">点击开启 AI帮筛</div>
+      </div>
+
       <!-- status tabs + search bar -->
       <div class="ap-header">
         <div class="ap-tabs">
@@ -3427,6 +3678,7 @@
             <li class="ap-sort-opt" onclick="selectSort(this,'AI评分排序')">AI评分排序</li>
           </ul>
         </div>
+        <span class="ap-ai-sort-tag">✦ AI推荐优先</span>
         <div class="ap-filter-divider"></div>
         <label class="ap-filter-check"><input type="checkbox"> 评价过的简历</label>
         <label class="ap-filter-check"><input type="checkbox"> 有证书</label>
@@ -3435,6 +3687,20 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           更多筛选
         </button>
+        <div class="ap-ai-lock-hint">🔒 AI帮筛模式中，关闭后可调整筛选</div>
+      </div>
+
+      <!-- AI 状态条 -->
+      <div id="ap-ai-statusbar" class="ap-ai-statusbar">
+        <div class="ap-ai-sb-left">
+          <div class="ap-ai-sb-title">✦ AI帮筛已开启 · 已分析 2 份</div>
+          <div class="ap-ai-sb-sub">分析维度：职业轨迹 · 技能匹配 · 项目相关性</div>
+        </div>
+        <div class="ap-ai-pills">
+          <button class="ap-ai-pill pill-active" data-filter="all" onclick="filterApAiCards('all')">全部 2</button>
+          <button class="ap-ai-pill" data-filter="recommend" onclick="filterApAiCards('recommend')" style="color:#389e0d">✓ 推荐 1</button>
+          <button class="ap-ai-pill" data-filter="consider" onclick="filterApAiCards('consider')" style="color:#d46b08">△ 可考虑 1</button>
+        </div>
       </div>
 
       <!-- resume cards -->
@@ -3488,8 +3754,9 @@
             </div>
             <div class="ccard-btns">
               <button class="cbtn-contact" onclick="moveToComm(this,'陈二')">查看联系方式</button>
+              <button class="cbtn-chat">发起沟通</button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-              </div>
+            </div>
           </div>
         </div>
 
@@ -3541,8 +3808,9 @@
             </div>
             <div class="ccard-btns">
               <button class="cbtn-contact" onclick="moveToComm(this,'李明辉')">查看联系方式</button>
+              <button class="cbtn-chat">发起沟通</button>
               <button class="cbtn-pass" onclick="this.closest('.ccard').classList.add('dismissed')">不合适</button>
-              </div>
+            </div>
           </div>
         </div>
 
@@ -5703,6 +5971,24 @@
       c.style.display = (c.dataset.apstatus === '沟通中') ? '' : 'none';
     });
 
+    /* 沟通中无 AI帮筛：隐藏悬浮球，若已开启则关闭 */
+    var fab = document.getElementById('ap-ai-fab');
+    if (fab) fab.style.display = 'none';
+    if (apAiActive) {
+      apAiActive = false;
+      var circle  = document.getElementById('ap-ai-circle');
+      var vt      = document.getElementById('ap-ai-vt');
+      var tooltip = document.getElementById('ap-ai-tooltip');
+      if (fab)     fab.classList.remove('fab-open');
+      if (circle)  { circle.className = 'ai-fab-circle circle-default'; circle.textContent = '✦'; }
+      if (vt)      { vt.className = 'ai-fab-vt vt-orange'; vt.textContent = 'AI帮筛'; }
+      if (tooltip) tooltip.textContent = '点击开启 AI帮筛';
+      document.querySelector('#page-applied .ap-filter-bar').classList.remove('ai-locked');
+      var sb = document.getElementById('ap-ai-statusbar');
+      if (sb) sb.classList.remove('show');
+      clearApAiCards();
+    }
+
     /* Toast */
     var toast = document.getElementById('ai-toast');
     toast.textContent = name + ' 已进入沟通中';
@@ -5871,12 +6157,29 @@
     var tabBar = el.closest('.ap-tabs');
     (tabBar ? tabBar : document).querySelectorAll('.ap-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
-    /* page-applied：按状态过滤卡片 */
+    /* page-applied：按状态过滤卡片，并控制 AI帮筛悬浮球 */
     if (el.closest('#page-applied')) {
       document.querySelectorAll('#page-applied .ap-list .ccard').forEach(function(c) {
         var st = c.dataset.apstatus || '待筛选';
         c.style.display = (st === name) ? '' : 'none';
       });
+      var fab = document.getElementById('ap-ai-fab');
+      if (fab) fab.style.display = (name === '待筛选') ? '' : 'none';
+      /* 切离待筛选时若 AI 已开启，自动关闭并还原 */
+      if (name !== '待筛选' && apAiActive) {
+        apAiActive = false;
+        var circle  = document.getElementById('ap-ai-circle');
+        var vt      = document.getElementById('ap-ai-vt');
+        var tooltip = document.getElementById('ap-ai-tooltip');
+        if (fab)     fab.classList.remove('fab-open');
+        if (circle)  { circle.className = 'ai-fab-circle circle-default'; circle.textContent = '✦'; }
+        if (vt)      { vt.className = 'ai-fab-vt vt-orange'; vt.textContent = 'AI帮筛'; }
+        if (tooltip) tooltip.textContent = '点击开启 AI帮筛';
+        document.querySelector('#page-applied .ap-filter-bar').classList.remove('ai-locked');
+        var sb = document.getElementById('ap-ai-statusbar');
+        if (sb) sb.classList.remove('show');
+        clearApAiCards();
+      }
     }
     /* page-recommended：按状态过滤卡片 */
     if (el.closest('#page-recommended')) {
@@ -6056,6 +6359,186 @@
       if (dd2) dd2.classList.remove('show');
     }
   });
+
+  // ===== AI帮筛 =====
+  var apAiActive = false;
+  var apAiFilter = 'all';
+
+  var apAiData = [
+    {
+      type: 'recommend',
+      badgeClass: 'badge-green', badgeText: '✦ AI推荐',
+      barClass: 'bar-green',
+      reasonClass: 'ai-reco',
+      reasonTitle: '✦ AI推荐理由',
+      reasonText: '清华大学电气工程本科，现任值长岗位，行业工作10年以上，近期简历更新、主动求职状态。',
+      tags: [
+        { cls: 'ctag-pos',    text: '年限匹配 ✓' },
+        { cls: 'ctag-pos',    text: '专业对口 ✓' },
+        { cls: 'ctag-pos',    text: '在职求职 ✓' }
+      ]
+    },
+    {
+      type: 'consider',
+      badgeClass: 'badge-yellow', badgeText: '△ 有差距',
+      barClass: 'bar-yellow',
+      reasonClass: 'ai-cons',
+      reasonTitle: '✦ AI推荐理由',
+      reasonText: '电气测试方向背景，累计5年工作经验，岗位要求8年以上，上海本地求职，薪资期望暂未填写。',
+      tags: [
+        { cls: 'ctag-pos',    text: '专业匹配 ✓' },
+        { cls: 'ctag-pos',    text: '本地求职 ✓' },
+        { cls: 'ctag-warn',   text: '年限不足' },
+        { cls: 'ctag-notice', text: '薪资待确认' }
+      ]
+    }
+  ];
+
+  function _fabEl(id) { return document.getElementById(id); }
+
+  function toggleApAi() {
+    var shell   = _fabEl('ap-ai-fab');
+    var circle  = _fabEl('ap-ai-circle');
+    var vt      = _fabEl('ap-ai-vt');
+    var tooltip = _fabEl('ap-ai-tooltip');
+    if (!shell || circle.classList.contains('circle-loading')) return;
+
+    if (apAiActive) {
+      // ── 关闭 ──
+      apAiActive = false;
+      shell.classList.remove('fab-open');
+      circle.className = 'ai-fab-circle circle-default';
+      circle.textContent = '✦';
+      vt.className = 'ai-fab-vt vt-orange';
+      vt.textContent = 'AI帮筛';
+      tooltip.textContent = '点击开启 AI帮筛';
+      document.querySelector('#page-applied .ap-filter-bar').classList.remove('ai-locked');
+      _fabEl('ap-ai-statusbar').classList.remove('show');
+      clearApAiCards();
+
+    } else {
+      // ── 加载 ──
+      circle.className = 'ai-fab-circle circle-loading';
+      circle.textContent = '⟳';
+      vt.className = 'ai-fab-vt vt-gray';
+      vt.textContent = '分析中';
+      tooltip.textContent = '';
+
+      setTimeout(function() {
+        // ── 已开启 ──
+        apAiActive = true;
+        shell.classList.add('fab-open');
+        circle.className = 'ai-fab-circle circle-open';
+        circle.textContent = '✦';
+        vt.className = 'ai-fab-vt vt-green';
+        vt.textContent = '已开启';
+        tooltip.textContent = '点击关闭 AI帮筛';
+        document.querySelector('#page-applied .ap-filter-bar').classList.add('ai-locked');
+        requestAnimationFrame(function() { _fabEl('ap-ai-statusbar').classList.add('show'); });
+        renderApAiCards();
+      }, 1200);
+    }
+  }
+
+  function renderApAiCards() {
+    apAiFilter = 'all';
+    updateAiPills('all');
+    var cards = document.querySelectorAll('#page-applied .ap-list .ccard');
+    cards.forEach(function(card, i) {
+      var d = apAiData[i];
+      if (!d) return;
+      card.dataset.aitype = d.type;
+      card.classList.remove('ai-hidden');
+      // 保存原始 tags
+      var ctags = card.querySelector('.ctags');
+      if (ctags && !card.dataset.origTags) card.dataset.origTags = ctags.innerHTML;
+      // 插入色条
+      if (!card.querySelector('.ccard-ai-bar')) {
+        var bar = document.createElement('div');
+        bar.className = 'ccard-ai-bar ' + d.barClass;
+        card.insertBefore(bar, card.firstChild);
+      }
+      // 骨架屏
+      var sep = card.querySelector('.creason-sep');
+      var skel = document.createElement('div');
+      skel.className = 'creason-skeleton';
+      skel.innerHTML = '<div class="sk-line"></div><div class="sk-line"></div>';
+      if (sep) sep.after(skel);
+      // 延迟展示真实内容
+      setTimeout(function() {
+        skel.remove();
+        // 色条
+        var b = card.querySelector('.ccard-ai-bar');
+        if (b) requestAnimationFrame(function() { b.classList.add('bar-show'); });
+        // badge
+        var nl = card.querySelector('.ccard-nameline');
+        if (nl && !nl.querySelector('.ai-name-badge')) {
+          var badge = document.createElement('span');
+          badge.className = 'ai-name-badge ' + d.badgeClass + ' badge-show';
+          badge.textContent = d.badgeText;
+          nl.appendChild(badge);
+        }
+        // creason
+        var sep2 = card.querySelector('.creason-sep');
+        var cr = card.querySelector('.creason');
+        if (sep2) sep2.style.display = '';
+        if (cr) {
+          cr.className = 'creason ' + d.reasonClass + ' ai-in';
+          cr.querySelector('.creason-label').textContent = d.reasonTitle;
+          cr.querySelector('.creason-text').textContent = d.reasonText;
+          cr.style.display = 'flex';
+        }
+        // tags
+        if (ctags) {
+          ctags.innerHTML = d.tags.map(function(t) {
+            return '<span class="ctag ' + t.cls + '">' + t.text + '</span>';
+          }).join('');
+          ctags.style.display = 'flex';
+        }
+      }, 480 * (i + 1));
+    });
+  }
+
+  function clearApAiCards() {
+    var cards = document.querySelectorAll('#page-applied .ap-list .ccard');
+    cards.forEach(function(card) {
+      delete card.dataset.aitype;
+      card.classList.remove('ai-hidden');
+      var bar = card.querySelector('.ccard-ai-bar');
+      if (bar) bar.remove();
+      var badge = card.querySelector('.ai-name-badge');
+      if (badge) badge.remove();
+      var skel = card.querySelector('.creason-skeleton');
+      if (skel) skel.remove();
+      var sep = card.querySelector('.creason-sep');
+      var cr = card.querySelector('.creason');
+      if (sep) sep.style.display = 'none';
+      if (cr) { cr.style.display = 'none'; cr.className = 'creason'; }
+      var ctags = card.querySelector('.ctags');
+      if (ctags) {
+        if (card.dataset.origTags) ctags.innerHTML = card.dataset.origTags;
+        ctags.style.display = 'none';
+      }
+    });
+    apAiFilter = 'all';
+    updateAiPills('all');
+  }
+
+  function filterApAiCards(type) {
+    apAiFilter = type;
+    updateAiPills(type);
+    document.querySelectorAll('#page-applied .ap-list .ccard').forEach(function(card) {
+      var t = card.dataset.aitype;
+      var hide = type !== 'all' && t !== type;
+      card.classList.toggle('ai-hidden', hide);
+    });
+  }
+
+  function updateAiPills(type) {
+    document.querySelectorAll('.ap-ai-pill').forEach(function(p) {
+      p.classList.toggle('pill-active', p.dataset.filter === type);
+    });
+  }
 </script>
 </body>
 </html>
