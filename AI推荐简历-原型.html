@@ -278,14 +278,184 @@
     /* ===== CONTENT ===== */
     .content-wrap {
       flex: 1;
-      overflow-y: auto;
+      overflow: hidden;
       padding: 14px;
       display: flex;
       gap: 14px;
       min-width: 0;
     }
 
-    .content-main { flex: 1; min-width: 0; }
+    .content-main { flex: 1; min-width: 0; overflow-y: auto; }
+
+    /* ===== RIGHT SIDEBAR ===== */
+    .content-side {
+      width: 282px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .rs-company {
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .rs-company-name {
+      flex: 1; min-width: 0;
+      font-size: 13px; font-weight: 500; color: #222;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .rs-company-arrow { color: #888; font-size: 10px; flex-shrink: 0; }
+    .rs-select-account {
+      background: none; border: 1px solid #e0e0e0; border-radius: 3px;
+      padding: 3px 8px; font-size: 12px; color: #555; cursor: pointer; white-space: nowrap;
+    }
+    .rs-sub {
+      background: linear-gradient(135deg, #ff8c00 0%, #ff5f00 100%);
+      border-radius: 6px; padding: 12px 14px; color: #fff; flex-shrink: 0;
+    }
+    .rs-sub-expire { font-size: 12px; font-weight: 500; margin-bottom: 10px; opacity: 0.92; }
+    .rs-sub-stats { display: flex; gap: 0; margin-bottom: 8px; }
+    .rs-sub-stat { flex: 1; text-align: center; }
+    .rs-sub-stat-label { font-size: 11px; opacity: 0.8; margin-bottom: 2px; }
+    .rs-sub-stat-num { font-size: 18px; font-weight: 700; }
+    .rs-sub-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.25); padding-top: 8px;
+      font-size: 11.5px;
+    }
+    .rs-sub-nav { display: flex; align-items: center; gap: 6px; opacity: 0.85; }
+    .rs-sub-nav-btn { cursor: pointer; }
+    .rs-sub-rights { opacity: 0.85; text-decoration: underline; cursor: pointer; }
+    .rs-card {
+      background: #fff; border-radius: 6px;
+      padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .rs-sec-title {
+      font-size: 13px; font-weight: 600; color: #222;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .rs-sec-icon { width: 15px; height: 15px; flex-shrink: 0; }
+    .rs-actions-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }
+    .rs-action-item {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 6px 2px; cursor: pointer; border-radius: 4px;
+    }
+    .rs-action-item:hover { background: #f7f7f7; }
+    .rs-action-icon {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: #eef3ff; display: flex; align-items: center; justify-content: center;
+    }
+    .rs-action-label { font-size: 11.5px; color: #555; white-space: nowrap; }
+    .rs-stats-grid { display: grid; grid-template-columns: 1fr 1fr; row-gap: 10px; }
+    .rs-stat-label { font-size: 11px; color: #aaa; margin-bottom: 1px; }
+    .rs-stat-val   { font-size: 14px; font-weight: 600; color: #222; }
+    .rs-rpo {
+      background: linear-gradient(135deg, #1e2540 0%, #2c3a6a 100%);
+      border-radius: 6px; padding: 16px 14px; color: #fff; text-align: center;
+    }
+    .rs-rpo-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .rs-rpo-desc  { font-size: 11.5px; opacity: 0.7; margin-bottom: 12px; line-height: 1.6; }
+    .rs-rpo-btn {
+      background: #ff6b2b; color: #fff; border: none; border-radius: 4px;
+      padding: 6px 18px; font-size: 12.5px; cursor: pointer;
+    }
+
+    /* ===== HOME DASHBOARD ===== */
+    .home-dashboard {
+      background: #fff; border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 12px; display: flex; overflow: hidden;
+    }
+    .dash-left {
+      flex: 1; min-width: 0; padding: 16px 18px;
+      border-right: 1px solid #f0f0f0;
+      display: flex; flex-direction: column;
+    }
+    .dash-right { width: 240px; flex-shrink: 0; padding: 16px 18px; }
+    .dash-sec-hd {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13.5px; font-weight: 600; color: #222; margin-bottom: 12px;
+    }
+    .dash-sec-hd-icon { flex-shrink: 0; }
+    .dash-resume-stats {
+      display: flex; gap: 0;
+      padding-bottom: 14px; border-bottom: 1px solid #f5f5f5; margin-bottom: 14px;
+    }
+    .dash-stat { flex: 1; }
+    .dash-stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .dash-stat-num   { font-size: 22px; font-weight: 600; color: #222; }
+    .dash-schedule-hd {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+    }
+    .dash-more { font-size: 12px; color: #aaa; cursor: pointer; }
+    .dash-more:hover { color: #ff6b2b; }
+    .dash-sched-tabs {
+      display: flex; gap: 16px; margin-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .dash-sched-tab {
+      font-size: 13px; color: #aaa; padding-bottom: 8px; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .dash-sched-tab.active { color: #ff6b2b; border-bottom-color: #ff6b2b; }
+    .dash-sched-body { display: flex; gap: 0; flex: 1; }
+    /* Mini calendar */
+    .dash-cal { flex: 1; min-width: 0; }
+    .dash-cal-nav {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-bottom: 8px; font-size: 13px; color: #333;
+    }
+    .dash-cal-nav-btn { cursor: pointer; color: #bbb; font-size: 11px; user-select: none; }
+    .dash-cal-nav-btn:hover { color: #ff6b2b; }
+    .dash-cal-title { font-size: 13px; font-weight: 500; color: #333; min-width: 72px; text-align: center; }
+    .dash-cal-grid { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .dash-cal-grid th { text-align: center; color: #bbb; font-weight: 400; padding: 3px 0; }
+    .dash-cal-grid td {
+      text-align: center; padding: 0; cursor: pointer; color: #333;
+      height: 26px; width: 26px; position: relative;
+    }
+    .dash-cal-grid td span {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%;
+    }
+    .dash-cal-grid td:hover span { background: #fff2ec; color: #ff6b2b; }
+    .dash-cal-grid td.other-m span { color: #ccc; }
+    .dash-cal-grid td.today span { background: #ff6b2b; color: #fff; }
+    .dash-cal-dot {
+      position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 2px;
+    }
+    .dash-cal-dot i { width: 4px; height: 4px; border-radius: 50%; display: block; }
+    .dot-green { background: #52c41a; }
+    .dot-blue  { background: #1677ff; }
+    /* Empty state */
+    .dash-sched-empty {
+      width: 150px; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    }
+    .dash-empty-btn {
+      background: #ff6b2b; color: #fff; border: none; border-radius: 4px;
+      padding: 6px 14px; font-size: 12.5px; cursor: pointer;
+    }
+    .dash-empty-text { font-size: 12px; color: #aaa; }
+    /* 我的职位 */
+    .dash-pos-hd {
+      display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px;
+    }
+    .dash-publish-link {
+      color: #ff6b2b; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 3px;
+    }
+    .dash-pos-stats { display: flex; gap: 32px; }
+    .dash-pos-stat-label { font-size: 12px; color: #888; margin-bottom: 6px; }
+    .dash-pos-stat-num   { font-size: 28px; font-weight: 600; color: #222; }
 
     /* Tab bar */
     .tab-bar {
@@ -539,6 +709,17 @@
 
     .pos-tab:hover { border-color: #ff6b2b; color: #ff6b2b; }
     .pos-tab.active { background: #ff6b2b; color: #fff; border-color: #ff6b2b; }
+
+    .pos-tab-new { position: relative; }
+    .pos-tab-new::after {
+      content: '';
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #ff4d4f;
+    }
+    .pos-tab-new.active::after { background: #fff; }
 
     .ctrl-right {
       margin-left: auto;
@@ -931,6 +1112,25 @@
       0%   { opacity: 1; max-height: 600px; margin-bottom: 10px; }
       45%  { opacity: 0; max-height: 600px; margin-bottom: 10px; }
       100% { opacity: 0; max-height: 0;   margin-bottom: 0; border-width: 0; padding: 0; }
+    }
+
+    /* 已下载 ribbon */
+    .ccard.ai-card-downloaded { overflow: hidden; }
+    .ccard.ai-card-downloaded::before {
+      content: '已下载';
+      position: absolute;
+      top: 14px; left: -20px;
+      width: 76px;
+      text-align: center;
+      background: #52c41a;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 20px;
+      transform: rotate(-45deg);
+      z-index: 10;
+      pointer-events: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
     /* Toast */
@@ -1704,6 +1904,7 @@
       margin-bottom: 10px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       overflow: hidden;
+      position: relative;
       transition: box-shadow 0.18s;
     }
 
@@ -2937,60 +3138,6 @@
   .dislike-submit:not(:disabled):hover { background: #e55a1e; }
   .creason-btn.dislike-open { border-color: #ff6b2b; color: #ff6b2b; }
 
-  /* ===== 场景切换按钮 ===== */
-  .scenario-switcher {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-  }
-  .scenario-btn {
-    padding: 4px 14px;
-    border-radius: 20px;
-    border: 1.5px solid #ff6b2b;
-    background: white;
-    color: #ff6b2b;
-    font-size: 12.5px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s, color 0.15s;
-    box-shadow: 0 1px 4px rgba(255,107,43,0.12);
-  }
-  .scenario-btn.active {
-    background: #ff6b2b;
-    color: white;
-  }
-  .scenario-btn:hover:not(.active) { background: #fff4ef; }
-
-  /* ===== AI推荐状态条 ===== */
-  #ai-status-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    border-radius: 4px;
-    padding: 9px 16px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    color: #444;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }
-  .ai-status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #52c41a;
-    flex-shrink: 0;
-  }
-  .ai-status-label {
-    color: #333;
-    font-weight: 500;
-  }
-  .ai-status-count {
-    color: #ff6b2b;
-    font-weight: 600;
-  }
-
   /* ===== 信息流底部文案 ===== */
   .feed-bottom-tip {
     text-align: center;
@@ -3006,27 +3153,153 @@
   }
   .feed-bottom-tip-link:hover { color: #e55a1e; }
 
-  /* ===== 兜底放宽分界线 ===== */
-  .home-fallback-sep {
+  /* ===== AI分析中状态页 ===== */
+  #ai-analyzing-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 20px 48px;
+  }
+  .aia-visual {
+    position: relative;
+    width: 200px; height: 200px;
+    margin-bottom: 32px;
+    flex-shrink: 0;
+  }
+  /* 同心圆脉冲环 */
+  .aia-ring {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(255,107,43,0.25);
+  }
+  .aia-ring-1 { width: 72px;  height: 72px;  animation: aia-pulse 2.4s ease-in-out infinite; }
+  .aia-ring-2 { width: 120px; height: 120px; animation: aia-pulse 2.4s ease-in-out infinite 0.6s; }
+  .aia-ring-3 { width: 170px; height: 170px; animation: aia-pulse 2.4s ease-in-out infinite 1.2s; }
+  @keyframes aia-pulse {
+    0%, 100% { border-color: rgba(255,107,43,0.35); transform: translate(-50%,-50%) scale(1); }
+    50%       { border-color: rgba(255,107,43,0.1);  transform: translate(-50%,-50%) scale(1.04); }
+  }
+  /* 雷达扫描射线 */
+  .aia-scan {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 85px; height: 2px;
+    transform-origin: 0 50%;
+    background: linear-gradient(to right, rgba(255,107,43,0.75), transparent);
+    animation: aia-scan-rot 3s linear infinite;
+    border-radius: 1px;
+  }
+  @keyframes aia-scan-rot {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  /* 中心发光圆 */
+  .aia-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b2b 0%, #ff8c5a 100%);
+    box-shadow: 0 0 22px rgba(255,107,43,0.55), 0 0 50px rgba(255,107,43,0.2);
+    display: flex; align-items: center; justify-content: center;
+    animation: aia-glow 2s ease-in-out infinite;
+  }
+  @keyframes aia-glow {
+    0%, 100% { box-shadow: 0 0 22px rgba(255,107,43,0.55), 0 0 50px rgba(255,107,43,0.2); }
+    50%       { box-shadow: 0 0 32px rgba(255,107,43,0.75), 0 0 70px rgba(255,107,43,0.3); }
+  }
+  .aia-center svg { opacity: 0.95; }
+  /* 轨道粒子 */
+  .aia-orbit {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .aia-orbit-1 { width: 72px;  height: 72px;  animation: aia-orbit-spin 3s linear infinite; }
+  .aia-orbit-2 { width: 120px; height: 120px; animation: aia-orbit-spin 5s linear infinite reverse; }
+  .aia-orbit-3 { width: 170px; height: 170px; animation: aia-orbit-spin 8s linear infinite; }
+  @keyframes aia-orbit-spin {
+    from { transform: translate(-50%,-50%) rotate(0deg); }
+    to   { transform: translate(-50%,-50%) rotate(360deg); }
+  }
+  .aia-particle {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #ff6b2b;
+    box-shadow: 0 0 6px rgba(255,107,43,0.9);
+  }
+  .aia-orbit-1 .aia-particle { width: 8px; height: 8px; }
+  .aia-orbit-2 .aia-particle { width: 6px; height: 6px; background: #ff9d6e; box-shadow: 0 0 5px rgba(255,157,110,0.8); }
+  .aia-orbit-3 .aia-particle { width: 5px; height: 5px; background: #ffbfa0; box-shadow: 0 0 4px rgba(255,191,160,0.7); }
+  /* 浮动标签 */
+  .aia-node {
+    position: absolute;
+    font-size: 10.5px; font-weight: 600;
+    color: #ff6b2b;
+    background: rgba(255,107,43,0.07);
+    border: 1px solid rgba(255,107,43,0.22);
+    border-radius: 4px;
+    padding: 2px 7px;
+    letter-spacing: 0.02em;
+    animation: aia-float 3.5s ease-in-out infinite;
+  }
+  .aia-node-1 { top: 12px;   left: 6px;  animation-delay: 0s; }
+  .aia-node-2 { top: 12px;   right: 6px; animation-delay: 0.9s; }
+  .aia-node-3 { bottom: 12px; left: 6px;  animation-delay: 1.8s; }
+  .aia-node-4 { bottom: 12px; right: 6px; animation-delay: 2.7s; }
+  @keyframes aia-float {
+    0%, 100% { transform: translateY(0);    opacity: 0.6; }
+    50%       { transform: translateY(-6px); opacity: 1; }
+  }
+  /* 文字 */
+  .aia-title {
+    font-size: 17px; font-weight: 600;
+    color: #ff6b2b;
+    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+  .aia-desc {
+    font-size: 13.5px; color: #666;
+    text-align: center;
+    line-height: 1.75;
+    margin-bottom: 28px;
+  }
+  .aia-desc strong { color: #ff6b2b; }
+  /* 步骤条 */
+  .aia-steps {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 6px 0 4px;
-    color: #aaa;
-    font-size: 12px;
+    gap: 0;
   }
-  .home-fallback-sep::before,
-  .home-fallback-sep::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #ebebeb;
+  .aia-step {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: #ccc;
+    padding: 0 12px;
+    position: relative;
   }
-  .home-fallback-sep-text {
-    white-space: nowrap;
-    padding: 0 4px;
-    letter-spacing: 0.01em;
+  .aia-step:not(:last-child)::after {
+    content: '›';
+    position: absolute; right: -3px;
+    color: #ddd; font-size: 14px;
   }
+  .aia-step.aia-done { color: #52c41a; }
+  .aia-step.aia-active { color: #ff6b2b; font-weight: 500; }
+  .aia-step-spinner {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border: 1.5px solid #ffe4d6;
+    border-top-color: #ff6b2b;
+    border-radius: 50%;
+    animation: aia-spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes aia-spin { to { transform: rotate(360deg); } }
 
   /* ===== JD更新提示栏 ===== */
   #jd-updated-notice {
@@ -3264,6 +3537,125 @@
     <!-- ===== PAGE: 首页 ===== -->
     <div id="page-home">
 
+      <!-- ===== HOME DASHBOARD ===== -->
+      <div class="home-dashboard">
+        <!-- 左侧：我的简历 + 我的日程 -->
+        <div class="dash-left">
+          <!-- 我的简历 -->
+          <div class="dash-sec-hd">
+            <span class="dash-sec-hd-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M5 4h14a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M9 12h6M9 16h4"/></svg></span>
+            我的简历
+          </div>
+          <div class="dash-resume-stats">
+            <div class="dash-stat">
+              <div class="dash-stat-label">应聘待筛选简历</div>
+              <div class="dash-stat-num">401</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-label">应聘的简历</div>
+              <div class="dash-stat-num">2144</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-label">推荐的简历</div>
+              <div class="dash-stat-num">699</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-label">下载的简历</div>
+              <div class="dash-stat-num">523</div>
+            </div>
+          </div>
+          <!-- 我的日程 -->
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="dash-schedule-hd">
+              <div class="dash-sec-hd" style="margin-bottom:0">
+                <span class="dash-sec-hd-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg></span>
+                我的日程
+              </div>
+              <span class="dash-more">更多</span>
+            </div>
+            <div class="dash-sched-tabs">
+              <span class="dash-sched-tab active">面试安排</span>
+              <span class="dash-sched-tab">自定义事件</span>
+            </div>
+            <div class="dash-sched-body">
+              <!-- 日历 -->
+              <div class="dash-cal">
+                <div class="dash-cal-nav">
+                  <span class="dash-cal-nav-btn">◀◀</span>
+                  <span class="dash-cal-nav-btn">◀</span>
+                  <span class="dash-cal-title">2026年6月</span>
+                  <span class="dash-cal-nav-btn">▶</span>
+                  <span class="dash-cal-nav-btn">▶▶</span>
+                </div>
+                <table class="dash-cal-grid">
+                  <thead>
+                    <tr><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span>1</span></td><td><span>2</span></td><td><span>3</span></td><td><span>4</span></td><td><span>5</span></td><td><span>6</span></td><td><span>7</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>8</span></td><td><span>9</span></td><td><span>10</span></td><td><span>11</span></td><td class="today"><span>12</span></td><td><span>13</span></td><td><span>14</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>15</span></td><td><span>16</span></td><td><span>17</span></td><td><span>18</span></td>
+                      <td><span>19</span><div class="dash-cal-dot"><i class="dot-green"></i></div></td>
+                      <td><span>20</span><div class="dash-cal-dot"><i class="dot-green"></i><i class="dot-blue"></i></div></td>
+                      <td><span>21</span><div class="dash-cal-dot"><i class="dot-blue"></i></div></td>
+                    </tr>
+                    <tr>
+                      <td><span>22</span></td><td><span>23</span></td><td><span>24</span></td><td><span>25</span></td><td><span>26</span></td><td><span>27</span></td><td><span>28</span></td>
+                    </tr>
+                    <tr>
+                      <td><span>29</span></td><td><span>30</span></td>
+                      <td class="other-m"><span>1</span></td><td class="other-m"><span>2</span></td><td class="other-m"><span>3</span></td><td class="other-m"><span>4</span></td><td class="other-m"><span>5</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- 空状态 -->
+              <div class="dash-sched-empty">
+                <svg width="80" height="68" viewBox="0 0 80 68" fill="none">
+                  <path d="M40 8 L72 24 L40 40 L8 24 Z" fill="#ffd8b8"/>
+                  <path d="M8 24 L8 52 L40 68 L40 40 Z" fill="#ffb98a"/>
+                  <path d="M72 24 L72 52 L40 68 L40 40 Z" fill="#ff9d6e"/>
+                  <path d="M28 16 L52 16" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle cx="68" cy="10" r="3" fill="#ff6b2b" opacity="0.4"/>
+                  <circle cx="12" cy="18" r="2" fill="#ffb98a" opacity="0.6"/>
+                  <path d="M60 4 L62 8 L66 8 L63 11 L64 15 L60 12 L56 15 L57 11 L54 8 L58 8 Z" fill="#ffd8b8" opacity="0.8"/>
+                </svg>
+                <div class="dash-empty-text">暂无面试日程</div>
+                <button class="dash-empty-btn">查看待面试</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 右侧：我的职位 -->
+        <div class="dash-right">
+          <div class="dash-pos-hd">
+            <div class="dash-sec-hd" style="margin-bottom:0">
+              <span class="dash-sec-hd-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+              我的职位
+            </div>
+            <span class="dash-publish-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+              发布职位
+            </span>
+          </div>
+          <div class="dash-pos-stats">
+            <div>
+              <div class="dash-pos-stat-label">在线职位</div>
+              <div class="dash-pos-stat-num">0</div>
+            </div>
+            <div>
+              <div class="dash-pos-stat-label">7天内即将下线</div>
+              <div class="dash-pos-stat-num">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ===== CONTROL BAR (no mode toggle — tabs below) ===== -->
       <div class="ctrl-bar">
         <!-- 职位筛选 Tab -->
@@ -3271,12 +3663,7 @@
           <div class="pos-tab active" onclick="selectPosTab(this,'测试工程师')">测试工程师</div>
           <div class="pos-tab" onclick="selectPosTab(this,'硬件工程师')">硬件工程师</div>
           <div class="pos-tab" onclick="selectPosTab(this,'质量工程师')">质量工程师</div>
-        </div>
-
-        <!-- 场景切换 -->
-        <div class="scenario-switcher">
-          <button class="scenario-btn active" id="scen-btn-1" onclick="switchScenario(1)">状态1：首次触发</button>
-          <button class="scenario-btn" id="scen-btn-2" onclick="switchScenario(2)">状态2：修改JD后</button>
+          <div class="pos-tab pos-tab-new" onclick="selectPosTab(this,'新发布职位xx')">新发布职位xx</div>
         </div>
 
       </div>
@@ -3303,10 +3690,33 @@
         <span class="jd-notice-time">刚刚</span>
       </div>
 
-      <!-- AI推荐状态条 -->
-      <div id="ai-status-bar">
-        <div class="ai-status-dot"></div>
-        <span class="ai-status-label">AI推荐已完成 · 共</span><span class="ai-status-count" id="ai-status-count">5</span><span class="ai-status-label">份推荐简历</span>
+
+      <!-- ===== AI分析中状态 ===== -->
+      <div id="ai-analyzing-state">
+        <div class="aia-visual">
+          <div class="aia-ring aia-ring-1"></div>
+          <div class="aia-ring aia-ring-2"></div>
+          <div class="aia-ring aia-ring-3"></div>
+          <div class="aia-scan"></div>
+          <div class="aia-orbit aia-orbit-1"><div class="aia-particle"></div></div>
+          <div class="aia-orbit aia-orbit-2"><div class="aia-particle"></div></div>
+          <div class="aia-orbit aia-orbit-3"><div class="aia-particle"></div></div>
+          <div class="aia-center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff">
+              <path d="M12 2.5C12 2.5 13.1 9.2 18.5 12C13.1 14.8 12 21.5 12 21.5C12 21.5 10.9 14.8 5.5 12C10.9 9.2 12 2.5 12 2.5Z"/>
+              <path d="M2.5 12C2.5 12 9.2 10.9 12 5.5C14.8 10.9 21.5 12 21.5 12C21.5 12 14.8 13.1 12 18.5C9.2 13.1 2.5 12 2.5 12Z"/>
+            </svg>
+          </div>
+          <div class="aia-node aia-node-1">JD解析</div>
+          <div class="aia-node aia-node-2">向量化</div>
+          <div class="aia-node aia-node-3">人才库</div>
+          <div class="aia-node aia-node-4">匹配中</div>
+        </div>
+        <div class="aia-title">AI正在全力分析中...</div>
+        <div class="aia-desc">
+          新职位发布成功！AI正在深度解析岗位JD并匹配人才库，<br>
+          预计需要 <strong>3</strong> 分钟。
+        </div>
       </div>
 
       <!-- ===== Candidate cards ===== -->
@@ -3553,11 +3963,6 @@
         </div>
       </div>
 
-      <!-- ===== 测试工程师 · 兜底放宽分界线 ===== -->
-      <div class="home-fallback-sep" data-pos="测试工程师">
-        <span class="home-fallback-sep-text">JD要求较为严格，以下为放宽条件后推荐简历</span>
-      </div>
-
       <!-- ===== 陈先生 | 测试工程师 fallback | 58分 ===== -->
       <div class="ccard" id="ccard-chen" data-type="fallback" data-pos="测试工程师">
         <div class="ccard-top" onclick="">
@@ -3648,11 +4053,6 @@
         </div>
       </div>
 
-      <!-- ===== 硬件工程师 · 兜底放宽分界线 ===== -->
-      <div class="home-fallback-sep" data-pos="硬件工程师">
-        <span class="home-fallback-sep-text">JD要求较为严格，以下为放宽条件后推荐简历</span>
-      </div>
-
       <!-- ===== 吴先生 | 硬件工程师 fallback | 62分 ===== -->
       <div class="ccard" id="ccard-wu" data-type="fallback" data-pos="硬件工程师">
         <div class="ccard-top" onclick="">
@@ -3696,11 +4096,6 @@
             <button class="cbtn-contact" onclick="viewContactAI('ccard-wu')">查看联系方式</button>
           </div>
         </div>
-      </div>
-
-      <!-- ===== 质量工程师 · 兜底放宽分界线 ===== -->
-      <div class="home-fallback-sep" data-pos="质量工程师">
-        <span class="home-fallback-sep-text">JD要求较为严格，以下为放宽条件后推荐简历</span>
       </div>
 
       <!-- ===== 郑先生 | 质量工程师 fallback | 56分 ===== -->
@@ -4187,7 +4582,7 @@
       <!-- status tabs + search -->
       <div class="ap-header">
         <div class="ap-tabs">
-          <span class="ap-tab" onclick="switchApTab(this,'待筛选')">待筛选 <span class="ap-tab-cnt">2</span></span>
+          <span class="ap-tab dl-tab-disabled">待筛选 <span class="ap-tab-cnt">2</span></span>
           <span class="ap-tab active" onclick="switchApTab(this,'沟通中')">沟通中 <span class="rec-tab-num">6</span></span>
           <span class="ap-tab dl-tab-disabled">已约面 <span class="rec-tab-num">3</span></span>
           <span class="ap-tab dl-tab-disabled">不合适 <span class="rec-tab-num">0</span></span>
@@ -4549,6 +4944,105 @@
     </div><!-- /page-downloaded -->
 
     </div><!-- /content-main -->
+
+    <!-- ===== RIGHT SIDEBAR ===== -->
+    <div class="content-side">
+      <!-- 公司选择 -->
+      <div class="rs-company">
+        <div class="rs-company-name">
+          北极星华文传媒有限公司...
+          <span class="rs-company-arrow">▼</span>
+        </div>
+        <button class="rs-select-account">选择账号</button>
+      </div>
+
+      <!-- 套餐信息 -->
+      <div class="rs-sub">
+        <div class="rs-sub-expire">2026 10.5 过期（剩余116天）</div>
+        <div class="rs-sub-stats">
+          <div class="rs-sub-stat">
+            <div class="rs-sub-stat-label">帖发布数</div>
+            <div class="rs-sub-stat-num">9814</div>
+          </div>
+          <div class="rs-sub-stat">
+            <div class="rs-sub-stat-label">总发布数</div>
+            <div class="rs-sub-stat-num">9898</div>
+          </div>
+          <div class="rs-sub-stat">
+            <div class="rs-sub-stat-label">简历下载数</div>
+            <div class="rs-sub-stat-num">1839</div>
+          </div>
+        </div>
+        <div class="rs-sub-footer">
+          <div class="rs-sub-nav">
+            <span class="rs-sub-nav-btn">◀</span>
+            <span>1 / 2</span>
+            <span class="rs-sub-nav-btn">▶</span>
+          </div>
+          <span class="rs-sub-rights">查看套餐全部权益</span>
+        </div>
+      </div>
+
+      <!-- 快捷操作 -->
+      <div class="rs-card">
+        <div class="rs-sec-title">
+          <svg class="rs-sec-icon" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          快捷操作
+        </div>
+        <div class="rs-actions-grid">
+          <div class="rs-action-item">
+            <div class="rs-action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5m-4-9h4m0 0v4m0-4L10 14"/></svg>
+            </div>
+            <span class="rs-action-label">发布公告</span>
+          </div>
+          <div class="rs-action-item">
+            <div class="rs-action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <span class="rs-action-label">集招招聘</span>
+          </div>
+          <div class="rs-action-item">
+            <div class="rs-action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+            </div>
+            <span class="rs-action-label">协同办公</span>
+          </div>
+          <div class="rs-action-item">
+            <div class="rs-action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <span class="rs-action-label">公司主页</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 招聘数据统计 -->
+      <div class="rs-card">
+        <div class="rs-sec-title">
+          <svg class="rs-sec-icon" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          招聘数据统计
+        </div>
+        <div class="rs-stats-grid">
+          <div><div class="rs-stat-label">今日总投递</div><div class="rs-stat-val">—</div></div>
+          <div><div class="rs-stat-label">今日总访量</div><div class="rs-stat-val">2</div></div>
+          <div><div class="rs-stat-label">今日总流量</div><div class="rs-stat-val">231</div></div>
+          <div><div class="rs-stat-label">今日无效数量</div><div class="rs-stat-val">134</div></div>
+          <div><div class="rs-stat-label">当时意率率</div><div class="rs-stat-val">76%</div></div>
+          <div><div class="rs-stat-label">当时处理率</div><div class="rs-stat-val">70%</div></div>
+          <div><div class="rs-stat-label">投递转化率</div><div class="rs-stat-val">0.0%</div></div>
+          <div><div class="rs-stat-label">简历常管理时</div><div class="rs-stat-val">1.1天</div></div>
+        </div>
+      </div>
+
+      <!-- RPO服务 -->
+      <div class="rs-rpo">
+        <div class="rs-rpo-title">北极星RPO服务中心</div>
+        <div class="rs-rpo-desc">专注于提供行业人才整体解决方案</div>
+        <button class="rs-rpo-btn">获取方案</button>
+      </div>
+    </div><!-- /content-side -->
+
   </div><!-- /content-wrap -->
 </div><!-- /body-wrapper -->
 
@@ -5169,25 +5663,48 @@
   }
 
 /* 职位 Tab */
+  var _analyzingTimer = null;
+
   function selectPosTab(el, pos) {
     document.querySelectorAll('#pos-tab-bar .pos-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
     closeAddCondInline();
     filterHomeCards(pos);
     renderCondBar(pos);
-    updateAiStatusCount(pos);
   }
 
-  function updateAiStatusCount(pos) {
-    var count = document.querySelectorAll('#ccard-list-wrap .ccard[data-pos="' + pos + '"]').length;
-    var el = document.getElementById('ai-status-count');
-    if (el) el.textContent = count;
+  function _showAnalyzingDone() {
+    var analyzingEl = document.getElementById('ai-analyzing-state');
+    var cardWrap    = document.getElementById('ccard-list-wrap');
+    if (analyzingEl) analyzingEl.style.display = 'none';
+    if (cardWrap) {
+      cardWrap.style.display = '';
+      cardWrap.classList.add('refreshed');
+      setTimeout(function() { cardWrap.classList.remove('refreshed'); }, 600);
+    }
+    document.querySelectorAll('#page-home .ccard').forEach(function(card) {
+      var t = card.dataset.type;
+      card.style.display = (t === 'ai' || t === 'both' || t === 'fallback') ? '' : 'none';
+    });
+    _analyzingTimer = null;
   }
 
   function filterHomeCards(pos) {
     if (pos === undefined) {
       var activeTab = document.querySelector('#pos-tab-bar .pos-tab.active');
       pos = activeTab ? activeTab.textContent.trim() : '全部职位';
+    }
+    if (_analyzingTimer) { clearTimeout(_analyzingTimer); _analyzingTimer = null; }
+    var analyzingEl = document.getElementById('ai-analyzing-state');
+    var cardWrap    = document.getElementById('ccard-list-wrap');
+    var condBar     = document.getElementById('jd-cond-bar');
+    var isNewPos = pos === '新发布职位xx';
+    if (analyzingEl) analyzingEl.style.display = isNewPos ? 'flex' : 'none';
+    if (cardWrap)    cardWrap.style.display    = isNewPos ? 'none' : '';
+    if (condBar)     condBar.style.display     = isNewPos ? 'none' : '';
+    if (isNewPos) {
+      _analyzingTimer = setTimeout(_showAnalyzingDone, 3000);
+      return;
     }
     document.querySelectorAll('#page-home .ccard').forEach(function(card) {
       var t = card.dataset.type;
@@ -5199,10 +5716,6 @@
         show = cardPos === pos;
       }
       card.style.display = show ? '' : 'none';
-    });
-    /* 同步分界线显隐 */
-    document.querySelectorAll('#page-home .home-fallback-sep').forEach(function(sep) {
-      sep.style.display = (pos !== '全部职位' && sep.dataset.pos === pos) ? '' : 'none';
     });
   }
 
@@ -5911,7 +6424,9 @@
     document.getElementById('rd-ai-action-bar').style.display = isAI ? 'flex' : 'none';
 
     /* 顶部面包屑 */
-    var displayName = isAI ? (d.name.charAt(0) + (d.gender === 'F' ? '女士' : '先生')) : d.name;
+    var aiCardEl = _rdAICardId ? document.getElementById(_rdAICardId) : null;
+    var alreadyDownloaded = aiCardEl && aiCardEl.classList.contains('ai-card-downloaded');
+    var displayName = (isAI && !alreadyDownloaded) ? (d.name.charAt(0) + (d.gender === 'F' ? '女士' : '先生')) : d.name;
     var statusLabel = apStatus || '沟通中';
     document.getElementById('rd-breadcrumb').innerHTML =
       crumbPage + ' <span class="rd-bc-status">' + statusLabel + '</span> | ' + displayName + ' | 简历编号: ' + d.code;
@@ -6261,11 +6776,35 @@
     var confirmedId = _aiContactCardId;
     if (confirmedId) {
       var card = document.getElementById(confirmedId);
+      /* 获取真实姓名 */
+      var rdKey = _ccard2rd[confirmedId];
+      var realName = (rdKey && rdData[rdKey]) ? rdData[rdKey].name : null;
       if (card) {
-        card.classList.add('vanishing');
-        card.addEventListener('animationend', function() {
-          card.style.display = 'none';
-        }, { once: true });
+        card.classList.add('ai-card-downloaded');
+        /* 更新卡片姓名 */
+        if (realName) {
+          var nameEl = card.querySelector('.ccard-name');
+          if (nameEl) nameEl.textContent = realName;
+        }
+        /* 替换按钮 */
+        var contactBtn = card.querySelector('.cbtn-contact');
+        if (contactBtn) {
+          var passBtn = document.createElement('button');
+          passBtn.className = 'cbtn-pass';
+          passBtn.textContent = '不合适';
+          passBtn.onclick = function() { card.classList.add('dismissed'); };
+          var chatBtn = document.createElement('button');
+          chatBtn.className = 'cbtn-chat';
+          chatBtn.textContent = '发起沟通';
+          contactBtn.parentNode.insertBefore(chatBtn, contactBtn);
+          contactBtn.parentNode.insertBefore(passBtn, contactBtn);
+          contactBtn.parentNode.removeChild(contactBtn);
+        }
+      }
+      /* 若简历详情页正在展示同一人，同步更新姓名 */
+      if (realName && _rdAICardId === confirmedId) {
+        var rdNameEl = document.getElementById('rd-name');
+        if (rdNameEl) rdNameEl.textContent = realName;
       }
       _aiContactCardId = null;
     }
