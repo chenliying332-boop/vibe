@@ -3323,7 +3323,7 @@
   }
   .rcard-ai-tags { display: flex; flex-wrap: wrap; gap: 5px; }
   .ai-pill-green { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; font-size: 11.5px; padding: 1px 8px; border-radius: 10px; }
-  .ai-pill-blue  { background: #e6f4ff; color: #1677ff; border: 1px solid #91caff; font-size: 11.5px; padding: 1px 8px; border-radius: 10px; }
+  .ai-pill-green  { background: #e6f4ff; color: #1677ff; border: 1px solid #91caff; font-size: 11.5px; padding: 1px 8px; border-radius: 10px; }
   .ai-pill-red   { background: #fff2f0; color: #cf1322; border: 1px solid #ffa39e; font-size: 11.5px; padding: 1px 8px; border-radius: 10px; }
 
   /* ===== AI 骨架屏 ===== */
@@ -3396,6 +3396,102 @@
     to   { opacity: 1; transform: scale(1); }
   }
   .hl-tag-anim { opacity: 0; animation: hlTagPop 0.18s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+  /* ===== 更多筛选 抽屉 ===== */
+  .mf-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+    z-index: 900; opacity: 0; pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .mf-overlay.show { opacity: 1; pointer-events: auto; }
+
+  .mf-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 340px; background: #fff;
+    z-index: 901; display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: -4px 0 20px rgba(0,0,0,0.12);
+  }
+  .mf-drawer.show { transform: translateX(0); }
+
+  .mf-hd {
+    display: flex; align-items: center;
+    padding: 0 16px;
+    height: 52px; flex-shrink: 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .mf-hd-icon { color: #ff6b2b; margin-right: 6px; display: flex; align-items: center; }
+  .mf-hd-title { font-size: 15px; font-weight: 600; color: #1a1a1a; flex: 1; }
+  .mf-hd-close {
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+    border: none; background: none; cursor: pointer; color: #999; font-size: 18px; border-radius: 4px;
+  }
+  .mf-hd-close:hover { background: #f5f5f5; color: #333; }
+
+  .mf-body { flex: 1; overflow-y: auto; padding: 16px 16px 0; }
+
+  .mf-section { margin-bottom: 20px; }
+  .mf-label {
+    font-size: 13px; color: #555; font-weight: 500;
+    margin-bottom: 8px; display: block;
+  }
+
+  .mf-select {
+    width: 100%; height: 34px;
+    border: 1px solid #e0e0e0; border-radius: 4px;
+    padding: 0 28px 0 10px; font-size: 13px; color: #333;
+    background: #fff url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    outline: none;
+  }
+  .mf-select:focus { border-color: #ff6b2b; }
+  .mf-select.placeholder { color: #bbb; }
+
+  .mf-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .mf-row .mf-select { flex: 1; }
+
+  .mf-input {
+    width: 100%; height: 34px;
+    border: 1px solid #e0e0e0; border-radius: 4px;
+    padding: 0 10px; font-size: 13px; color: #333;
+    outline: none; font-family: inherit;
+  }
+  .mf-input:focus { border-color: #ff6b2b; }
+  .mf-input.active { border-color: #ff6b2b; }
+
+  .mf-date-row { display: flex; align-items: center; gap: 8px; }
+  .mf-date-input {
+    flex: 1; height: 34px;
+    border: 1px solid #e0e0e0; border-radius: 4px;
+    padding: 0 10px; font-size: 13px; color: #bbb;
+    outline: none; font-family: inherit;
+  }
+  .mf-date-input:focus { border-color: #ff6b2b; color: #333; }
+  .mf-date-sep { font-size: 13px; color: #aaa; flex-shrink: 0; }
+
+  .mf-ft {
+    display: flex; align-items: center;
+    padding: 12px 16px 16px; flex-shrink: 0;
+    border-top: 1px solid #f0f0f0;
+    gap: 8px;
+  }
+  .mf-clear {
+    font-size: 13px; color: #999; background: none; border: none;
+    cursor: pointer; padding: 0; white-space: nowrap;
+  }
+  .mf-clear:hover { color: #ff6b2b; }
+  .mf-ft-right { margin-left: auto; display: flex; gap: 8px; }
+  .mf-cancel {
+    height: 34px; padding: 0 20px; border: 1px solid #d9d9d9; border-radius: 4px;
+    background: #fff; color: #555; font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .mf-cancel:hover { border-color: #999; }
+  .mf-search {
+    height: 34px; padding: 0 24px; border: none; border-radius: 4px;
+    background: #ff6b2b; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+  .mf-search:hover { background: #e55a1e; }
   </style>
 </head>
 <body>
@@ -3887,7 +3983,7 @@
       <!-- status tabs + search bar -->
       <div class="ap-header">
         <div class="ap-tabs">
-          <span class="ap-tab active" onclick="switchApTab(this,'待筛选')">待筛选 <span class="ap-tab-cnt">2</span></span>
+          <span class="ap-tab active" onclick="switchApTab(this,'待筛选')">待筛选 <span class="ap-tab-cnt">6</span></span>
           <span class="ap-tab" onclick="switchApTab(this,'沟通中')">沟通中 <span class="ap-tab-cnt" id="ap-comm-cnt">2</span></span>
           <span class="ap-tab" onclick="switchApTab(this,'已约面')">已约面 <span class="ap-tab-cnt">1</span></span>
           <span class="ap-tab" onclick="switchApTab(this,'不合适')">不合适 <span class="ap-tab-cnt">1</span></span>
@@ -3927,7 +4023,7 @@
           <ul class="ap-sort-dropdown" id="ap-sort-dropdown">
             <li class="ap-sort-opt selected" onclick="selectSort(this,'时间排序')">时间排序</li>
             <li class="ap-sort-opt" onclick="selectSort(this,'匹配度排序')">匹配度排序</li>
-            <li class="ap-sort-opt sort-disabled" id="ap-sort-ai-match">AI匹配度排序<span class="ap-sort-tip">请先选择具体职位</span></li>
+            <li class="ap-sort-opt sort-disabled" id="ap-sort-ai-match">AI匹配度排序<span class="ap-sort-tip">请先选择具体职位（仅限招聘中职位）</span></li>
           </ul>
         </div>
         <span class="ap-ai-sort-tag">✦ AI推荐优先</span>
@@ -3997,7 +4093,7 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 查看联系方式
               </button>
-              <button class="rcard-btn-chat" onclick="event.stopPropagation();moveToComm(this,'陈志远')">
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 发起沟通
               </button>
@@ -4016,7 +4112,7 @@
             <div class="rcard-ai-tags">
               <span class="ai-pill-green">值长经验</span>
               <span class="ai-pill-green">13年+</span>
-              <span class="ai-pill-blue">本地求职</span>
+              <span class="ai-pill-green">本地求职</span>
               <span class="ai-pill-red">未见特种作业证</span>
             </div>
           </div>
@@ -4061,7 +4157,7 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 查看联系方式
               </button>
-              <button class="rcard-btn-chat" onclick="event.stopPropagation();moveToComm(this,'李明辉')">
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 发起沟通
               </button>
@@ -4079,6 +4175,255 @@
                 <div class="rcard-skel-bar skel-w50"></div>
               </div>
               <span class="rcard-ai-analyzing">分析中…</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 3 — 值长-上海 -->
+        <div class="rcard ccard" data-apstatus="待筛选" data-appos="xin" data-ai-score="85">
+          <div class="rcard-hd">
+            <label class="rcard-chk"><input type="checkbox"></label>
+            <span class="rcard-pos">应聘职位：<a class="rcard-pos-link">值长-上海</a></span>
+            <span class="rcard-time">投递时间：2026-01-06 09:12</span>
+          </div>
+          <div class="rcard-body" onclick="openRD('zhang_jg','应聘的简历',false,this.closest('.ccard').dataset.apstatus)" style="cursor:pointer;">
+            <div class="rcard-avatar-wrap" style="background:#e8e8e8;display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="rcard-info">
+              <div class="rcard-nameline">
+                <span class="rcard-name">张建国</span>
+                <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="rcard-meta">
+                <span>本科</span><span class="rcard-sep">|</span><span>15年以上</span><span class="rcard-sep">|</span><span>上海</span><span class="rcard-sep">|</span><span>42岁</span><span class="rcard-sep">|</span><span class="rcard-status-tag">有工作，看机会</span>
+              </div>
+            </div>
+            <div class="rcard-history">
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span class="rh-date">2010.03-至今（15年3个月）</span>
+                <span class="rh-co">华能上海电力 · 值长</span>
+              </div>
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+                <span class="rh-date">2006.09-2010.06</span>
+                <span class="rh-co">上海电力大学 · 热能与动力工程 · 本科</span>
+              </div>
+            </div>
+          </div>
+          <div class="rcard-ft">
+            <div class="rcard-btns">
+              <button class="rcard-btn-contact" onclick="event.stopPropagation();moveToComm(this,'张建国')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                查看联系方式
+              </button>
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                发起沟通
+              </button>
+              <button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                不合适
+              </button>
+            </div>
+          </div>
+          <div class="rcard-ai-hl">
+            <div class="rcard-ai-hl-top">
+              <span class="rcard-ai-badge">★ AI 亮点</span>
+              <span class="rcard-ai-text">本地15年值长经验，热能专业背景，持特种作业证，与职位高度匹配。</span>
+            </div>
+            <div class="rcard-ai-tags">
+              <span class="ai-pill-green">值长经验</span>
+              <span class="ai-pill-green">15年+</span>
+              <span class="ai-pill-green">本地求职</span>
+              <span class="ai-pill-green">持证上岗</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 4 — 值长-上海 -->
+        <div class="rcard ccard" data-apstatus="待筛选" data-appos="xin" data-ai-score="74">
+          <div class="rcard-hd">
+            <label class="rcard-chk"><input type="checkbox"></label>
+            <span class="rcard-pos">应聘职位：<a class="rcard-pos-link">值长-上海</a></span>
+            <span class="rcard-time">投递时间：2026-01-07 16:35</span>
+          </div>
+          <div class="rcard-body" onclick="openRD('wang_hb','应聘的简历',false,this.closest('.ccard').dataset.apstatus)" style="cursor:pointer;">
+            <div class="rcard-avatar-wrap" style="background:#e8e8e8;display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="rcard-info">
+              <div class="rcard-nameline">
+                <span class="rcard-name">王海波</span>
+              </div>
+              <div class="rcard-meta">
+                <span>本科</span><span class="rcard-sep">|</span><span>12年</span><span class="rcard-sep">|</span><span>苏州</span><span class="rcard-sep">|</span><span>38岁</span><span class="rcard-sep">|</span><span class="rcard-status-tag">有工作，看机会</span>
+              </div>
+            </div>
+            <div class="rcard-history">
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span class="rh-date">2014.06-至今（12年）</span>
+                <span class="rh-co">大唐苏州热电 · 副值长</span>
+              </div>
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+                <span class="rh-date">2010.09-2014.06</span>
+                <span class="rh-co">苏州大学 · 电气工程及自动化 · 本科</span>
+              </div>
+            </div>
+          </div>
+          <div class="rcard-ft">
+            <div class="rcard-btns">
+              <button class="rcard-btn-contact" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                查看联系方式
+              </button>
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                发起沟通
+              </button>
+              <button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                不合适
+              </button>
+            </div>
+          </div>
+          <div class="rcard-ai-hl">
+            <div class="rcard-ai-hl-top">
+              <span class="rcard-ai-badge">★ AI 亮点</span>
+              <span class="rcard-ai-text">12年副值长经验，有晋升空间，异地求职需关注意愿。</span>
+            </div>
+            <div class="rcard-ai-tags">
+              <span class="ai-pill-green">副值长</span>
+              <span class="ai-pill-green">12年</span>
+              <span class="ai-pill-red">异地求职</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 5 — 测试工程师-上海 -->
+        <div class="rcard ccard" data-apstatus="待筛选" data-appos="test" data-ai-score="88">
+          <div class="rcard-hd">
+            <label class="rcard-chk"><input type="checkbox"></label>
+            <span class="rcard-pos">应聘职位：<a class="rcard-pos-link">测试工程师-上海</a></span>
+            <span class="rcard-time">投递时间：2026-01-05 11:08</span>
+          </div>
+          <div class="rcard-body" onclick="openRD('zhao_yx','应聘的简历',false,this.closest('.ccard').dataset.apstatus)" style="cursor:pointer;">
+            <div class="rcard-avatar-wrap" style="background:#e8e8e8;display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="rcard-info">
+              <div class="rcard-nameline">
+                <span class="rcard-name">赵雨欣</span>
+                <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="rcard-meta">
+                <span>本科</span><span class="rcard-sep">|</span><span>3年</span><span class="rcard-sep">|</span><span>上海</span><span class="rcard-sep">|</span><span>27岁</span><span class="rcard-sep">|</span><span class="rcard-status-tag">我正在找工作</span>
+              </div>
+            </div>
+            <div class="rcard-history">
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span class="rh-date">2023.03-至今（2年3个月）</span>
+                <span class="rh-co">上海斯堪尼亚汽车 · 软件测试工程师</span>
+              </div>
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+                <span class="rh-date">2019.09-2023.06</span>
+                <span class="rh-co">同济大学 · 计算机科学与技术 · 本科</span>
+              </div>
+            </div>
+          </div>
+          <div class="rcard-ft">
+            <div class="rcard-btns">
+              <button class="rcard-btn-contact" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                查看联系方式
+              </button>
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                发起沟通
+              </button>
+              <button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                不合适
+              </button>
+            </div>
+          </div>
+          <div class="rcard-ai-hl">
+            <div class="rcard-ai-hl-top">
+              <span class="rcard-ai-badge">★ AI 亮点</span>
+              <span class="rcard-ai-text">同济本科，本地求职，有软件测试项目实践，与测试工程师岗位匹配度高。</span>
+            </div>
+            <div class="rcard-ai-tags">
+              <span class="ai-pill-green">本地求职</span>
+              <span class="ai-pill-green">985院校</span>
+              <span class="ai-pill-green">软件测试</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 6 — 测试工程师-上海 -->
+        <div class="rcard ccard" data-apstatus="待筛选" data-appos="test" data-ai-score="81">
+          <div class="rcard-hd">
+            <label class="rcard-chk"><input type="checkbox"></label>
+            <span class="rcard-pos">应聘职位：<a class="rcard-pos-link">测试工程师-上海</a></span>
+            <span class="rcard-time">投递时间：2026-01-05 08:47</span>
+          </div>
+          <div class="rcard-body" onclick="openRD('liu_zh','应聘的简历',false,this.closest('.ccard').dataset.apstatus)" style="cursor:pointer;">
+            <div class="rcard-avatar-wrap" style="background:#e8e8e8;display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="rcard-info">
+              <div class="rcard-nameline">
+                <span class="rcard-name">刘志豪</span>
+                <span class="verified-badge"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+              <div class="rcard-meta">
+                <span>硕士</span><span class="rcard-sep">|</span><span>7年</span><span class="rcard-sep">|</span><span>上海</span><span class="rcard-sep">|</span><span>31岁</span><span class="rcard-sep">|</span><span class="rcard-status-tag">有工作，看机会</span>
+              </div>
+            </div>
+            <div class="rcard-history">
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span class="rh-date">2019.07-至今（6年11个月）</span>
+                <span class="rh-co">上海汽车集团 · 自动化测试工程师</span>
+              </div>
+              <div class="rcard-hist-row">
+                <span class="rh-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+                <span class="rh-date">2016.09-2019.06</span>
+                <span class="rh-co">复旦大学 · 软件工程 · 硕士</span>
+              </div>
+            </div>
+          </div>
+          <div class="rcard-ft">
+            <div class="rcard-btns">
+              <button class="rcard-btn-contact" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                查看联系方式
+              </button>
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                发起沟通
+              </button>
+              <button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                不合适
+              </button>
+            </div>
+          </div>
+          <div class="rcard-ai-hl">
+            <div class="rcard-ai-hl-top">
+              <span class="rcard-ai-badge">★ AI 亮点</span>
+              <span class="rcard-ai-text">复旦硕士，7年自动化测试经验，技术栈与岗位要求高度吻合。</span>
+            </div>
+            <div class="rcard-ai-tags">
+              <span class="ai-pill-green">985院校</span>
+              <span class="ai-pill-green">自动化测试</span>
+              <span class="ai-pill-green">7年</span>
+              <span class="ai-pill-green">本地求职</span>
             </div>
           </div>
         </div>
@@ -4124,11 +4469,11 @@
           </div>
           <div class="rcard-ft">
             <div class="rcard-btns">
-              <button class="rcard-btn-contact" onclick="event.stopPropagation();moveToComm(this,'王先生')">
+              <button class="rcard-btn-contact" onclick="event.stopPropagation();">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 查看联系方式
               </button>
-              <button class="rcard-btn-chat" onclick="event.stopPropagation();moveToComm(this,'王先生')">
+              <button class="rcard-btn-chat" onclick="event.stopPropagation();">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 发起沟通
               </button>
@@ -4136,18 +4481,6 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                 不合适
               </button>
-            </div>
-          </div>
-          <!-- AI 亮点区 -->
-          <div class="rcard-ai-hl">
-            <div class="rcard-ai-hl-top">
-              <span class="rcard-ai-badge">★ AI 亮点</span>
-              <span class="rcard-ai-text">博士学历，10年以上行业经验，天津本地求职，与值长职位存在一定匹配度。</span>
-            </div>
-            <div class="rcard-ai-tags">
-              <span class="ai-pill-green">博士学历</span>
-              <span class="ai-pill-blue">本地求职</span>
-              <span class="ai-pill-red">经历待核实</span>
             </div>
           </div>
         </div>
@@ -4197,7 +4530,7 @@
           </div>
           <div class="rcard-ft">
             <div class="rcard-btns">
-              <button class="rcard-btn-undo" onclick="event.stopPropagation();">
+              <button class="rcard-btn-undo" onclick="event.stopPropagation();undoUnsuitableAp(this)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
                 撤销不合适
               </button>
@@ -4257,7 +4590,7 @@
             </div>
             <div class="rcard-ai-tags">
               <span class="ai-pill-green">本地求职</span>
-              <span class="ai-pill-blue">年龄优势</span>
+              <span class="ai-pill-green">年龄优势</span>
               <span class="ai-pill-red">学历偏低</span>
             </div>
           </div>
@@ -4322,7 +4655,7 @@
             <div class="rcard-ai-tags">
               <span class="ai-pill-green">值长经验</span>
               <span class="ai-pill-green">12年+</span>
-              <span class="ai-pill-blue">本地求职</span>
+              <span class="ai-pill-green">本地求职</span>
               <span class="ai-pill-green">国企背景</span>
             </div>
           </div>
@@ -4387,7 +4720,7 @@
             <div class="rcard-ai-tags">
               <span class="ai-pill-green">岗位直接对口</span>
               <span class="ai-pill-green">4年+</span>
-              <span class="ai-pill-blue">本地求职</span>
+              <span class="ai-pill-green">本地求职</span>
             </div>
           </div>
         </div>
@@ -5953,7 +6286,7 @@
       ],
       hlText:'热力行业13年+，现任值长，管理经验丰富，与信长职位高度匹配。',
       aiSummary:'候选人清华大学本科，13年数据中心值长经验，配电系统运维深度不可替代，正积极求职，今日活跃，是优先级极高的候选人。',
-      aiGrid:{posMatch:'值长、运维工程师',edu:'本科（清华大学）',company:'数据中心',skills:'配电巡检、故障处理、应急响应',industry:'数据中心',years:'13年以上',risk:null},
+      aiGrid:{posMatch:'值长、运维工程师',edu:'本科（清华大学）',company:'数据中心',skills:'配电巡检、故障处理、应急响应',industry:'数据中心',years:'13年以上',risk:'未见特种作业证'},
       dims:[{label:'专业匹配',val:90,lv:'lv-high'},{label:'工作经验',val:95,lv:'lv-high'},{label:'学历背景',val:92,lv:'lv-high'},{label:'求职活跃度',val:88,lv:'lv-def'}],
       highlights:['清华大学本科学历，顶级院校背景显著增强候选人信任度','13年值长经验，数据中心运维深度不可替代','正在积极求职，今日活跃，可快速响应面试邀约','专业背景与岗位高度契合，建议作为优先候选人联系']
     },
@@ -6228,6 +6561,90 @@
       aiGrid:{posMatch:'运维工程师、DevOps工程师',edu:'本科（北京工业大学）',company:'中国航天科工集团、联想',skills:'Linux运维、Docker、K8s、CI/CD',industry:'互联网/信息化',years:'5年',risk:null},
       dims:[{label:'专业匹配',val:82,lv:'lv-def'},{label:'工作经验',val:78,lv:'lv-mid'},{label:'学历背景',val:80,lv:'lv-def'},{label:'求职活跃度',val:88,lv:'lv-high'}],
       highlights:['航天科工+联想双重企业背景，经历可信','Docker/K8s/Linux云原生技术栈完整','5年运维经验，容器化迁移与CI/CD实战能力强','今日活跃，正积极求职，响应速度快']
+    },
+    zhang_jg: {
+      name:'张建国', ch:'张', color:'#2c7a4b', gender:'M',
+      phone:'139****2233', email:'zhang***@qq.com', code:'E1F82A3B4C5D9012',
+      meta:['42岁','15年以上','本科'],
+      loc:'有工作，看机会 · 现居地：上海',
+      time:'简历刷新时间：3天前 · 人才活跃时间：本周活跃',
+      intention:{titles:'值长 | 热工仪表工程师', salary:'1.5万-2.5万', tags:['热能动力','上海','值长']},
+      exp:[{co:'华能上海电力有限公司', period:'2010.03-至今（15年3个月）', role:'值长 | 热能与动力', desc:'带领8人班组负责电厂生产运行全面管理，包括机组启停操作、设备巡检、故障应急处理，持特种作业操作证。'}],
+      edu:[{school:'上海电力大学', period:'2006.09-2010.06', major:'热能与动力工程 | 本科'}],
+      score:85, pos:'值长',
+      cloud:[
+        {t:'热能动力',s:'xl',c:'#1a2a5e'},{t:'华能电力',s:'lg',c:'#2c4a8a'},{t:'15年经验',s:'lg',c:'#1a2a5e'},
+        {t:'值长',s:'md',c:'#4a6fa5'},{t:'班组管理',s:'md',c:'#6b8fc7'},{t:'本科',s:'sm',c:'#8faed5'},
+        {t:'机组启停',s:'sm',c:'#8faed5'},{t:'特种作业证',s:'sm',c:'#aabfdb'},{t:'本地求职',s:'xs',c:'#aaa'},{t:'本周活跃',s:'xs',c:'#c5d1e2'}
+      ],
+      hlText:'本地15年值长经验，热能专业背景，持特种作业证，与职位高度匹配。',
+      aiSummary:'候选人上海电力大学热能专业本科，在华能上海电力任值长15年，持特种作业操作证，本地求职，综合匹配度高，建议优先跟进。',
+      aiGrid:{posMatch:'值长、热工仪表工程师',edu:'本科（上海电力大学）',company:'华能上海电力',skills:'机组启停、班组管理、设备巡检',industry:'热能电力',years:'15年以上',risk:null},
+      dims:[{label:'专业匹配',val:92,lv:'lv-high'},{label:'工作经验',val:95,lv:'lv-high'},{label:'学历背景',val:80,lv:'lv-def'},{label:'求职活跃度',val:70,lv:'lv-mid'}],
+      highlights:['华能上海电力15年值长经验，行业深度不可替代','热能与动力工程专业，背景精准对口','持特种作业操作证，可直接上岗','上海本地求职，无异地成本']
+    },
+    wang_hb: {
+      name:'王海波', ch:'王', color:'#7c5cbf', gender:'M',
+      phone:'137****8899', email:'wang***@163.com', code:'F2A93B4C5D6E0123',
+      meta:['38岁','12年','本科'],
+      loc:'有工作，看机会 · 现居地：苏州',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'值长 | 运行工程师', salary:'1.2万-2万', tags:['电力运行','上海','苏州']},
+      exp:[{co:'大唐苏州热电有限责任公司', period:'2014.06-至今（12年）', role:'副值长 | 热电运行', desc:'协助值长统筹生产运行，独立处理机组异常事件，参与班组管理及新员工培训，具备值长晋升条件。'}],
+      edu:[{school:'苏州大学', period:'2010.09-2014.06', major:'电气工程及自动化 | 本科'}],
+      score:74, pos:'值长',
+      cloud:[
+        {t:'电力运行',s:'xl',c:'#1a2a5e'},{t:'大唐热电',s:'lg',c:'#2c4a8a'},{t:'12年经验',s:'lg',c:'#4a6fa5'},
+        {t:'副值长',s:'md',c:'#6b8fc7'},{t:'班组管理',s:'md',c:'#8faed5'},{t:'本科',s:'sm',c:'#8faed5'},
+        {t:'机组异常处理',s:'sm',c:'#aabfdb'},{t:'今日活跃',s:'xs',c:'#aaa'},{t:'异地求职',s:'xs',c:'#ffa39e'}
+      ],
+      hlText:'12年副值长经验，有晋升空间，异地求职需关注意愿。',
+      aiSummary:'候选人苏州大学电气工程本科，大唐苏州热电副值长12年，具备晋升值长条件，今日活跃，但为异地求职，建议面试时确认到岗意愿。',
+      aiGrid:{posMatch:'值长、运行工程师',edu:'本科（苏州大学）',company:'大唐苏州热电',skills:'机组运行、异常处理、班组管理',industry:'热电行业',years:'12年',risk:'异地求职，到岗意愿待确认'},
+      dims:[{label:'专业匹配',val:80,lv:'lv-def'},{label:'工作经验',val:82,lv:'lv-def'},{label:'学历背景',val:75,lv:'lv-mid'},{label:'求职活跃度',val:85,lv:'lv-def'}],
+      highlights:['大唐热电副值长12年，具备晋升值长的直接经验积累','今日活跃，求职意向积极','电气工程本科，专业背景与岗位匹配','异地求职（苏州→上海），建议面试确认到岗意愿及搬迁计划']
+    },
+    zhao_yx: {
+      name:'赵雨欣', ch:'赵', color:'#e05a8a', gender:'F',
+      phone:'135****6677', email:'zhao***@gmail.com', code:'A3B04C5D6E7F1234',
+      meta:['27岁','3年','本科'],
+      loc:'我正在找工作 · 现居地：上海',
+      time:'简历刷新时间：今天 · 人才活跃时间：今天',
+      intention:{titles:'软件测试工程师 | 测试开发', salary:'1万-1.5万', tags:['软件测试','上海']},
+      exp:[{co:'上海斯堪尼亚汽车服务有限公司', period:'2023.03-至今（2年3个月）', role:'软件测试工程师', desc:'负责车联网平台功能测试及回归测试，编写测试用例，使用Jira进行缺陷管理，参与自动化测试框架搭建。'}],
+      edu:[{school:'同济大学', period:'2019.09-2023.06', major:'计算机科学与技术 | 本科'}],
+      score:88, pos:'测试工程师',
+      cloud:[
+        {t:'软件测试',s:'xl',c:'#1a2a5e'},{t:'同济大学',s:'lg',c:'#2c4a8a'},{t:'车联网',s:'lg',c:'#4a6fa5'},
+        {t:'3年经验',s:'md',c:'#6b8fc7'},{t:'自动化测试',s:'md',c:'#8faed5'},{t:'本科',s:'sm',c:'#8faed5'},
+        {t:'Jira',s:'sm',c:'#aabfdb'},{t:'测试用例',s:'sm',c:'#c5d1e2'},{t:'本地求职',s:'xs',c:'#aaa'},{t:'今日活跃',s:'xs',c:'#c5d1e2'}
+      ],
+      hlText:'同济本科，本地求职，有软件测试项目实践，与测试工程师岗位匹配度高。',
+      aiSummary:'候选人同济大学计算机科学本科，在上海斯堪尼亚从事软件测试2年+，车联网领域测试经验扎实，本地求职，今日活跃，建议优先面试。',
+      aiGrid:{posMatch:'软件测试工程师、测试开发',edu:'本科（同济大学）',company:'上海斯堪尼亚',skills:'功能测试、回归测试、自动化框架',industry:'汽车/互联网',years:'3年',risk:null},
+      dims:[{label:'专业匹配',val:85,lv:'lv-def'},{label:'工作经验',val:75,lv:'lv-mid'},{label:'学历背景',val:90,lv:'lv-high'},{label:'求职活跃度',val:92,lv:'lv-high'}],
+      highlights:['同济大学计算机科学本科，985院校背景','车联网软件测试经验，与岗位直接对口','掌握自动化测试框架，技术栈持续提升','上海本地求职，今日活跃，响应速度快']
+    },
+    liu_zh: {
+      name:'刘志豪', ch:'刘', color:'#3b8ec9', gender:'M',
+      phone:'138****4455', email:'liu***@sina.com', code:'B4C15D6E7F8A2345',
+      meta:['31岁','7年','硕士'],
+      loc:'有工作，看机会 · 现居地：上海',
+      time:'简历刷新时间：昨天 · 人才活跃时间：昨天',
+      intention:{titles:'自动化测试工程师 | 测试开发', salary:'1.5万-2万', tags:['自动化测试','上海']},
+      exp:[{co:'上海汽车集团股份有限公司', period:'2019.07-至今（6年11个月）', role:'自动化测试工程师', desc:'负责整车控制器软件自动化测试，搭建HIL测试平台，编写Python/CAPL测试脚本，覆盖率提升至90%+。'}],
+      edu:[{school:'复旦大学', period:'2016.09-2019.06', major:'软件工程 | 硕士'}],
+      score:81, pos:'测试工程师',
+      cloud:[
+        {t:'自动化测试',s:'xl',c:'#1a2a5e'},{t:'复旦大学',s:'lg',c:'#2c4a8a'},{t:'上汽集团',s:'lg',c:'#4a6fa5'},
+        {t:'7年经验',s:'md',c:'#6b8fc7'},{t:'HIL测试',s:'md',c:'#8faed5'},{t:'硕士',s:'sm',c:'#8faed5'},
+        {t:'Python',s:'sm',c:'#aabfdb'},{t:'CAPL',s:'sm',c:'#c5d1e2'},{t:'本地求职',s:'xs',c:'#aaa'},{t:'昨日活跃',s:'xs',c:'#c5d1e2'}
+      ],
+      hlText:'复旦硕士，7年自动化测试经验，技术栈与岗位要求高度吻合。',
+      aiSummary:'候选人复旦大学软件工程硕士，上汽集团7年自动化测试经验，HIL测试平台搭建能力突出，本地求职，技术深度与岗位高度吻合，建议优先联系。',
+      aiGrid:{posMatch:'自动化测试工程师、测试开发',edu:'硕士（复旦大学）',company:'上海汽车集团',skills:'HIL测试、Python/CAPL脚本、覆盖率分析',industry:'汽车/软件',years:'7年',risk:null},
+      dims:[{label:'专业匹配',val:88,lv:'lv-def'},{label:'工作经验',val:85,lv:'lv-def'},{label:'学历背景',val:92,lv:'lv-high'},{label:'求职活跃度',val:78,lv:'lv-mid'}],
+      highlights:['复旦大学软件工程硕士，顶级院校背景','上汽集团7年自动化测试一线经验，业务深度扎实','HIL测试平台搭建+Python/CAPL双语言能力','上海本地求职，昨日活跃，可快速响应']
     }
   };
 
@@ -6417,9 +6834,9 @@
       skelDiv.style.display = 'none';
     }
 
-    /* 不合适状态：隐藏 AI 评估面板 */
+    /* 不合适/已过滤状态：隐藏 AI 评估面板 */
     var aiBlock = document.getElementById('rd-ai-block');
-    if (aiBlock) aiBlock.style.display = (apStatus === '不合适') ? 'none' : '';
+    if (aiBlock) aiBlock.style.display = (apStatus === '不合适' || apStatus === '已过滤') ? 'none' : '';
 
     /* 经历概览（右侧）*/
     document.getElementById('rd-overview-exp').innerHTML = d.exp.map(function(e){
@@ -6582,6 +6999,10 @@
           '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
           '面试TA' +
         '</button>' +
+        '<button class="rcard-btn-chat" onclick="event.stopPropagation();">' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+          '发起沟通' +
+        '</button>' +
         '<button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">' +
           '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
           '不合适' +
@@ -6600,40 +7021,16 @@
     if (commCnt) {
       var cur = parseInt(commCnt.textContent) || 0;
       commCnt.textContent = cur + 1;
-      commCnt.style.display = '';
     }
 
-    /* 切换到沟通中 tab */
-    var allTabs = document.querySelectorAll('#page-applied .ap-tab');
-    var commTab = null;
-    allTabs.forEach(function(t) {
-      t.classList.remove('active');
-      if (t.textContent.trim().startsWith('沟通中')) commTab = t;
-    });
-    if (commTab) commTab.classList.add('active');
-
-    /* 过滤：只显示沟通中的卡片 */
-    document.querySelectorAll('#page-applied .ap-list .ccard').forEach(function(c) {
-      c.style.display = (c.dataset.apstatus === '沟通中') ? '' : 'none';
-    });
-
-    /* 沟通中无 AI帮筛：隐藏悬浮球，若已开启则关闭 */
-    var fab = document.getElementById('ap-ai-fab');
-    if (fab) fab.style.display = 'none';
-    if (apAiActive) {
-      apAiActive = false;
-      var circle  = document.getElementById('ap-ai-circle');
-      var vt      = document.getElementById('ap-ai-vt');
-      var tooltip = document.getElementById('ap-ai-tooltip');
-      if (fab)     fab.classList.remove('fab-open');
-      if (circle)  { circle.className = 'ai-fab-circle circle-default'; circle.textContent = '✦'; }
-      if (vt)      { vt.className = 'ai-fab-vt vt-orange'; vt.textContent = 'AI帮筛'; }
-      if (tooltip) tooltip.textContent = '点击开启 AI帮筛';
-      document.querySelector('#page-applied .ap-filter-bar').classList.remove('ai-locked');
-      var sb = document.getElementById('ap-ai-statusbar');
-      if (sb) sb.classList.remove('show');
-      clearApAiCards();
-    }
+    /* 卡片淡出后隐藏（留在当前 tab，420ms 后消失；清除 opacity/transition 使其在沟通中 tab 可正常显示） */
+    card.style.transition = 'opacity 0.4s';
+    card.style.opacity = '0';
+    setTimeout(function() {
+      card.style.transition = '';
+      card.style.opacity = '';
+      card.style.display = 'none';
+    }, 420);
 
     /* Toast */
     var toast = document.getElementById('ai-toast');
@@ -7048,7 +7445,7 @@
       '<div class="rcard-ai-tags">' +
         '<span class="ai-pill-green">岗位直接对口</span>' +
         '<span class="ai-pill-green">4年+</span>' +
-        '<span class="ai-pill-blue">本地求职</span>' +
+        '<span class="ai-pill-green">本地求职</span>' +
       '</div>';
     /* D3: 标签依次弹入（D2淡入完成后启动，约300ms后） */
     hlEl.querySelectorAll('.rcard-ai-tags > span').forEach(function(tag, i) {
@@ -7080,11 +7477,23 @@
   function markUnsuitableAp(btn) {
     var card = btn.closest('.ccard');
     if (!card) return;
+    /* 记录流转前状态，供撤销使用 */
+    card.dataset.prevApstatus = card.dataset.apstatus || '待筛选';
     card.classList.add('vanishing');
     setTimeout(function() {
-      card.style.display = 'none';
       card.dataset.apstatus = '不合适';
       card.classList.remove('vanishing');
+
+      /* 替换按钮为"撤销不合适" */
+      var btnsDiv = card.querySelector('.rcard-btns');
+      if (btnsDiv) {
+        btnsDiv.innerHTML =
+          '<button class="rcard-btn-undo" onclick="event.stopPropagation();undoUnsuitableAp(this)">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>' +
+            '撤销不合适' +
+          '</button>';
+      }
+      card.style.display = 'none';
 
       /* 当前 tab -1 */
       var activeTab = document.querySelector('#page-applied .ap-tab.active');
@@ -7104,6 +7513,68 @@
       });
       if (unsuitTab) switchApTab(unsuitTab, '不合适');
     }, 400);
+  }
+
+  function undoUnsuitableAp(btn) {
+    var card = btn.closest('.ccard');
+    if (!card) return;
+    var prevStatus = card.dataset.prevApstatus || '待筛选';
+    var name = (card.querySelector('.rcard-name') || {}).textContent || '';
+
+    card.dataset.apstatus = prevStatus;
+
+    /* 恢复按钮 */
+    var btnsDiv = card.querySelector('.rcard-btns');
+    if (btnsDiv) {
+      if (prevStatus === '沟通中') {
+        btnsDiv.innerHTML =
+          '<button class="rcard-btn-interview" onclick="event.stopPropagation();">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+            '面试TA' +
+          '</button>' +
+          '<button class="rcard-btn-chat" onclick="event.stopPropagation();">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+            '发起沟通' +
+          '</button>' +
+          '<button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+            '不合适' +
+          '</button>';
+      } else {
+        btnsDiv.innerHTML =
+          '<button class="rcard-btn-contact" onclick="event.stopPropagation();moveToComm(this,\'' + name + '\')">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' +
+            '查看联系方式' +
+          '</button>' +
+          '<button class="rcard-btn-chat" onclick="event.stopPropagation();">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+            '发起沟通' +
+          '</button>' +
+          '<button class="rcard-btn-pass" onclick="event.stopPropagation();markUnsuitableAp(this)">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+            '不合适' +
+          '</button>';
+      }
+    }
+
+    /* 不合适 -1 */
+    document.querySelectorAll('#page-applied .ap-tab').forEach(function(t) {
+      if (t.textContent.trim().replace(/\s+/g, '').startsWith('不合适')) {
+        var c2 = t.querySelector('.ap-tab-cnt');
+        if (c2) c2.textContent = Math.max(0, (parseInt(c2.textContent) || 0) - 1);
+      }
+    });
+
+    /* 原状态 tab +1，并跳转 */
+    var prevTab = null;
+    document.querySelectorAll('#page-applied .ap-tab').forEach(function(t) {
+      if (t.textContent.trim().startsWith(prevStatus)) prevTab = t;
+    });
+    if (prevTab) {
+      var cntEl = prevTab.querySelector('.ap-tab-cnt');
+      if (cntEl) cntEl.textContent = (parseInt(cntEl.textContent) || 0) + 1;
+      switchApTab(prevTab, prevStatus);
+    }
   }
 
   /* 点击外部关闭职位下拉 */
@@ -7357,6 +7828,214 @@
       }
     }, 38);
   })();
+
+  /* ===== 更多筛选 抽屉 ===== */
+  function openMoreFilter() {
+    document.getElementById('mf-overlay').classList.add('show');
+    document.getElementById('mf-drawer').classList.add('show');
+  }
+  function closeMoreFilter() {
+    document.getElementById('mf-overlay').classList.remove('show');
+    document.getElementById('mf-drawer').classList.remove('show');
+  }
+  function clearMoreFilter() {
+    document.getElementById('mf-pos-member').value = '';
+    document.getElementById('mf-pos-status').value = '';
+    document.getElementById('mf-pos-dept').value = '';
+    document.getElementById('mf-pos-name').selectedIndex = 0;
+    document.getElementById('mf-age').value = '';
+    document.getElementById('mf-school').value = '';
+    document.getElementById('mf-date-start').value = '';
+    document.getElementById('mf-date-end').value = '';
+    document.getElementById('mf-area').value = '';
+    document.getElementById('mf-city').value = '';
+    document.getElementById('mf-hukou').value = '';
+    document.getElementById('mf-politics').value = '';
+    /* 恢复所有下拉框 placeholder 灰色 */
+    document.querySelectorAll('.mf-select').forEach(function(sel) {
+      sel.classList.add('placeholder');
+    });
+    /* 清空后重新展示当前 tab 所有卡片 */
+    _applyApFilter('');
+  }
+
+  /* 根据职位筛选当前 tab 的卡片 */
+  function _applyApFilter(targetPos) {
+    var activeTab = document.querySelector('#page-applied .ap-tab.active');
+    var activeStatus = '待筛选';
+    if (activeTab) {
+      var m = (activeTab.getAttribute('onclick') || '').match(/'([^']+)'\s*\)/);
+      if (m) activeStatus = m[1];
+    }
+    var posMap = { '值长-上海': 'xin', '测试工程师-上海': 'test' };
+    var filterPos = posMap[targetPos] || '';
+    document.querySelectorAll('#page-applied .ap-list .ccard').forEach(function(c) {
+      var matchStatus = (c.dataset.apstatus || '待筛选') === activeStatus;
+      var matchPos = !filterPos || c.dataset.appos === filterPos;
+      c.style.display = (matchStatus && matchPos) ? '' : 'none';
+    });
+  }
+
+  function applyMoreFilter() {
+    var posName = document.getElementById('mf-pos-name').value;
+    _applyApFilter(posName);
+    closeMoreFilter();
+  }
+
+  /* 绑定所有"更多筛选"按钮 */
+  document.querySelectorAll('.ap-more-filter').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openMoreFilter();
+    });
+  });
+
+  /* 选中后移除 placeholder 灰色，清空后恢复 */
+  document.querySelectorAll('.mf-select').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      this.classList.toggle('placeholder', !this.value);
+    });
+  });
 </script>
+
+<!-- 更多筛选 抽屉 -->
+<div class="mf-overlay" id="mf-overlay" onclick="closeMoreFilter()"></div>
+<div class="mf-drawer" id="mf-drawer">
+  <div class="mf-hd">
+    <span class="mf-hd-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </span>
+    <span class="mf-hd-title">更多筛选</span>
+    <button class="mf-hd-close" onclick="closeMoreFilter()">×</button>
+  </div>
+
+  <div class="mf-body">
+    <!-- 职位 -->
+    <div class="mf-section">
+      <span class="mf-label">职位</span>
+      <div style="margin-bottom:8px;">
+        <select class="mf-select placeholder" id="mf-pos-member">
+          <option value="" disabled selected>协作成员</option>
+          <option>全部成员</option>
+          <option>张三</option>
+          <option>李四</option>
+        </select>
+      </div>
+      <div style="margin-bottom:8px;">
+        <select class="mf-select" id="mf-pos-status">
+          <option value="招聘中" selected>招聘中</option>
+          <option>未上线</option>
+        </select>
+      </div>
+      <div style="margin-bottom:8px;">
+        <select class="mf-select placeholder" id="mf-pos-dept">
+          <option value="" disabled selected>选择部门</option>
+          <option>运行部</option>
+          <option>技术部</option>
+          <option>管理部</option>
+        </select>
+      </div>
+      <select class="mf-select placeholder" id="mf-pos-name">
+        <option value="" disabled selected>选择职位</option>
+        <option>值长-上海</option>
+        <option>测试工程师-上海</option>
+      </select>
+    </div>
+
+    <!-- 年龄 -->
+    <div class="mf-section">
+      <span class="mf-label">年龄</span>
+      <select class="mf-select placeholder" id="mf-age">
+        <option value="" disabled selected>请选择</option>
+        <option>18-25岁</option>
+        <option>26-30岁</option>
+        <option>31-35岁</option>
+        <option>36-40岁</option>
+        <option>40岁以上</option>
+      </select>
+    </div>
+
+    <!-- 院校要求 -->
+    <div class="mf-section">
+      <span class="mf-label">院校要求</span>
+      <select class="mf-select placeholder" id="mf-school">
+        <option value="" disabled selected>请选择</option>
+        <option>985院校</option>
+        <option>211院校</option>
+        <option>普通本科</option>
+        <option>不限</option>
+      </select>
+    </div>
+
+    <!-- 投递时间 -->
+    <div class="mf-section">
+      <span class="mf-label">投递时间</span>
+      <div class="mf-date-row">
+        <input class="mf-date-input" id="mf-date-start" type="text" placeholder="开始日期">
+        <span class="mf-date-sep">至</span>
+        <input class="mf-date-input" id="mf-date-end" type="text" placeholder="结束日期">
+      </div>
+    </div>
+
+    <!-- 意向工作地区 -->
+    <div class="mf-section">
+      <span class="mf-label">意向工作地区</span>
+      <select class="mf-select placeholder" id="mf-area">
+        <option value="" disabled selected>请选择</option>
+        <option>北京</option>
+        <option>上海</option>
+        <option>天津</option>
+        <option>广州</option>
+        <option>深圳</option>
+      </select>
+    </div>
+
+    <!-- 当前所在地 -->
+    <div class="mf-section">
+      <span class="mf-label">当前所在地</span>
+      <select class="mf-select placeholder" id="mf-city">
+        <option value="" disabled selected>请选择</option>
+        <option>北京</option>
+        <option>上海</option>
+        <option>天津</option>
+        <option>广州</option>
+        <option>深圳</option>
+      </select>
+    </div>
+
+    <!-- 户口所在地 -->
+    <div class="mf-section">
+      <span class="mf-label">户口所在地</span>
+      <select class="mf-select placeholder" id="mf-hukou">
+        <option value="" disabled selected>请选择</option>
+        <option>北京</option>
+        <option>上海</option>
+        <option>天津</option>
+        <option>其他</option>
+      </select>
+    </div>
+
+    <!-- 政治面貌 -->
+    <div class="mf-section">
+      <span class="mf-label">政治面貌</span>
+      <select class="mf-select placeholder" id="mf-politics">
+        <option value="" disabled selected>请选择</option>
+        <option>中共党员</option>
+        <option>共青团员</option>
+        <option>群众</option>
+        <option>其他</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mf-ft">
+    <button class="mf-clear" onclick="clearMoreFilter()">清空筛选项</button>
+    <div class="mf-ft-right">
+      <button class="mf-cancel" onclick="closeMoreFilter()">取消</button>
+      <button class="mf-search" onclick="applyMoreFilter()">搜索</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
