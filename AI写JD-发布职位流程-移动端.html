@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>发布职位</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Noto Sans SC', sans-serif;
+      background: #F5F5F5;
+      color: #1A1A1A;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ── App root ── */
+    .app-root {
+      max-width: 390px;
+      margin: 0 auto;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background: #F5F5F5;
+    }
+
+    /* ── Screen transitions ── */
+    .screen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #F5F5F5;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen.active {
+      transform: translateX(0);
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+    .status-time { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Nav header (shared) ── */
+    .nav-header {
+      height: 52px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid #F0F0F0;
+      flex-shrink: 0;
+    }
+    .nav-back {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: #F2F2F2;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nav-title { font-size: 18px; font-weight: 600; color: #1A1A1A; }
+    .nav-action { font-size: 15px; color: #F56400; cursor: pointer; min-width: 38px; text-align: right; }
+    .nav-spacer { width: 38px; }
+
+    /* ── Steps ── */
+    .steps-wrap {
+      background: #fff;
+      padding: 20px 50px 18px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .step-item { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-circle.active { background: #F56400; }
+    .step-circle.inactive { background: #DCDCDC; }
+    .step-text { font-size: 12px; white-space: nowrap; }
+    .step-text.active { color: #F56400; font-weight: 500; }
+    .step-text.inactive { color: #B0B0B0; }
+    .step-line {
+      flex: 1;
+      height: 3px;
+      background: linear-gradient(90deg, #F56400, #FF9355);
+      border-radius: 2px;
+      margin: 0 10px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Form card ── */
+    .form-card { background: #fff; margin-bottom: 10px; padding: 0 16px; }
+
+    .recruit-block { padding: 18px 0 16px; border-bottom: 1px solid #F0F0F0; }
+    .field-label-row { font-size: 14px; color: #888; margin-bottom: 12px; }
+    .required-star { color: #F56400; margin-right: 2px; }
+    .type-btns { display: flex; gap: 12px; }
+    .type-btn {
+      flex: 1; height: 46px; border-radius: 8px;
+      border: 1.5px solid #E0E0E0; background: #F5F5F5;
+      font-size: 16px; color: #666; cursor: pointer;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .type-btn.active { border-color: #F56400; background: #FFF3EC; color: #F56400; font-weight: 500; }
+
+    .field-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0; border-bottom: 1px solid #F0F0F0; cursor: pointer;
+    }
+    .field-row:last-child { border-bottom: none; }
+    .field-row:active { background: #FAFAFA; }
+    .field-left { flex: 1; min-width: 0; }
+    .field-label { font-size: 13px; color: #888; margin-bottom: 6px; }
+    .field-value { font-size: 16px; color: #BEBEBE; line-height: 1.4; }
+    .field-value.filled { color: #1A1A1A; }
+    .field-value.hint { font-size: 13px; color: #BEBEBE; line-height: 1.5; }
+    .field-right { display: flex; align-items: center; gap: 8px; margin-left: 10px; flex-shrink: 0; }
+    .chevron { color: #C8C8C8; font-size: 20px; line-height: 1; font-weight: 300; }
+
+    .ai-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 14px; background: #F56400; border-radius: 20px;
+      color: #fff; font-size: 14px; font-weight: 500;
+      cursor: pointer; white-space: nowrap; font-family: inherit; border: none;
+    }
+
+    .bottom-bar {
+      position: sticky; bottom: 0;
+      padding: 12px 16px 30px; background: #fff; border-top: 1px solid #F0F0F0;
+    }
+    .next-btn {
+      width: 100%; height: 52px; border-radius: 26px; border: none;
+      background: linear-gradient(135deg, #FF9355 0%, #F56400 100%);
+      color: #fff; font-size: 17px; font-weight: 500;
+      cursor: pointer; font-family: inherit; letter-spacing: 1px;
+    }
+    .next-btn:active { opacity: 0.88; }
+
+    /* ════════════════════════════════════
+       行业类别 screen
+    ════════════════════════════════════ */
+    #screen-industry { background: #fff; }
+
+    .ind-header-block {
+      padding: 18px 20px 14px;
+      background: #fff;
+    }
+    .ind-title { font-size: 24px; font-weight: 700; color: #1A1A1A; margin-bottom: 6px; }
+    .ind-sub { font-size: 13px; color: #AAAAAA; }
+
+    .ind-cols-wrap {
+      display: flex;
+      height: calc(100vh - 44px - 52px - 84px - 80px);
+      border-top: 1px solid #F0F0F0;
+      overflow: hidden;
+    }
+    .ind-col {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .ind-col-1 { width: 30%; background: #F7F7F7; border-right: 1px solid #EDEDED; }
+    .ind-col-2 { width: 30%; border-right: 1px solid #EDEDED; background: #fff; }
+    .ind-col-3 { flex: 1; background: #fff; }
+
+    .ind-item {
+      padding: 15px 12px;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+      line-height: 1.4;
+      text-align: center;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .ind-item.selected { color: #F56400; background: #fff; }
+    .ind-col-1 .ind-item.selected { background: #fff; }
+    .ind-col-2 .ind-item.selected { color: #F56400; }
+    .ind-col-3 .ind-item { text-align: left; padding: 14px 16px; }
+    .ind-col-3 .ind-item:active { background: #FFF3EC; }
+
+    .ind-bottom {
+      padding: 12px 16px 28px;
+      background: #fff;
+      border-top: 1px solid #F0F0F0;
+    }
+    .ind-confirm-btn {
+      width: 100%; height: 52px; border-radius: 6px; border: none;
+      background: #F56400;
+      color: #fff; font-size: 17px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+    }
+    .ind-confirm-btn:active { opacity: 0.88; }
+
+    /* ════════════════════════════════════
+       职位类别 screen
+    ════════════════════════════════════ */
+    #screen-jobtype { background: #fff; display: flex; flex-direction: column; }
+
+    .jt-search-wrap {
+      padding: 10px 16px 8px;
+      background: #fff;
+    }
+    .jt-search-box {
+      display: flex; align-items: center; gap: 8px;
+      background: #F3F3F3; border-radius: 22px;
+      padding: 10px 16px;
+    }
+    .jt-search-box input {
+      flex: 1; border: none; background: transparent;
+      font-size: 14px; color: #333; font-family: inherit; outline: none;
+    }
+    .jt-search-box input::placeholder { color: #BBBBBB; }
+
+    .jt-selected-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px 10px;
+      background: #fff;
+      border-bottom: 1px solid #F0F0F0;
+      font-size: 13px; color: #666;
+    }
+    .jt-tag {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px;
+      border: 1px solid #F56400;
+      border-radius: 14px;
+      color: #F56400; font-size: 13px;
+    }
+    .jt-tag-close { margin-left: 4px; font-size: 14px; color: #F56400; cursor: pointer; }
+
+    .jt-cols-wrap {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .jt-col { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .jt-col-1 { width: 30%; background: #F7F7F7; border-right: 1px solid #EDEDED; }
+    .jt-col-2 { width: 28%; border-right: 1px solid #EDEDED; background: #fff; }
+    .jt-col-3 { flex: 1; background: #fff; }
+
+    .jt-item {
+      padding: 14px 10px;
+      font-size: 13px; color: #333;
+      cursor: pointer; line-height: 1.4;
+      border-bottom: 1px solid #F5F5F5;
+      text-align: center;
+    }
+    .jt-item.selected { color: #F56400; background: #fff; }
+    .jt-col-1 .jt-item.selected { background: #fff; }
+
+    .jt-col-3 .jt-item { text-align: left; padding: 13px 14px; }
+    .jt-col-3 .jt-item.group-header {
+      font-weight: 700; color: #1A1A1A; font-size: 13px;
+      cursor: default; background: #fff;
+    }
+    .jt-col-3 .jt-item.leaf-selected { background: #F5F5F5; color: #333; }
+    .jt-col-3 .jt-item:not(.group-header):active { background: #FFF3EC; }
+
+    /* ════════════════════════════════════
+       职位名称 screen
+    ════════════════════════════════════ */
+    #screen-jobname { background: #fff; }
+
+    .jn-header-block {
+      padding: 18px 20px 20px;
+      background: #fff;
+    }
+    .jn-title { font-size: 24px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
+    .jn-sub { font-size: 13px; color: #AAAAAA; line-height: 1.5; }
+
+    .jn-input-wrap {
+      margin: 4px 16px 0;
+      display: flex; align-items: center; gap: 10px;
+      background: #F3F3F3; border-radius: 22px;
+      padding: 12px 16px;
+    }
+    .jn-input {
+      flex: 1; border: none; background: transparent;
+      font-size: 15px; color: #333; font-family: inherit; outline: none;
+    }
+    .jn-input::placeholder { color: #BBBBBB; }
+    .jn-counter { font-size: 13px; color: #BBBBBB; white-space: nowrap; flex-shrink: 0; }
+
+    /* ── AI btn disabled ── */
+    .ai-btn.disabled { background: #DCDCDC; cursor: default; }
+
+    /* ── AI JD Drawer ── */
+    .ai-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.38);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s; z-index: 100;
+    }
+    .ai-overlay.show { opacity: 1; pointer-events: auto; }
+
+    .ai-drawer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: #fff; border-radius: 18px 18px 0 0;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+      z-index: 101; height: 78vh;
+      display: flex; flex-direction: column;
+    }
+    .ai-drawer.open { transform: translateY(0); }
+
+    .drw-handle {
+      width: 40px; height: 4px; background: #E0E0E0; border-radius: 2px;
+      margin: 10px auto 2px; flex-shrink: 0;
+    }
+    .drw-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 16px 10px; flex-shrink: 0;
+    }
+    .drw-hdr-title { font-size: 16px; font-weight: 600; color: #1A1A1A; }
+    .drw-x {
+      width: 26px; height: 26px; border-radius: 50%; background: #F2F2F2;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: #777; cursor: pointer; line-height: 1; flex-shrink: 0;
+    }
+    .drw-scroll {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 0 16px 8px;
+    }
+    .ctx-blk {
+      background: #FFF8F2; border-radius: 10px; padding: 12px 14px;
+      font-size: 13.5px; line-height: 1.7; color: #555; margin-bottom: 14px;
+    }
+    .ctx-blk em { color: #F56400; font-style: normal; font-weight: 500; }
+    .drw-sec { font-size: 13px; font-weight: 600; color: #1A1A1A; margin-bottom: 10px; }
+    .sys-tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .sys-tag {
+      display: inline-flex; align-items: center; gap: 2px;
+      padding: 6px 12px; border: 1.5px solid #F56400; border-radius: 20px;
+      color: #F56400; font-size: 13px; cursor: pointer;
+      background: #fff; transition: all 0.15s; font-family: inherit;
+    }
+    .sys-tag.sel { background: #F56400; color: #fff; }
+    .tag-plus-ic { font-size: 14px; font-weight: 300; }
+
+    .custom-row {
+      display: flex; align-items: center; gap: 8px;
+      border: 1.5px dashed #CCCCCC; border-radius: 22px; padding: 9px 12px;
+      margin-bottom: 8px;
+    }
+    .custom-row input {
+      flex: 1; border: none; background: transparent;
+      font-size: 13px; color: #333; font-family: inherit; outline: none;
+    }
+    .custom-row input::placeholder { color: #C0C0C0; }
+    .custom-add {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #F56400; color: #fff; border: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; cursor: pointer; flex-shrink: 0; font-family: inherit;
+    }
+    .ctags-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .ctag-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 10px; border: 1.5px dashed #4CAF50; border-radius: 20px;
+      color: #4CAF50; font-size: 13px;
+    }
+    .ctag-rm { cursor: pointer; font-size: 13px; }
+    .custom-hint { font-size: 11.5px; color: #BBBBBB; margin-top: 6px; }
+    .ctag-inline {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 6px 11px; border-radius: 20px;
+      background: #4CAF50; color: #fff; font-size: 13px;
+    }
+    .sel-params-label { font-size: 12px; color: #888; margin-top: 12px; margin-bottom: 7px; }
+    .sel-params-box {
+      border: 1.5px solid #FFB08A; border-radius: 10px;
+      padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 8px;
+      min-height: 36px; margin-bottom: 4px;
+    }
+    .sel-chip-sys {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 4px 10px; border-radius: 16px; font-size: 12px;
+      border: 1.5px solid #F56400; color: #F56400;
+    }
+    .sel-chip-cust {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 4px 10px; border-radius: 16px; font-size: 12px;
+      border: 1.5px dashed #4CAF50; color: #4CAF50;
+    }
+    .sel-chip-rm { cursor: pointer; font-size: 13px; }
+
+    .drw-foot {
+      padding: 10px 16px 28px; background: #fff;
+      border-top: 1px solid #F0F0F0; flex-shrink: 0;
+    }
+    .gen-btn {
+      width: 100%; height: 50px; border-radius: 25px; border: none;
+      font-size: 16px; font-weight: 500; font-family: inherit; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .gen-btn.on { background: linear-gradient(135deg,#FF9355,#F56400); color: #fff; }
+    .gen-btn.off { background: #F0F0F0; color: #BBBBBB; cursor: default; }
+
+    .ld-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; padding: 50px 20px;
+    }
+    .ld-dots { display: flex; gap: 7px; }
+    .ld-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: #F56400;
+      animation: ldpulse 1.2s infinite ease-in-out;
+    }
+    .ld-dot:nth-child(2){ animation-delay:.2s }
+    .ld-dot:nth-child(3){ animation-delay:.4s }
+    @keyframes ldpulse {
+      0%,80%,100%{ opacity:.2; transform:scale(.8) }
+      40%{ opacity:1; transform:scale(1) }
+    }
+    .ld-text { font-size: 14px; color: #999; }
+
+    .pv-hdr {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 16px 10px; flex-shrink: 0;
+    }
+    .pv-title { font-size: 16px; font-weight: 600; color: #1A1A1A; flex: 1; }
+    .pv-badge {
+      font-size: 11px; color: #F56400; background: #FFF3EC;
+      border-radius: 10px; padding: 2px 8px;
+    }
+    .pv-scroll {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 0 16px 8px;
+    }
+    .pv-text { font-size: 14px; line-height: 1.85; color: #333; white-space: pre-wrap; }
+    .pv-foot {
+      display: flex; gap: 10px; padding: 10px 16px 28px;
+      background: #fff; border-top: 1px solid #F0F0F0; flex-shrink: 0;
+    }
+    .regen-btn {
+      flex: 1; height: 48px; border-radius: 24px;
+      border: 1.5px solid #F56400; background: #fff;
+      color: #F56400; font-size: 15px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+    }
+    .use-btn {
+      flex: 1.5; height: 48px; border-radius: 24px; border: none;
+      background: linear-gradient(135deg,#FF9355,#F56400);
+      color: #fff; font-size: 15px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+    }
+    /* ── Generation streaming panel ── */
+    .gen-hdr-new {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 16px 12px; flex-shrink: 0;
+    }
+    .gen-ai-icon {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: linear-gradient(145deg,#FF9050,#F25800);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .gen-hdr-txt { flex: 1; min-width: 0; }
+    .gen-hdr-title { font-size: 15px; font-weight: 700; color: #1A1A1A; line-height: 1.4; margin-bottom: 3px; }
+    .gen-hdr-sub { font-size: 12px; color: #999; line-height: 1.55; }
+    .gen-close-x {
+      font-size: 22px; color: #BBBBBB; cursor: pointer; line-height: 1; flex-shrink: 0; padding: 4px;
+    }
+    .gen-divider { height: 1px; background: #F0F0F0; flex-shrink: 0; }
+    .gen-content-box {
+      padding: 14px 16px; flex: 1; min-height: 0; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .gen-stream-text { font-size: 14px; line-height: 1.85; color: #333; white-space: pre-wrap; }
+    /* Info row: disclaimer + count */
+    .gen-foot-info {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 16px 5px; border-top: 1px solid #F0F0F0; flex-shrink: 0;
+    }
+    .gen-disc { font-size: 11px; color: #C0C0C0; }
+    .gen-count { font-size: 12px; color: #F56400; }
+    /* Action row: stop/regen left + btn(s) right */
+    .gen-foot-actions {
+      display: flex; align-items: center;
+      padding: 10px 16px 26px; flex-shrink: 0;
+    }
+    .gen-stop {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 13px; color: #999; cursor: pointer;
+    }
+    .gen-regen {
+      display: none; align-items: center; gap: 3px;
+      font-size: 13px; color: #999; cursor: pointer;
+    }
+    .gen-action-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .fill-single-btn {
+      height: 38px; padding: 0 20px; border-radius: 20px;
+      border: 1.5px solid #F56400; background: #fff;
+      color: #F56400; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .fill-append-btn {
+      height: 38px; padding: 0 14px; border-radius: 20px;
+      border: 1.5px solid #F56400; background: #fff;
+      color: #F56400; font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .fill-replace-btn {
+      height: 38px; padding: 0 14px; border-radius: 20px;
+      border: none; background: #F56400;
+      color: #fff; font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+
+    .field-value.jd-filled {
+      font-size: 13px; line-height: 1.5; color: #1A1A1A;
+      display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    /* ── 职位描述 editing screen ── */
+    #screen-jddesc { background: #fff; display: flex; flex-direction: column; overflow: hidden; }
+    .jd-screen-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 20px 12px; }
+    .jd-screen-title { font-size: 26px; font-weight: 700; color: #1A1A1A; margin: 20px 0 8px; }
+    .jd-screen-sub { font-size: 14px; color: #ABABAB; margin-bottom: 10px; }
+    .jd-screen-warn {
+      font-size: 13px; color: #B0B0B0; line-height: 1.65; margin-bottom: 18px;
+    }
+    .jd-textarea {
+      width: 100%; min-height: 400px; border: none; outline: none; resize: none;
+      font-size: 15px; line-height: 1.85; color: #1A1A1A;
+      font-family: inherit; background: transparent;
+    }
+    .jd-bottom-bar {
+      display: flex; align-items: center; padding: 10px 16px 28px;
+      border-top: 1px solid #F0F0F0; background: #fff; flex-shrink: 0;
+    }
+    .jd-ai-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: #F56400; color: #fff; border: none; border-radius: 20px;
+      padding: 9px 18px; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .jd-char-count { flex: 1; text-align: right; font-size: 14px; color: #F56400; }
+  </style>
+</head>
+<body>
+<div class="app-root">
+
+  <!-- ════ SCREEN: 发布职位（主页） ════ -->
+  <div id="screen-main" class="screen active">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">13:28</span>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+          <rect x="0" y="7" width="3" height="5" rx="0.8" fill="#1A1A1A"/>
+          <rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8" fill="#1A1A1A"/>
+          <rect x="9" y="2" width="3" height="10" rx="0.8" fill="#1A1A1A"/>
+          <rect x="13.5" y="0" width="3" height="12" rx="0.8" fill="#1A1A1A" opacity="0.3"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M8 9.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z" fill="#1A1A1A"/>
+          <path d="M4.2 7C5.3 5.9 6.6 5.2 8 5.2s2.7.7 3.8 1.8" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+          <path d="M1.4 4.2C3.2 2.4 5.5 1.3 8 1.3s4.8 1.1 6.6 2.9" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+        </svg>
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#1A1A1A" stroke-opacity="0.35"/>
+          <rect x="2" y="2" width="14" height="9" rx="2" fill="#1A1A1A"/>
+          <path d="M23.5 4.5v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="#1A1A1A" opacity="0.4"/>
+          <text x="7" y="9.5" font-size="7" fill="#fff" font-family="sans-serif" font-weight="600">35</text>
+        </svg>
+      </div>
+    </div>
+    <!-- Nav -->
+    <div class="nav-header">
+      <div class="nav-back"><svg width="9" height="16" viewBox="0 0 9 16" fill="none"><path d="M8 1L1.5 8L8 15" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="nav-title">发布职位</div>
+      <div class="nav-action">使用模板</div>
+    </div>
+    <!-- Steps -->
+    <div class="steps-wrap">
+      <div class="step-item">
+        <div class="step-circle active">
+          <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
+            <path d="M4.5 1h7L13 7l-5 10L3 7l1.5-6z" fill="white" opacity="0.9"/>
+            <path d="M5.5 1h5l.8 3H4.7L5.5 1z" fill="white"/>
+          </svg>
+        </div>
+        <span class="step-text active">基本信息</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item">
+        <div class="step-circle inactive">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </div>
+        <span class="step-text inactive">职位设置</span>
+      </div>
+    </div>
+    <!-- Form -->
+    <div class="form-card">
+      <!-- 招聘类型 -->
+      <div class="recruit-block">
+        <div class="field-label-row"><span class="required-star">*</span>招聘类型</div>
+        <div class="type-btns">
+          <button class="type-btn active" onclick="selectType(this)">社会招聘</button>
+          <button class="type-btn" onclick="selectType(this)">校园招聘</button>
+        </div>
+      </div>
+      <!-- 行业类别 -->
+      <div class="field-row" onclick="openScreen('industry')">
+        <div class="field-left">
+          <div class="field-label"><span class="required-star">*</span>行业类别</div>
+          <div class="field-value" id="main-industry-val">请选择行业类别</div>
+        </div>
+        <div class="field-right"><span class="chevron">›</span></div>
+      </div>
+      <!-- 职位类别 -->
+      <div class="field-row" onclick="openScreen('jobtype')">
+        <div class="field-left">
+          <div class="field-label"><span class="required-star">*</span>职位类别</div>
+          <div class="field-value" id="main-jobtype-val">请选择职位类别</div>
+        </div>
+        <div class="field-right"><span class="chevron">›</span></div>
+      </div>
+      <!-- 职位名称 -->
+      <div class="field-row" onclick="openScreen('jobname')">
+        <div class="field-left">
+          <div class="field-label"><span class="required-star">*</span>职位名称</div>
+          <div class="field-value" id="main-jobname-val">请输入职位名称</div>
+        </div>
+        <div class="field-right"><span class="chevron">›</span></div>
+      </div>
+      <!-- 所属部门 -->
+      <div class="field-row">
+        <div class="field-left">
+          <div class="field-label">所属部门</div>
+          <div class="field-value">请选择所属部门</div>
+        </div>
+        <div class="field-right"><span class="chevron">›</span></div>
+      </div>
+      <!-- 职位描述 -->
+      <div class="field-row" style="border-bottom:none" onclick="openScreen('jddesc')">
+        <div class="field-left">
+          <div class="field-label"><span class="required-star">*</span>职位描述</div>
+          <div class="field-value" id="jd-desc-val">介绍工作内容、职位要求</div>
+        </div>
+        <div class="field-right">
+          <button class="ai-btn disabled" id="ai-help-btn" onclick="event.stopPropagation();openAiDrawer()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="white" opacity="0.9"/></svg>
+            AI帮写
+          </button>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom -->
+    <div class="bottom-bar">
+      <button class="next-btn">下一步</button>
+    </div>
+  </div><!-- /screen-main -->
+
+
+  <!-- ════ SCREEN: 行业类别 ════ -->
+  <div id="screen-industry" class="screen" style="display:flex;flex-direction:column;">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">13:39</span>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="0.8" fill="#1A1A1A"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8" fill="#1A1A1A"/><rect x="9" y="2" width="3" height="10" rx="0.8" fill="#1A1A1A"/><rect x="13.5" y="0" width="3" height="12" rx="0.8" fill="#1A1A1A" opacity="0.3"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z" fill="#1A1A1A"/><path d="M4.2 7C5.3 5.9 6.6 5.2 8 5.2s2.7.7 3.8 1.8" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M1.4 4.2C3.2 2.4 5.5 1.3 8 1.3s4.8 1.1 6.6 2.9" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#1A1A1A" stroke-opacity="0.35"/><rect x="2" y="2" width="14" height="9" rx="2" fill="#1A1A1A"/><path d="M23.5 4.5v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="#1A1A1A" opacity="0.4"/><text x="7" y="9.5" font-size="7" fill="#fff" font-family="sans-serif" font-weight="600">34</text></svg>
+      </div>
+    </div>
+    <!-- Nav (no center title, no right action) -->
+    <div class="nav-header" style="border-bottom:none;">
+      <div class="nav-back" onclick="goBack('industry')"><svg width="9" height="16" viewBox="0 0 9 16" fill="none"><path d="M8 1L1.5 8L8 15" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div></div>
+      <div class="nav-spacer"></div>
+    </div>
+    <!-- Title block -->
+    <div class="ind-header-block">
+      <div class="ind-title">行业类别</div>
+      <div class="ind-sub">请选择相应的行业类别</div>
+    </div>
+    <!-- 3-column picker -->
+    <div class="ind-cols-wrap" style="flex:1;height:auto;">
+      <div class="ind-col ind-col-1" id="ind-col1"></div>
+      <div class="ind-col ind-col-2" id="ind-col2"></div>
+      <div class="ind-col ind-col-3" id="ind-col3"></div>
+    </div>
+    <!-- Confirm -->
+    <div class="ind-bottom">
+      <button class="ind-confirm-btn" onclick="confirmIndustry()">确认</button>
+    </div>
+  </div><!-- /screen-industry -->
+
+
+  <!-- ════ SCREEN: 职位类别 ════ -->
+  <div id="screen-jobtype" class="screen" style="display:flex;flex-direction:column;">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">13:39</span>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="0.8" fill="#1A1A1A"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8" fill="#1A1A1A"/><rect x="9" y="2" width="3" height="10" rx="0.8" fill="#1A1A1A"/><rect x="13.5" y="0" width="3" height="12" rx="0.8" fill="#1A1A1A" opacity="0.3"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z" fill="#1A1A1A"/><path d="M4.2 7C5.3 5.9 6.6 5.2 8 5.2s2.7.7 3.8 1.8" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M1.4 4.2C3.2 2.4 5.5 1.3 8 1.3s4.8 1.1 6.6 2.9" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#1A1A1A" stroke-opacity="0.35"/><rect x="2" y="2" width="14" height="9" rx="2" fill="#1A1A1A"/><path d="M23.5 4.5v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="#1A1A1A" opacity="0.4"/><text x="7" y="9.5" font-size="7" fill="#fff" font-family="sans-serif" font-weight="600">34</text></svg>
+      </div>
+    </div>
+    <!-- Nav -->
+    <div class="nav-header">
+      <div class="nav-back" onclick="goBack('jobtype')"><svg width="9" height="16" viewBox="0 0 9 16" fill="none"><path d="M8 1L1.5 8L8 15" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="nav-title">职位类别</div>
+      <div class="nav-action" onclick="saveJobtype()">保存</div>
+    </div>
+    <!-- Search -->
+    <div class="jt-search-wrap">
+      <div class="jt-search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#BBBBBB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="搜索职位类别" id="jt-search-input" oninput="jtSearch(this.value)">
+      </div>
+    </div>
+    <!-- Selected tag -->
+    <div class="jt-selected-row">
+      <span>已选类型：</span>
+      <div id="jt-tags-wrap"></div>
+    </div>
+    <!-- 3-column -->
+    <div class="jt-cols-wrap">
+      <div class="jt-col jt-col-1" id="jt-col1"></div>
+      <div class="jt-col jt-col-2" id="jt-col2"></div>
+      <div class="jt-col jt-col-3" id="jt-col3"></div>
+    </div>
+  </div><!-- /screen-jobtype -->
+
+
+  <!-- ════ SCREEN: 职位名称 ════ -->
+  <div id="screen-jobname" class="screen">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">13:40</span>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="0.8" fill="#1A1A1A"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8" fill="#1A1A1A"/><rect x="9" y="2" width="3" height="10" rx="0.8" fill="#1A1A1A"/><rect x="13.5" y="0" width="3" height="12" rx="0.8" fill="#1A1A1A" opacity="0.3"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z" fill="#1A1A1A"/><path d="M4.2 7C5.3 5.9 6.6 5.2 8 5.2s2.7.7 3.8 1.8" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M1.4 4.2C3.2 2.4 5.5 1.3 8 1.3s4.8 1.1 6.6 2.9" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#1A1A1A" stroke-opacity="0.35"/><rect x="2" y="2" width="14" height="9" rx="2" fill="#1A1A1A"/><path d="M23.5 4.5v4c.8-.3 1.5-1 1.5-2s-.7-1.7-1.5-2z" fill="#1A1A1A" opacity="0.4"/><text x="7" y="9.5" font-size="7" fill="#fff" font-family="sans-serif" font-weight="600">34</text></svg>
+      </div>
+    </div>
+    <!-- Nav -->
+    <div class="nav-header" style="border-bottom:none;">
+      <div class="nav-back" onclick="saveJobname()"><svg width="9" height="16" viewBox="0 0 9 16" fill="none"><path d="M8 1L1.5 8L8 15" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div></div>
+      <div class="nav-action" onclick="saveJobname()">保存</div>
+    </div>
+    <!-- Title -->
+    <div class="jn-header-block">
+      <div class="jn-title">职位名称</div>
+      <div class="jn-sub">请勿输入QQ、微信、电话等联系方式，以及特殊符号</div>
+    </div>
+    <!-- Input -->
+    <div class="jn-input-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#BBBBBB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="jn-input" id="jn-input" type="text" placeholder="输入职位名称" maxlength="40" oninput="jnCount(this)">
+      <span class="jn-counter" id="jn-counter">0/40</span>
+    </div>
+  </div><!-- /screen-jobname -->
+
+
+  <!-- ════ SCREEN: 职位描述 ════ -->
+  <div id="screen-jddesc" class="screen" style="display:flex;flex-direction:column;background:#fff;">
+    <div class="status-bar">
+      <span class="status-time">13:28</span>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="0.8" fill="#1A1A1A"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8" fill="#1A1A1A"/><rect x="9" y="2" width="3" height="10" rx="0.8" fill="#1A1A1A"/><rect x="13.5" y="0" width="3" height="12" rx="0.8" fill="#1A1A1A" opacity="0.3"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.8 2.4 13.3 3.6 15 5.5L16 4.4C14 2.2 11.2 1 8 1 4.8 1 2 2.2 0 4.4L1 5.5C2.7 3.6 5.2 2.4 8 2.4z" fill="#1A1A1A"/><path d="M8 5.2C10 5.2 11.8 6 13.1 7.3L14.1 6.2C12.5 4.6 10.4 3.8 8 3.8 5.6 3.8 3.5 4.6 1.9 6.2L2.9 7.3C4.2 6 6 5.2 8 5.2z" fill="#1A1A1A"/><circle cx="8" cy="10" r="1.8" fill="#1A1A1A"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#1A1A1A" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#1A1A1A"/><path d="M23 4.5v3a1.5 1.5 0 000-3z" fill="#1A1A1A" opacity="0.4"/></svg>
+      </div>
+    </div>
+    <div class="nav-header">
+      <div class="nav-back" onclick="saveJdDesc()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div></div>
+      <span class="nav-action" onclick="saveJdDesc()">保存</span>
+    </div>
+    <div class="jd-screen-body">
+      <div class="jd-screen-title">职位描述</div>
+      <div class="jd-screen-sub">工作时间、晋升说明、培训情况等</div>
+      <div class="jd-screen-warn">请勿输入邮箱、电话、链接,请不要包含性别歧视语。一经发现系统将会自动下线职位。</div>
+      <textarea id="jd-editor" class="jd-textarea" placeholder="请输入岗位职责、任职要求等描述，至少10个字，建议使用以下格式逐条列出：&#10;岗位职责&#10;1.&#10;2.&#10;任职要求&#10;1.&#10;2." oninput="onJdInput()" maxlength="3000"></textarea>
+    </div>
+    <div class="jd-bottom-bar">
+      <button class="jd-ai-btn" onclick="openAiDrawer()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="white"/></svg>
+        AI帮写
+      </button>
+      <span class="jd-char-count"><span id="jd-char-ct">0</span>/3000</span>
+    </div>
+  </div><!-- /screen-jddesc -->
+
+
+  <!-- AI Overlay -->
+  <div id="ai-overlay" class="ai-overlay" onclick="closeAiDrawer()"></div>
+
+  <!-- AI Drawer -->
+  <div id="ai-drawer" class="ai-drawer">
+
+    <!-- Step 1: tag selection -->
+    <div id="dw-s1">
+      <div class="drw-handle"></div>
+      <div class="drw-hdr">
+        <span class="drw-hdr-title">AI帮写JD助手</span>
+        <span class="drw-x" onclick="closeAiDrawer()">×</span>
+      </div>
+      <div class="drw-scroll">
+        <div class="ctx-blk" id="dw-ctx"></div>
+        <div class="drw-sec">系统推荐标签（可多选）</div>
+        <div class="sys-tags-wrap" id="dw-sys-tags"></div>
+        <div class="drw-sec">自定义补充（可选）</div>
+        <div class="custom-row">
+          <input type="text" id="dw-ci" placeholder="输入后按回车或点 + 添加" onkeydown="ciKeydown(event)">
+          <button class="custom-add" onclick="addCtag()">+</button>
+        </div>
+        <div class="custom-hint">虚线边框为自定义标签，最多添加5个</div>
+        <div class="sel-params-label" id="dw-sel-label" style="display:none">已选参数（将注入AI生成）</div>
+        <div class="sel-params-box" id="dw-sel-box" style="display:none"></div>
+      </div>
+      <div class="drw-foot">
+        <button id="dw-gen" class="gen-btn on" onclick="startGenerate()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="currentColor"/></svg>
+          开始生成JD
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: loading -->
+    <div id="dw-s2" style="display:none;">
+      <div class="drw-handle"></div>
+      <div class="drw-hdr"><span class="drw-hdr-title">AI帮写JD助手</span></div>
+      <div class="ld-wrap">
+        <div class="ld-dots">
+          <div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div>
+        </div>
+        <div class="ld-text">AI正在为您生成职位描述…</div>
+      </div>
+    </div>
+
+    <!-- Step 3: streaming generation -->
+    <div id="dw-s3" style="display:none; flex-direction:column; overflow:hidden; flex:1; min-height:0;">
+      <div class="drw-handle"></div>
+      <!-- Header -->
+      <div class="gen-hdr-new">
+        <div class="gen-ai-icon">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+            <rect x="4" y="2" width="15" height="19" rx="2" fill="white" opacity="0.95"/>
+            <path d="M15 2l4 4h-4z" fill="white" opacity="0.55"/>
+            <path d="M15 2l4 4h-4V2z" fill="rgba(0,0,0,0.12)"/>
+            <rect x="7" y="8"  width="9" height="1.6" rx="0.8" fill="#F56400" opacity="0.75"/>
+            <rect x="7" y="12" width="9" height="1.6" rx="0.8" fill="#F56400" opacity="0.45"/>
+            <rect x="7" y="16" width="6" height="1.6" rx="0.8" fill="#F56400" opacity="0.45"/>
+            <circle cx="21" cy="21" r="5.5" fill="#F56400" stroke="white" stroke-width="1.5"/>
+            <text x="21" y="24.5" text-anchor="middle" font-size="5.5" font-weight="700" fill="white" font-family="Arial,sans-serif">Ai</text>
+          </svg>
+        </div>
+        <div class="gen-hdr-txt">
+          <div class="gen-hdr-title" id="dw-gen-title">AI正在为您生成职位描述，请稍等</div>
+          <div class="gen-hdr-sub">AI生成内容仅供您参考，请您根据实际招聘需求进行调整</div>
+        </div>
+        <span class="gen-close-x" onclick="closeAiDrawer()">×</span>
+      </div>
+      <div class="gen-divider"></div>
+      <!-- Scrollable content -->
+      <div class="gen-content-box" id="dw-content-box">
+        <div class="gen-stream-text" id="dw-stream-text"></div>
+      </div>
+      <!-- Info row: disclaimer + count -->
+      <div class="gen-foot-info">
+        <span class="gen-disc">内容由AI生成，仅供参考</span>
+        <span class="gen-count"><span id="dw-char-ct">0</span>/3000</span>
+      </div>
+      <!-- Action row: stop/regen (left) + button(s) (right) -->
+      <div class="gen-foot-actions">
+        <span class="gen-stop" id="dw-stop-btn" onclick="stopStream()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="#999" stroke-width="1.8"/>
+            <rect x="8.5" y="8" width="2.5" height="8" rx="1.2" fill="#999"/>
+            <rect x="13" y="8" width="2.5" height="8" rx="1.2" fill="#999"/>
+          </svg>
+          停止生成
+        </span>
+        <span class="gen-regen" id="dw-regen-btn" onclick="regenJD()">↻ 重新生成</span>
+        <div class="gen-action-right">
+          <!-- Single button: first time -->
+          <div id="dw-foot-single">
+            <button class="fill-single-btn" onclick="replaceJD()">填到内容区</button>
+          </div>
+          <!-- Two buttons: returning user -->
+          <div id="dw-foot-two" style="display:none; gap:8px;">
+            <button class="fill-append-btn" onclick="appendJD()">填到内容下方</button>
+            <button class="fill-replace-btn" onclick="replaceJD()">替换原内容</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /app-root -->
+
+<script>
+/* ──────────────────────────────
+   行业类别数据
+────────────────────────────── */
+const industryData = {
+  '电力': {
+    '火电': ['火力发电', '火电设备', '火电调试及检修', '热电'],
+    '水电': ['水力发电', '水电设备', '抽水蓄能'],
+    '核电': ['核电运行', '核电检修', '核安全'],
+    '新能源': ['风力发电', '光伏发电', '储能技术', '氢能'],
+    '输配电': ['输电线路', '变电站运维', '配电网', '电力调度'],
+  },
+  '能源化工': {
+    '石油': ['石油勘探', '石油开采', '石油炼制', '油气储运'],
+    '天然气': ['天然气开采', '天然气储运', '液化天然气'],
+    '化工': ['化工生产', '化工设备', '精细化工'],
+    '煤炭': ['煤矿开采', '煤炭洗选', '煤化工'],
+  },
+  '制造业': {
+    '机械': ['机械设计', '机械制造', '机械维修', '数控加工'],
+    '电气': ['电气工程', '电气设计', '电气安装'],
+    '自动化': ['自动化控制', 'PLC编程', '工业机器人'],
+  },
+  '建筑/地产': {
+    '建筑施工': ['项目经理', '施工员', '质检员', '安全员'],
+    '设计': ['建筑设计', '结构设计', '给排水设计'],
+    '地产运营': ['地产策划', '销售', '物业管理'],
+  },
+  'IT/互联网': {
+    '开发': ['前端开发', '后端开发', '全栈开发', '移动开发'],
+    '测试': ['功能测试', '自动化测试', '性能测试'],
+    '运维': ['系统运维', 'DevOps', '云计算'],
+  },
+};
+
+/* ──────────────────────────────
+   职位类别数据
+────────────────────────────── */
+const jobtypeData = {
+  '设计/研发': {
+    '电气设计': { items: ['电气工程师', '强电设计工程师', '弱电设计工程师', '仪表设计工程师'] },
+    '机械设计': { items: ['机械设计工程师', '结构设计工程师', '产品设计工程师'] },
+    '研发': { items: ['研发工程师', '技术研发', 'R&D工程师', '产品研发'] },
+    '工艺': { items: ['工艺工程师', '工艺设计', '工艺优化'] },
+  },
+  '运维/运管': {
+    '运行': { items: ['值长', '副值长', '主值', '值班员', '运行工程师', '巡检员', '集控运行'] },
+    '检修': {
+      groups: [
+        { header: '汽机巡检', items: ['汽机巡检员', '汽机巡检', '电气汽机巡检', '汽机巡检值班员', '汽机巡检工程师', '汽机检修', '巡操'] },
+        { header: '锅炉巡检', items: ['锅炉巡检员', '锅炉巡检', '余热锅炉巡检', '锅炉巡检工', '锅炉检修工'] },
+        { header: '电气检修', items: ['电气检修工', '继电保护', '高压电气检修', '变压器检修'] },
+        { header: '热控检修', items: ['热工仪表', 'DCS维护', '热控工程师', '仪控检修'] },
+      ]
+    },
+    '专工': { items: ['汽机专工', '锅炉专工', '电气专工', '热控专工', '化学专工', '燃料专工'] },
+    '运营管理': { items: ['厂长', '副厂长', '运营总监', '生产主任', '运营经理'] },
+    '维护/技术支持': { items: ['设备维护', '技术员', '技术支持工程师', '设备管理工程师'] },
+    '售电': { items: ['售电经理', '电力交易员', '售电分析师', '市场开发'] },
+    '碳管理': { items: ['碳资产管理', '碳交易员', '碳核查员', 'ESG管理'] },
+  },
+  '施工/基建': {
+    '土建': { items: ['土建工程师', '施工员', '项目经理', '建造师'] },
+    '安装': { items: ['安装工程师', '管道安装', '电气安装', '设备安装'] },
+    '调试': { items: ['调试工程师', '系统调试', '设备调试', '热态调试'] },
+  },
+  '生产/制造': {
+    '生产管理': { items: ['生产主管', '生产调度', '班组长', '生产计划'] },
+    '质量管理': { items: ['质量工程师', 'QC检验员', '品质管理', 'ISO审核员'] },
+  },
+  '造价/监理': {
+    '造价': { items: ['造价工程师', '预算员', '成本管理', '招投标专员'] },
+    '监理': { items: ['监理工程师', '总监', '监理员'] },
+  },
+  '安全/质量': {
+    '安全': { items: ['安全工程师', 'HSE工程师', '安全管理员', '消防工程师'] },
+    '质量': { items: ['质量工程师', '质量管理体系', '品质管理'] },
+    '环保': { items: ['环保工程师', '环境监测', '排污许可'] },
+  },
+  '高级经营管理': {
+    '总裁/CEO': { items: ['CEO', '总裁', '执行总裁', '联席总裁'] },
+    '总监级': { items: ['总监', '副总裁', '运营总监', '技术总监'] },
+    '厂长/总经理': { items: ['厂长', '总经理', '副总经理', '事业部总经理'] },
+  },
+  '人事/财务/行政': {
+    '人力资源': { items: ['HR专员', '招聘专员', '培训专员', 'HRBP', 'HR总监'] },
+    '财务': { items: ['财务专员', '会计', '财务分析师', '财务总监', '审计'] },
+    '行政': { items: ['行政专员', '行政主管', '办公室主任', '前台接待'] },
+  },
+  '咨询/翻译/法律': {
+    '咨询': { items: ['管理咨询', '战略咨询', '技术咨询', '行业研究'] },
+    '翻译': { items: ['英语翻译', '商务翻译', '技术翻译', '同声传译'] },
+    '法律': { items: ['法务专员', '律师', '合规专员', '知识产权'] },
+  },
+  '金融/投融资': {
+    '投资': { items: ['投资经理', '基金经理', '股权投资', '项目投资'] },
+    '融资': { items: ['融资经理', '资本运作', 'IPO', '债券融资'] },
+    '金融分析': { items: ['金融分析师', '风险控制', '量化分析', '研究员'] },
+  },
+  '市场营销': {
+    '市场': { items: ['市场专员', '市场经理', '品牌推广', '市场策划'] },
+    '销售': { items: ['销售代表', '销售经理', '大客户经理', '商务拓展'] },
+    '新媒体': { items: ['新媒体运营', '内容运营', '社群运营', '短视频运营'] },
+  },
+  '采购/贸易/物流': {
+    '采购': { items: ['采购专员', '采购经理', '战略采购', '供应商管理'] },
+    '贸易': { items: ['外贸专员', '进出口', '贸易跟单', '报关报检'] },
+    '物流': { items: ['物流专员', '仓储管理', '供应链', '配送管理'] },
+  },
+};
+
+/* ──────────────────────────────
+   State
+────────────────────────────── */
+let indState = { l1: '电力', l2: '火电', l3: null };
+let jtState  = { l1: '运维/运管', l2: '检修', l3: null, selected: null };
+
+/* ──────────────────────────────
+   Screen navigation
+────────────────────────────── */
+function openScreen(name) {
+  const id = 'screen-' + name;
+  document.getElementById(id).classList.add('active');
+  if (name === 'industry') renderIndustry();
+  if (name === 'jobtype')  renderJobtype();
+  if (name === 'jddesc') {
+    const cur = document.getElementById('jd-desc-val').textContent;
+    const ph = '介绍工作内容、职位要求';
+    const ed = document.getElementById('jd-editor');
+    ed.value = (cur === ph) ? '' : cur;
+    onJdInput();
+    setTimeout(() => ed.focus(), 300);
+  }
+}
+function goBack(name) {
+  document.getElementById('screen-' + name).classList.remove('active');
+}
+
+function onJdInput() {
+  const val = document.getElementById('jd-editor').value;
+  document.getElementById('jd-char-ct').textContent = val.length;
+}
+
+function saveJdDesc() {
+  const val = document.getElementById('jd-editor').value.trim();
+  const el = document.getElementById('jd-desc-val');
+  if (val) {
+    el.textContent = val;
+    el.className = 'field-value jd-filled';
+  } else {
+    el.textContent = '介绍工作内容、职位要求';
+    el.className = 'field-value';
+  }
+  goBack('jddesc');
+}
+
+/* ──────────────────────────────
+   行业类别 logic
+────────────────────────────── */
+function renderIndustry() {
+  const l1Keys = Object.keys(industryData);
+  const l2Keys = industryData[indState.l1] ? Object.keys(industryData[indState.l1]) : [];
+  const l3Items = (industryData[indState.l1] && indState.l2 && industryData[indState.l1][indState.l2])
+    ? industryData[indState.l1][indState.l2] : [];
+
+  // Col 1
+  document.getElementById('ind-col1').innerHTML = l1Keys.map(k =>
+    `<div class="ind-item ${k === indState.l1 ? 'selected' : ''}" onclick="selectIndL1('${k}')">${k}</div>`
+  ).join('');
+
+  // Col 2
+  document.getElementById('ind-col2').innerHTML = l2Keys.map(k =>
+    `<div class="ind-item ${k === indState.l2 ? 'selected' : ''}" onclick="selectIndL2('${k}')">${k}</div>`
+  ).join('');
+
+  // Col 3
+  document.getElementById('ind-col3').innerHTML = l3Items.map(item =>
+    `<div class="ind-item ${item === indState.l3 ? 'selected' : ''}" onclick="selectIndL3('${item}')">${item}</div>`
+  ).join('');
+}
+
+function selectIndL1(key) {
+  indState.l1 = key;
+  const l2Keys = Object.keys(industryData[key] || {});
+  indState.l2 = l2Keys[0] || null;
+  indState.l3 = null;
+  renderIndustry();
+}
+function selectIndL2(key) {
+  indState.l2 = key;
+  indState.l3 = null;
+  renderIndustry();
+}
+function selectIndL3(item) {
+  indState.l3 = item;
+  renderIndustry();
+}
+function confirmIndustry() {
+  const val = [indState.l1, indState.l2, indState.l3].filter(Boolean).join(' > ');
+  const el = document.getElementById('main-industry-val');
+  el.textContent = val || '请选择行业类别';
+  el.className = 'field-value' + (val ? ' filled' : '');
+  formState.industry = !!val;
+  checkAiBtn();
+  goBack('industry');
+}
+
+/* ──────────────────────────────
+   职位类别 logic
+────────────────────────────── */
+function renderJobtype() {
+  renderJtCol1();
+  renderJtCol2();
+  renderJtCol3();
+  renderJtTags();
+}
+
+function renderJtCol1() {
+  const keys = Object.keys(jobtypeData);
+  document.getElementById('jt-col1').innerHTML = keys.map(k =>
+    `<div class="jt-item ${k === jtState.l1 ? 'selected' : ''}" onclick="selectJtL1('${k}')">${k}</div>`
+  ).join('');
+}
+
+function renderJtCol2() {
+  const sub = jobtypeData[jtState.l1] || {};
+  const keys = Object.keys(sub);
+  document.getElementById('jt-col2').innerHTML = keys.map(k =>
+    `<div class="jt-item ${k === jtState.l2 ? 'selected' : ''}" onclick="selectJtL2('${k}')">${k}</div>`
+  ).join('');
+}
+
+function renderJtCol3() {
+  if (!jtState.l1 || !jtState.l2) { document.getElementById('jt-col3').innerHTML = ''; return; }
+  const data = jobtypeData[jtState.l1][jtState.l2];
+  let html = '';
+  if (data.groups) {
+    data.groups.forEach(g => {
+      html += `<div class="jt-item group-header">${g.header}</div>`;
+      g.items.forEach(item => {
+        html += `<div class="jt-item ${item === jtState.l3 ? 'leaf-selected' : ''}" onclick="selectJtL3('${item}')">${item}</div>`;
+      });
+    });
+  } else if (data.items) {
+    data.items.forEach(item => {
+      html += `<div class="jt-item ${item === jtState.l3 ? 'leaf-selected' : ''}" onclick="selectJtL3('${item}')">${item}</div>`;
+    });
+  }
+  document.getElementById('jt-col3').innerHTML = html;
+}
+
+function renderJtTags() {
+  const wrap = document.getElementById('jt-tags-wrap');
+  if (jtState.selected) {
+    wrap.innerHTML = `<span class="jt-tag">${jtState.selected}<span class="jt-tag-close" onclick="clearJtTag()">×</span></span>`;
+  } else {
+    wrap.innerHTML = '';
+  }
+}
+
+function selectJtL1(key) {
+  jtState.l1 = key;
+  const sub = jobtypeData[key] || {};
+  jtState.l2 = Object.keys(sub)[0] || null;
+  jtState.l3 = null;
+  renderJobtype();
+}
+function selectJtL2(key) {
+  jtState.l2 = key;
+  jtState.l3 = null;
+  renderJtCol2(); renderJtCol3();
+}
+function selectJtL3(item) {
+  jtState.l3 = item;
+  jtState.selected = item;
+  renderJtCol3();
+  renderJtTags();
+}
+function clearJtTag() {
+  jtState.selected = null;
+  jtState.l3 = null;
+  renderJtCol3();
+  renderJtTags();
+}
+function saveJobtype() {
+  const val = jtState.selected || '';
+  const el = document.getElementById('main-jobtype-val');
+  el.textContent = val || '请选择职位类别';
+  el.className = 'field-value' + (val ? ' filled' : '');
+  formState.jobtype = !!val;
+  checkAiBtn();
+  goBack('jobtype');
+}
+function jtSearch(q) {
+  // simple highlight – not filtering for prototype fidelity
+}
+
+/* ──────────────────────────────
+   职位名称 logic
+────────────────────────────── */
+function jnCount(input) {
+  document.getElementById('jn-counter').textContent = input.value.length + '/40';
+}
+function saveJobname() {
+  const val = document.getElementById('jn-input').value.trim();
+  const el = document.getElementById('main-jobname-val');
+  el.textContent = val || '请输入职位名称';
+  el.className = 'field-value' + (val ? ' filled' : '');
+  formState.jobname = !!val;
+  checkAiBtn();
+  goBack('jobname');
+}
+
+/* ──────────────────────────────
+   招聘类型
+────────────────────────────── */
+function selectType(btn) {
+  btn.closest('.type-btns').querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ──────────────────────────────
+   AI帮写 – state & drawer
+────────────────────────────── */
+const formState = { industry: false, jobtype: false, jobname: false };
+const selSysTags = new Set();
+let custTags = [];
+let genJD = '';
+let jdEverGenerated = false;
+
+const SYS_TAGS = ['600MW机组','1000MW机组','运行经验5年以上','高压电工证','垃圾焚烧发电','持有特种作业证','熟悉DL/T标准'];
+
+function checkAiBtn() {
+  const ok = formState.industry && formState.jobtype && formState.jobname;
+  document.getElementById('ai-help-btn').classList.toggle('disabled', !ok);
+}
+
+function openAiDrawer() {
+  if (!formState.industry || !formState.jobtype || !formState.jobname) return;
+  const indDisplay = [indState.l1, indState.l2, indState.l3].filter(Boolean).join('/');
+  const jtPath = [jtState.l1, jtState.l2, jtState.selected].filter(Boolean).join(' > ');
+  const jnVal = document.getElementById('main-jobname-val').textContent;
+  document.getElementById('dw-ctx').innerHTML =
+    `已为您锁定行业为<em>【${indDisplay}】</em>，职位类别<em>【${jtPath}】</em>，职位名称<em>【${jnVal}】</em>。<br>为生成更精准的JD，您可以选择以下标签补充细节：`;
+  // Only reset tags on very first open; subsequent opens remember last selection
+  if (!jdEverGenerated) { selSysTags.clear(); custTags = []; }
+  renderSysTags(); renderSelParams(); updateGenBtn();
+  showDwStep(1);
+  document.getElementById('ai-overlay').classList.add('show');
+  document.getElementById('ai-drawer').classList.add('open');
+}
+
+function closeAiDrawer() {
+  if (streamTimer) { clearInterval(streamTimer); streamTimer = null; }
+  document.getElementById('ai-overlay').classList.remove('show');
+  document.getElementById('ai-drawer').classList.remove('open');
+}
+
+function showDwStep(n) {
+  document.getElementById('dw-s1').style.display = n===1 ? ''     : 'none';
+  document.getElementById('dw-s2').style.display = n===2 ? ''     : 'none';
+  document.getElementById('dw-s3').style.display = n===3 ? 'flex' : 'none';
+}
+
+function renderSysTags() {
+  const sysPart = SYS_TAGS.map(t =>
+    `<button class="sys-tag${selSysTags.has(t)?' sel':''}" onclick="toggleSysTag('${t}')"><span class="tag-plus-ic">+</span> ${t}</button>`
+  ).join('');
+  const custPart = custTags.map(t =>
+    `<span class="ctag-inline">✓ ${t}</span>`
+  ).join('');
+  document.getElementById('dw-sys-tags').innerHTML = sysPart + custPart;
+}
+
+function toggleSysTag(t) {
+  selSysTags.has(t) ? selSysTags.delete(t) : selSysTags.add(t);
+  renderSysTags(); renderSelParams(); updateGenBtn();
+}
+
+function renderSelParams() {
+  const label = document.getElementById('dw-sel-label');
+  const box   = document.getElementById('dw-sel-box');
+  const hasAny = selSysTags.size > 0 || custTags.length > 0;
+  label.style.display = hasAny ? 'block' : 'none';
+  box.style.display   = hasAny ? 'flex'  : 'none';
+  if (!hasAny) return;
+  box.innerHTML =
+    [...selSysTags].map(t =>
+      `<span class="sel-chip-sys">+ ${t}<span class="sel-chip-rm" onclick="toggleSysTag('${t}')"> ×</span></span>`
+    ).join('') +
+    custTags.map((t,i) =>
+      `<span class="sel-chip-cust">+ ${t}<span class="sel-chip-rm" onclick="rmCtag(${i})"> ×</span></span>`
+    ).join('');
+}
+
+function addCtag() {
+  const inp = document.getElementById('dw-ci');
+  const v = inp.value.trim();
+  if (!v || custTags.length >= 5 || custTags.includes(v)) { inp.value = ''; return; }
+  custTags.push(v); inp.value = '';
+  renderSysTags(); renderSelParams(); updateGenBtn();
+}
+
+function ciKeydown(e) { if (e.key === 'Enter') { e.preventDefault(); addCtag(); } }
+
+function rmCtag(i) { custTags.splice(i,1); renderSysTags(); renderSelParams(); updateGenBtn(); }
+
+function updateGenBtn() {
+  // button is always active — tags are optional
+}
+
+let streamTimer = null;
+
+function startGenerate() {
+  genJD = buildJD([...selSysTags, ...custTags], false);
+  initStreamView();
+  showDwStep(3);
+  streamText(genJD);
+}
+
+function regenJD() {
+  if (streamTimer) { clearInterval(streamTimer); streamTimer = null; }
+  genJD = buildJD([...selSysTags, ...custTags], true);
+  initStreamView();
+  streamText(genJD);
+}
+
+function initStreamView() {
+  document.getElementById('dw-stream-text').textContent = '';
+  document.getElementById('dw-char-ct').textContent = '0';
+  document.getElementById('dw-gen-title').textContent = 'AI正在为您生成职位描述，请稍等';
+  document.getElementById('dw-stop-btn').style.display = 'flex';
+  document.getElementById('dw-regen-btn').style.display = 'none';
+  document.getElementById('dw-foot-single').style.display = '';
+  document.getElementById('dw-foot-two').style.display = 'none';
+  document.getElementById('dw-foot-two').style.flexDirection = 'row';
+}
+
+function streamText(text) {
+  const el = document.getElementById('dw-stream-text');
+  const countEl = document.getElementById('dw-char-ct');
+  const box = document.getElementById('dw-content-box');
+  let i = 0;
+  const chars = [...text];
+  streamTimer = setInterval(() => {
+    if (i >= chars.length) {
+      clearInterval(streamTimer); streamTimer = null;
+      onStreamDone(); return;
+    }
+    const chunk = Math.min(5, chars.length - i);
+    el.textContent += chars.slice(i, i + chunk).join('');
+    i += chunk;
+    countEl.textContent = i;
+    box.scrollTop = box.scrollHeight;
+  }, 20);
+}
+
+function stopStream() {
+  if (streamTimer) { clearInterval(streamTimer); streamTimer = null; }
+  genJD = document.getElementById('dw-stream-text').textContent;
+  onStreamDone();
+}
+
+function onStreamDone() {
+  document.getElementById('dw-stop-btn').style.display = 'none';
+  document.getElementById('dw-regen-btn').style.display = 'flex';
+  document.getElementById('dw-gen-title').textContent = '已为你生成职位描述';
+  genJD = document.getElementById('dw-stream-text').textContent;
+  // Show two buttons only if AI JD was previously filled into the editor
+  document.getElementById('dw-foot-single').style.display = jdEverGenerated ? 'none' : '';
+  document.getElementById('dw-foot-two').style.display   = jdEverGenerated ? 'flex' : 'none';
+}
+
+function buildJD(tags, variant) {
+  const tagsLine = tags.length ? `\n具备条件优先：${tags.join('、')}。` : '';
+  if (!variant) return `【岗位职责】
+
+1. 负责锅炉主辅设备的定期检修、消缺及维护工作，保障设备安全稳定运行；
+2. 带领班组完成年度/月度检修计划，合理分配任务；
+3. 参与大修、小修方案编制，把控检修工艺质量与进度；
+4. 处理受热面、燃烧器、风机、给煤机等设备故障缺陷；
+5. 开展班组安全培训，组织隐患排查及安全风险评估；
+6. 建立健全设备台账，填报检修及缺陷记录。
+
+【任职要求】
+
+1. 大专及以上学历，热能动力或相关专业；
+2. 5年以上火电厂锅炉检修工作经验，具备班组管理经历；
+3. 熟悉大机组锅炉结构及检修规程；
+4. 持有特种作业操作证，责任心强，善于协调沟通。${tagsLine}
+
+【薪资待遇】
+
+· 月薪面议，根据能力经验确定
+· 五险一金 + 年终奖 + 带薪年假 + 定期体检`;
+
+  return `【工作内容】
+
+1. 全面负责锅炉班组的日常检修管理，制定并执行预防性维护计划；
+2. 组织班组完成锅炉本体、燃烧设备、辅机系统的检修任务；
+3. 分析设备故障规律，提出改进措施和技术攻关方案；
+4. 监督检修质量，确保各项检修工艺符合相关标准要求；
+5. 做好班组安全管理，开展安全培训及隐患排查治理。
+
+【岗位要求】
+
+1. 大专及以上学历，热动工程、机械工程等相关专业；
+2. 5年以上电力行业锅炉检修工作经验及班组管理经验；
+3. 熟练掌握大型机组锅炉检修技术，工作严谨认真；
+4. 具备较强的现场组织协调能力及应急处置能力。${tagsLine}
+
+【薪酬福利】
+
+· 薪资待遇：面议
+· 社会保险 + 住房公积金
+· 年终奖金 + 带薪假期 + 节日慰问`;
+}
+
+function _commitJD(text) {
+  const ed = document.getElementById('jd-editor');
+  if (ed) { ed.value = text; onJdInput(); }
+  const el = document.getElementById('jd-desc-val');
+  if (el) { el.textContent = text; el.className = 'field-value jd-filled'; }
+  jdEverGenerated = true;
+  closeAiDrawer();
+}
+
+function replaceJD() {
+  if (streamTimer) { clearInterval(streamTimer); streamTimer = null; }
+  genJD = document.getElementById('dw-stream-text').textContent || genJD;
+  _commitJD(genJD);
+}
+
+function appendJD() {
+  if (streamTimer) { clearInterval(streamTimer); streamTimer = null; }
+  genJD = document.getElementById('dw-stream-text').textContent || genJD;
+  const ed = document.getElementById('jd-editor');
+  const existing = ed ? ed.value.trim() : '';
+  _commitJD(existing ? existing + '\n\n' + genJD : genJD);
+}
+
+function useJD() { replaceJD(); }
+</script>
+</body>
+</html>

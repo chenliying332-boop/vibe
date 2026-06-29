@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>发布职位 - 职位信息</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .page-wrapper {
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      padding: 32px 40px 40px;
+    }
+
+    /* Two-column inner layout */
+    .page-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .form-section { flex: 1; min-width: 0; }
+
+    .ai-sidebar {
+      width: 340px;
+      min-width: 340px;
+      padding-top: 324px;
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .section-hint {
+      font-size: 12px;
+      color: #ff6b35;
+    }
+
+    /* Form rows */
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      width: 100px;
+      min-width: 100px;
+      text-align: right;
+      padding-right: 12px;
+      padding-top: 7px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .form-label.required::before {
+      content: "* ";
+      color: #e34d59;
+    }
+
+    .form-content {
+      flex: 1;
+    }
+
+    /* Select / Input base */
+    .form-select,
+    .form-input {
+      width: 100%;
+      height: 34px;
+      border: 1px solid #d9d9d9;
+      border-radius: 3px;
+      padding: 0 28px 0 10px;
+      font-size: 13px;
+      color: #bbb;
+      background: #fff;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    .form-input {
+      padding: 0 10px;
+      cursor: text;
+    }
+
+    .form-input::placeholder { color: #bbb; }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: "";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-top-color: #bbb;
+      pointer-events: none;
+    }
+
+    /* Template row: two selects */
+    .template-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .template-row .select-wrapper:first-child {
+      width: 120px;
+      flex-shrink: 0;
+    }
+
+    .template-row .select-wrapper:last-child {
+      flex: 1;
+    }
+
+    /* Recruitment type buttons */
+    .type-buttons {
+      display: flex;
+      gap: 0;
+    }
+
+    .type-btn {
+      height: 34px;
+      padding: 0 24px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      color: #555;
+      position: relative;
+    }
+
+    .type-btn:first-child {
+      border-radius: 3px 0 0 3px;
+    }
+
+    .type-btn:last-child {
+      border-radius: 0 3px 3px 0;
+      border-left: none;
+    }
+
+    .type-btn.active {
+      background: #ff6b35;
+      border-color: #ff6b35;
+      color: #fff;
+      z-index: 1;
+    }
+
+    .free-badge {
+      position: absolute;
+      top: -9px;
+      right: -1px;
+      background: #e34d59;
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 2px;
+      line-height: 16px;
+    }
+
+    /* Department row */
+    .dept-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dept-row .select-wrapper {
+      flex: 1;
+    }
+
+    .add-dept-btn {
+      height: 34px;
+      padding: 0 14px;
+      border: 1px solid #ff6b35;
+      color: #ff6b35;
+      background: #fff;
+      border-radius: 3px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Job description area */
+    .jd-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .jd-editor {
+      flex: 1;
+      border: 1px solid #d9d9d9;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      border-bottom: 1px solid #e8e8e8;
+      background: #fafafa;
+    }
+
+    .toolbar-icon {
+      font-size: 15px;
+      color: #666;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .editor-body {
+      min-height: 160px;
+      padding: 10px;
+      position: relative;
+    }
+
+    .editor-placeholder {
+      color: #bbb;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .editor-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 4px 10px 6px;
+      font-size: 12px;
+      color: #bbb;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    /* ===== Cascading industry select ===== */
+    .industry-trigger {
+      width: 100%;
+      height: 34px;
+      border: 1px solid #d9d9d9;
+      border-radius: 3px;
+      padding: 0 28px 0 10px;
+      font-size: 13px;
+      color: #bbb;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      position: relative;
+      user-select: none;
+    }
+
+    .industry-trigger.open {
+      border-color: #ff6b35;
+      color: #333;
+    }
+
+    .industry-trigger .trigger-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .industry-trigger .trigger-arrow {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      width: 0;
+      height: 0;
+      border: 5px solid transparent;
+      border-top-color: #bbb;
+      transform: translateY(-30%);
+      transition: transform 0.2s;
+    }
+
+    .industry-trigger.open .trigger-arrow {
+      border-top-color: #ff6b35;
+      transform: translateY(-70%) rotate(180deg);
+    }
+
+    .industry-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      z-index: 999;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 2px;
+      min-width: 520px;
+    }
+
+    .industry-panel.open { display: flex; }
+
+    .industry-col {
+      width: 160px;
+      min-width: 160px;
+      border-right: 1px solid #f0f0f0;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .industry-col:last-child { border-right: none; flex: 1; }
+
+    .industry-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .industry-item:hover { background: #fff8f5; }
+
+    .industry-item.active {
+      color: #ff6b35;
+      background: #fff8f5;
+    }
+
+    .industry-item.selected-leaf {
+      background: #fff3ee;
+      color: #333;
+    }
+
+    .industry-item .item-arrow {
+      color: #bbb;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    .industry-item.active .item-arrow { color: #ff6b35; }
+
+    /* ===== Job category modal ===== */
+    .jc-trigger {
+      width: 100%;
+      height: 34px;
+      border: 1px solid #d9d9d9;
+      border-radius: 3px;
+      padding: 0 28px 0 10px;
+      font-size: 13px;
+      color: #bbb;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      position: relative;
+      user-select: none;
+    }
+
+    .jc-trigger.has-value { color: #333; }
+
+    .jc-trigger::after {
+      content: "";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-top-color: #bbb;
+    }
+
+    /* Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    /* Modal box */
+    .jc-modal {
+      background: #fff;
+      border-radius: 4px;
+      width: 600px;
+      max-height: 520px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    /* Modal header */
+    .jc-header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px 10px;
+      gap: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .jc-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      white-space: nowrap;
+    }
+
+    .jc-search {
+      flex: 1;
+      height: 30px;
+      border: 1px solid #e0e0e0;
+      border-radius: 15px;
+      padding: 0 12px 0 30px;
+      font-size: 13px;
+      outline: none;
+      background: #f7f7f7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;
+      color: #333;
+    }
+
+    .jc-search::placeholder { color: #bbb; }
+
+    .jc-close {
+      font-size: 18px;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 4px;
+    }
+
+    .jc-close:hover { color: #333; }
+
+    /* Selected tags row */
+    .jc-selected-row {
+      padding: 8px 16px;
+      font-size: 13px;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 36px;
+    }
+
+    .jc-selected-label { color: #333; white-space: nowrap; }
+
+    .jc-sel-tag {
+      background: #fff3ee;
+      border: 1px solid #ffb899;
+      color: #ff6b35;
+      border-radius: 2px;
+      padding: 2px 8px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .jc-sel-tag .rm { cursor: pointer; font-size: 13px; color: #ff6b35; }
+
+    /* 3-column body */
+    .jc-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .jc-col1 {
+      width: 130px;
+      min-width: 130px;
+      border-right: 1px solid #f0f0f0;
+      overflow-y: auto;
+    }
+
+    .jc-col2 {
+      width: 120px;
+      min-width: 120px;
+      border-right: 1px solid #f0f0f0;
+      overflow-y: auto;
+    }
+
+    .jc-col3 {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+    }
+
+    .jc-l1-item {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .jc-l1-item:hover { background: #fff8f5; }
+
+    .jc-l1-item.active {
+      color: #ff6b35;
+      border-left-color: #ff6b35;
+      background: #fff8f5;
+    }
+
+    .jc-l2-item {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .jc-l2-item:hover { background: #fff8f5; }
+
+    .jc-l2-item.active { color: #ff6b35; }
+
+    /* Tag groups */
+    .tag-group { margin-bottom: 14px; }
+
+    .tag-group-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .tag-chip {
+      padding: 4px 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 2px;
+      font-size: 12px;
+      color: #555;
+      cursor: pointer;
+      background: #fff;
+      white-space: nowrap;
+    }
+
+    .tag-chip:hover { border-color: #ff6b35; color: #ff6b35; }
+
+    .tag-chip.selected {
+      background: #fff3ee;
+      border-color: #ff6b35;
+      color: #ff6b35;
+    }
+
+    /* Modal footer */
+    .jc-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 12px 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .jc-btn-cancel {
+      height: 32px;
+      padding: 0 20px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #555;
+      border-radius: 3px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .jc-btn-confirm {
+      height: 32px;
+      padding: 0 20px;
+      border: none;
+      background: #ff6b35;
+      color: #fff;
+      border-radius: 3px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ===== AI helper card ===== */
+    .ai-card {
+      border: 1px solid #ffe0cc;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(255,107,53,0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header row: avatar + title */
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px 12px;
+      background: linear-gradient(135deg, #fff8f5 0%, #fff3ee 100%);
+      border-bottom: 1px solid #ffe0cc;
+    }
+
+    .ai-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff9a6c, #ff6b35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .ai-card-title {
+      color: #ff6b35;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .ai-card-subtitle {
+      font-size: 11px;
+      color: #bbb;
+      margin-top: 2px;
+    }
+
+    /* Card body area */
+    .ai-card-body-wrap {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow-y: auto;
+    }
+    .ai-card.expanded .ai-card-body-wrap {
+      flex: 1;
+      min-height: 0;
+    }
+    .ai-card.expanded {
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ai-card-body {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.9;
+    }
+
+    /* Summary block */
+    .ai-summary {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.85;
+      background: #fff8f5;
+      border-radius: 6px;
+      padding: 9px 11px;
+      margin-bottom: 12px;
+    }
+    .ai-summary em { color: #ff6b35; font-style: normal; font-weight: 500; }
+
+    /* Tag section */
+    .ai-sec-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .ai-tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    /* Tag chip base */
+    .aitc {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .aitc-icon { font-size: 11px; font-weight: 700; }
+
+    /* System tags */
+    .aitc.sys { border: 1px solid #ff8c5a; color: #ff6b35; background: #fff; }
+    .aitc.sys:hover { background: #fff3ee; }
+    .aitc.sys.sel { background: #ff6b35; color: #fff; border-color: #ff6b35; }
+
+    /* Custom tags */
+    .aitc.cust { border: 1.5px dashed #aaa; color: #555; background: #fff; }
+    .aitc.cust:hover { border-color: #27ae60; color: #27ae60; }
+    .aitc.cust.csel { background: #27ae60; color: #fff; border: 1.5px solid #27ae60; }
+
+    /* Custom input area */
+    .ai-custom-label { font-size: 12px; color: #666; margin-bottom: 6px; }
+
+    .ai-input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .ai-cust-in {
+      width: 100%;
+      height: 36px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 0 40px 0 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .ai-cust-in:focus { border-color: #ff6b35; }
+
+    .ai-cust-confirm {
+      position: absolute;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ff6b35;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .ai-input-tip {
+      font-size: 11px;
+      color: #bbb;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    /* 已选参数 */
+    .ai-params-box {
+      background: #f5f5f5;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+    }
+
+    .ai-params-title {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .ai-params-list { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .ai-param {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+    }
+
+    .ai-param.sys { background: #fff3ee; border: 1px solid #ff8c5a; color: #ff6b35; }
+    .ai-param.cust { background: #e8f8ee; border: 1px solid #27ae60; color: #27ae60; }
+
+    .px { cursor: pointer; font-size: 12px; opacity: 0.7; }
+    .px:hover { opacity: 1; }
+
+    /* Generate button */
+    .ai-gen-btn {
+      width: 100%;
+      height: 42px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+      margin-top: auto;
+    }
+
+    .ai-gen-btn { background: #ff6b35; color: #fff; }
+    .ai-gen-btn:hover { background: #f05a25; }
+
+    /* Generated JD state */
+    .ai-generated-scroll {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 13px;
+      color: #333;
+      line-height: 1.9;
+      white-space: pre-wrap;
+      margin-bottom: 12px;
+      max-height: 300px;
+      padding-right: 4px;
+    }
+
+    .ai-generated-scroll::-webkit-scrollbar { width: 4px; }
+    .ai-generated-scroll::-webkit-scrollbar-thumb { background: #ffc4a8; border-radius: 2px; }
+
+    .ai-foot-info {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0 4px; border-top: 1px solid #F0F0F0; flex-shrink: 0;
+      font-size: 11px;
+    }
+    .ai-foot-disc { color: #C0C0C0; }
+    .ai-foot-count { color: #ff6b35; }
+
+    .ai-action-row { display: flex; align-items: center; margin-top: 6px; gap: 8px; }
+
+    .ai-regen-btn {
+      font-size: 13px; color: #999; background: none; border: none;
+      cursor: pointer; padding: 0; white-space: nowrap; flex-shrink: 0;
+    }
+    .ai-regen-btn:hover { color: #ff6b35; }
+
+    .ai-use-btn {
+      margin-left: auto; height: 34px; padding: 0 18px;
+      background: #fff; border: 1.5px solid #ff6b35;
+      border-radius: 17px; color: #ff6b35;
+      font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .ai-use-btn:hover { background: #fff8f5; }
+    .ai-append-btn {
+      margin-left: auto; height: 34px; padding: 0 12px;
+      background: #fff; border: 1.5px solid #ff6b35;
+      border-radius: 17px; color: #ff6b35;
+      font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .ai-append-btn:hover { background: #fff8f5; }
+    .ai-replace-btn {
+      height: 34px; padding: 0 12px;
+      background: #ff6b35; border: none;
+      border-radius: 17px; color: #fff;
+      font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .ai-replace-btn:hover { background: #f05a25; }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- Section header -->
+    <div class="section-header">
+      <span class="section-title">1. 职位信息</span>
+      <span class="section-hint">加 * 内容，为必填项，请仔细填写</span>
+    </div>
+
+    <div class="page-inner">
+    <div class="form-section">
+
+    <!-- 职位模板复制 -->
+    <div class="form-row">
+      <div class="form-label">职位模板复制</div>
+      <div class="form-content">
+        <div class="template-row">
+          <div class="select-wrapper">
+            <select class="form-select">
+              <option>使用模板</option>
+            </select>
+          </div>
+          <div class="select-wrapper">
+            <select class="form-select">
+              <option value="">请选择已保存的模板</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 招聘类型 -->
+    <div class="form-row">
+      <div class="form-label required">招聘类型</div>
+      <div class="form-content">
+        <div class="type-buttons">
+          <button class="type-btn active">社会招聘</button>
+          <button class="type-btn" style="position:relative;">
+            校园招聘
+            <span class="free-badge">免费</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 行业类别 -->
+    <div class="form-row">
+      <div class="form-label required">行业类别</div>
+      <div class="form-content">
+        <div class="select-wrapper" id="industryWrapper" style="position:relative;">
+          <!-- Trigger -->
+          <div class="industry-trigger" id="industryTrigger">
+            <span class="trigger-text" id="industryText">请选择</span>
+            <span class="trigger-arrow"></span>
+          </div>
+          <!-- Panel -->
+          <div class="industry-panel" id="industryPanel">
+            <div class="industry-col" id="col1"></div>
+            <div class="industry-col" id="col2"></div>
+            <div class="industry-col" id="col3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 职位类别 -->
+    <div class="form-row">
+      <div class="form-label required">职位类别</div>
+      <div class="form-content">
+        <div class="jc-trigger" id="jcTrigger">
+          <span id="jcTriggerText">请选择</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 职位类别 Modal -->
+    <div class="modal-overlay" id="jcOverlay">
+      <div class="jc-modal" id="jcModal">
+        <div class="jc-header">
+          <span class="jc-title">选择职位类别</span>
+          <input class="jc-search" id="jcSearch" placeholder="搜索职位类别" />
+          <span class="jc-close" id="jcClose">×</span>
+        </div>
+        <div class="jc-selected-row" id="jcSelectedRow">
+          <span class="jc-selected-label">已选类别：</span>
+        </div>
+        <div class="jc-body">
+          <div class="jc-col1" id="jcCol1"></div>
+          <div class="jc-col2" id="jcCol2"></div>
+          <div class="jc-col3" id="jcCol3"></div>
+        </div>
+        <div class="jc-footer">
+          <button class="jc-btn-cancel" id="jcCancel">取消</button>
+          <button class="jc-btn-confirm" id="jcConfirm">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 职位名称 -->
+    <div class="form-row">
+      <div class="form-label required">职位名称</div>
+      <div class="form-content">
+        <input
+          id="jobNameInput"
+          class="form-input"
+          type="text"
+          placeholder="请输入职位名称，例如：人力资源经理，请勿超过40个字符，发布成功后职位名称将无法修改"
+        />
+      </div>
+    </div>
+
+    <!-- 所属部门 -->
+    <div class="form-row">
+      <div class="form-label">所属部门</div>
+      <div class="form-content">
+        <div class="dept-row">
+          <div class="select-wrapper">
+            <select class="form-select">
+              <option value="">请选择</option>
+            </select>
+          </div>
+          <button class="add-dept-btn">添加部门</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 职位描述 -->
+    <div class="form-row" style="align-items:flex-start;">
+      <div class="form-label required" style="padding-top:8px;">职位描述</div>
+      <div class="form-content">
+        <div class="jd-editor">
+          <div class="editor-toolbar">
+            <span class="toolbar-icon">&#9776;</span>
+            <span class="toolbar-icon">&#8801;</span>
+          </div>
+          <div class="editor-body">
+            <div class="editor-placeholder">
+              请输入职位描述，请勿填写QQ、微信、电话等联系方式及特殊符号、性别歧视词、违反劳动法相关内容，否则职位将不予发布
+            </div>
+          </div>
+          <div class="editor-footer">0 / 3000</div>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /form-section -->
+
+    <!-- AI sidebar -->
+    <div class="ai-sidebar">
+      <div class="ai-card" id="aiCard">
+        <div class="ai-header">
+          <div class="ai-avatar">🦁</div>
+          <div>
+            <div class="ai-card-title">AI帮写JD助手</div>
+            <div class="ai-card-subtitle">智能职位描述生成</div>
+          </div>
+        </div>
+        <div class="ai-card-body-wrap" id="aiCardContent">
+          <div class="ai-card-body">您好，我是您的AI帮写助手<br>填写行业类别、职位类别、职位名称后，我可以帮您高效生成职位描述哦~</div>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /page-inner -->
+
+  </div>
+
+  <script>
+    // AI panel persistent state
+    let aiSelectedSys = new Set();
+    let aiCustomList  = [];
+    let aiCtx = { industry: '', jobCat: '', jobName: '' };
+    let jdEverFilled  = false;
+
+    const industryData = [
+      { label: '电力', children: [
+        { label: '火电', children: ['火力发电','火电设备','火电调试及检修','热电'] },
+        { label: '水电', children: ['水力发电','水电设备','抽水蓄能'] },
+        { label: '核电', children: ['核能发电','核电设备','核电运维'] },
+        { label: '新能源', children: ['风力发电','光伏发电','储能'] },
+      ]},
+      { label: '建筑', children: [
+        { label: '房屋建筑', children: ['住宅建筑','商业建筑','工业厂房'] },
+        { label: '基础设施', children: ['道路桥梁','轨道交通','市政工程'] },
+        { label: '装修装饰', children: ['室内设计','工装装修','家装装修'] },
+      ]},
+      { label: '制造业', children: [
+        { label: '机械制造', children: ['通用机械','专用设备','仪器仪表'] },
+        { label: '电子制造', children: ['半导体','消费电子','PCB'] },
+        { label: '汽车制造', children: ['整车制造','汽车零部件','新能源汽车'] },
+      ]},
+      { label: '互联网', children: [
+        { label: '电商', children: ['B2C电商','B2B电商','跨境电商'] },
+        { label: '社交媒体', children: ['短视频','直播','社区'] },
+        { label: 'SaaS', children: ['企业软件','云计算','大数据'] },
+      ]},
+      { label: '金融', children: [
+        { label: '银行', children: ['商业银行','投资银行','政策性银行'] },
+        { label: '证券', children: ['股票','基金','期货'] },
+        { label: '保险', children: ['寿险','财险','再保险'] },
+      ]},
+      { label: '医疗健康', children: [
+        { label: '医院', children: ['综合医院','专科医院','诊所'] },
+        { label: '医疗器械', children: ['影像设备','体外诊断','植入器械'] },
+        { label: '制药', children: ['化学药','生物药','中药'] },
+      ]},
+    ];
+
+    let activeL1 = null, activeL2 = null, activeL3 = null;
+    const trigger = document.getElementById('industryTrigger');
+    const panel   = document.getElementById('industryPanel');
+    const col1    = document.getElementById('col1');
+    const col2    = document.getElementById('col2');
+    const col3    = document.getElementById('col3');
+    const text    = document.getElementById('industryText');
+
+    function renderCol1() {
+      col1.innerHTML = industryData.map((d, i) => `
+        <div class="industry-item ${activeL1 === i ? 'active' : ''}" data-l1="${i}">
+          <span>${d.label}</span>
+          <span class="item-arrow">›</span>
+        </div>`).join('');
+      col1.querySelectorAll('.industry-item').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          const i = +el.dataset.l1;
+          if (activeL1 === i) return;
+          activeL1 = i; activeL2 = null; activeL3 = null;
+          renderCol1(); renderCol2(); renderCol3();
+        });
+      });
+    }
+
+    function renderCol2() {
+      if (activeL1 === null) { col2.innerHTML = ''; return; }
+      const subs = industryData[activeL1].children;
+      col2.innerHTML = subs.map((d, i) => `
+        <div class="industry-item ${activeL2 === i ? 'active' : ''}" data-l2="${i}">
+          <span>${d.label}</span>
+          <span class="item-arrow">›</span>
+        </div>`).join('');
+      col2.querySelectorAll('.industry-item').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          const i = +el.dataset.l2;
+          if (activeL2 === i) return;
+          activeL2 = i; activeL3 = null;
+          renderCol2(); renderCol3();
+        });
+      });
+    }
+
+    function renderCol3() {
+      if (activeL1 === null || activeL2 === null) { col3.innerHTML = ''; return; }
+      const leaves = industryData[activeL1].children[activeL2].children;
+      col3.innerHTML = leaves.map((d, i) => `
+        <div class="industry-item ${activeL3 === i ? 'selected-leaf' : ''}" data-l3="${i}">
+          <span>${d}</span>
+        </div>`).join('');
+      col3.querySelectorAll('.industry-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const i = +el.dataset.l3;
+          activeL3 = i;
+          const val = `${industryData[activeL1].label} / ${industryData[activeL1].children[activeL2].label} / ${leaves[i]}`;
+          text.textContent = val;
+          text.style.color = '#333';
+          closePanel();
+          renderCol3();
+        });
+      });
+    }
+
+    function openPanel() {
+      trigger.classList.add('open');
+      panel.classList.add('open');
+      renderCol1(); renderCol2(); renderCol3();
+    }
+
+    function closePanel() {
+      trigger.classList.remove('open');
+      panel.classList.remove('open');
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      panel.classList.contains('open') ? closePanel() : openPanel();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('industryWrapper').contains(e.target)) closePanel();
+    });
+
+    /* ===== 职位类别 modal ===== */
+    const jobData = [
+      { label: '设计/研发', children: [
+        { label: 'UI/UX设计', groups: [
+          { name: '视觉设计', tags: ['UI设计师','视觉设计师','平面设计师','品牌设计师','插画师'] },
+          { name: '交互设计', tags: ['交互设计师','用户体验设计师','原型设计师'] },
+        ]},
+        { label: '软件研发', groups: [
+          { name: '前端开发', tags: ['前端工程师','H5开发','Vue开发','React开发'] },
+          { name: '后端开发', tags: ['Java工程师','Python工程师','Go工程师','Node.js工程师'] },
+        ]},
+      ]},
+      { label: '运维/运营', children: [
+        { label: '运行', groups: [
+          { name: '运行值班', tags: ['运行值班员','运行工程师','集控运行','机组运行'] },
+          { name: '运行管理', tags: ['运行主管','运行部长','值长'] },
+        ]},
+        { label: '检修', groups: [
+          { name: '汽机巡检', tags: ['汽机巡检员','汽机巡检','电气汽机巡检','汽机巡检值班员','汽机巡检工程师','汽机检修','巡操'] },
+          { name: '锅炉巡检', tags: ['锅炉巡检员','锅炉巡检','余热锅炉巡检','锅炉巡检工','汽机锅炉巡检员','锅炉巡检工程师','余热发电'] },
+          { name: '电气巡检', tags: ['电气巡检员','电气巡检','电气巡检值班员','电气巡检工程师'] },
+          { name: '热工巡检', tags: ['热工巡检员','热工巡检','DCS维护','热控工程师'] },
+        ]},
+        { label: '专工', groups: [
+          { name: '技术专工', tags: ['汽机专工','锅炉专工','电气专工','热工专工','化学专工'] },
+        ]},
+        { label: '运营管理', groups: [
+          { name: '运营策划', tags: ['运营经理','运营主管','内容运营','用户运营','活动运营'] },
+        ]},
+        { label: '维护/技术支持', groups: [
+          { name: '设备维护', tags: ['设备维护工程师','设备维护员','巡检工','维修技师'] },
+          { name: '技术支持', tags: ['技术支持工程师','售后技术支持','现场技术支持'] },
+        ]},
+        { label: '售电', groups: [
+          { name: '售电业务', tags: ['售电经理','售电专员','电力交易员','售电工程师'] },
+        ]},
+        { label: '碳管理', groups: [
+          { name: '碳资产', tags: ['碳资产管理员','碳排放核查员','碳交易员','碳减排工程师'] },
+        ]},
+      ]},
+      { label: '施工/基建', children: [
+        { label: '土建施工', groups: [
+          { name: '施工管理', tags: ['项目经理','施工员','质检员','安全员','资料员'] },
+          { name: '结构施工', tags: ['钢筋工','模板工','混凝土工','架子工'] },
+        ]},
+        { label: '机电安装', groups: [
+          { name: '机电工程', tags: ['机电工程师','强电工程师','弱电工程师','暖通工程师'] },
+        ]},
+      ]},
+      { label: '生产/制造', children: [
+        { label: '生产管理', groups: [
+          { name: '生产计划', tags: ['生产经理','生产主管','生产调度','PMC'] },
+          { name: '质量管理', tags: ['质量工程师','QC','QA','品质主管'] },
+        ]},
+        { label: '设备操作', groups: [
+          { name: '操作工', tags: ['数控操作工','车工','铣工','磨工','冲压工'] },
+        ]},
+      ]},
+      { label: '造价/监理', children: [
+        { label: '工程造价', groups: [
+          { name: '造价工程', tags: ['造价工程师','预算员','成本工程师','招标专员'] },
+        ]},
+        { label: '工程监理', groups: [
+          { name: '监理工程', tags: ['总监','监理工程师','监理员','旁站监理'] },
+        ]},
+      ]},
+      { label: '安全/质量', children: [
+        { label: 'HSE', groups: [
+          { name: '安全管理', tags: ['安全工程师','HSE工程师','安全主管','消防工程师'] },
+          { name: '环保管理', tags: ['环保工程师','环境监测员','环保专员'] },
+        ]},
+      ]},
+      { label: '高级经营管理', children: [
+        { label: '高管', groups: [
+          { name: '企业高管', tags: ['总经理','副总经理','总裁','CEO','COO','CFO','CTO'] },
+        ]},
+      ]},
+      { label: '人事/财务/行政', children: [
+        { label: '人力资源', groups: [
+          { name: 'HR', tags: ['人力资源经理','招聘专员','薪酬专员','培训专员','HR BP'] },
+        ]},
+        { label: '财务', groups: [
+          { name: '财务管理', tags: ['财务经理','会计','出纳','成本会计','税务专员'] },
+        ]},
+        { label: '行政', groups: [
+          { name: '行政管理', tags: ['行政经理','行政专员','前台','文员','秘书'] },
+        ]},
+      ]},
+      { label: '咨询/翻译/法律', children: [
+        { label: '管理咨询', groups: [
+          { name: '咨询', tags: ['管理咨询顾问','战略顾问','业务顾问','项目顾问'] },
+        ]},
+        { label: '法律', groups: [
+          { name: '法务', tags: ['律师','法务经理','法务专员','合规专员'] },
+        ]},
+      ]},
+    ];
+
+    let jcL1 = 1, jcL2 = 1;
+    const selectedTags = new Set();
+
+    const jcOverlay  = document.getElementById('jcOverlay');
+    const jcTrigger  = document.getElementById('jcTrigger');
+    const jcClose    = document.getElementById('jcClose');
+    const jcCancel   = document.getElementById('jcCancel');
+    const jcConfirm  = document.getElementById('jcConfirm');
+    const jcSearch   = document.getElementById('jcSearch');
+    const jcCol1El   = document.getElementById('jcCol1');
+    const jcCol2El   = document.getElementById('jcCol2');
+    const jcCol3El   = document.getElementById('jcCol3');
+    const jcSelRow   = document.getElementById('jcSelectedRow');
+    const jcTrigText = document.getElementById('jcTriggerText');
+
+    function renderJcL1() {
+      jcCol1El.innerHTML = jobData.map((d, i) => `
+        <div class="jc-l1-item ${jcL1 === i ? 'active' : ''}" data-i="${i}">${d.label}</div>
+      `).join('');
+      jcCol1El.querySelectorAll('.jc-l1-item').forEach(el => {
+        el.addEventListener('click', () => {
+          jcL1 = +el.dataset.i; jcL2 = 0;
+          renderJcL1(); renderJcL2(); renderJcL3();
+        });
+      });
+    }
+
+    function renderJcL2() {
+      const children = jobData[jcL1]?.children || [];
+      jcCol2El.innerHTML = children.map((d, i) => `
+        <div class="jc-l2-item ${jcL2 === i ? 'active' : ''}" data-i="${i}">${d.label}</div>
+      `).join('');
+      jcCol2El.querySelectorAll('.jc-l2-item').forEach(el => {
+        el.addEventListener('click', () => {
+          jcL2 = +el.dataset.i;
+          renderJcL2(); renderJcL3();
+        });
+      });
+    }
+
+    function renderJcL3(filter) {
+      const groups = jobData[jcL1]?.children[jcL2]?.groups || [];
+      let html = '';
+      groups.forEach(g => {
+        const tags = filter
+          ? g.tags.filter(t => t.includes(filter))
+          : g.tags;
+        if (!tags.length) return;
+        html += `<div class="tag-group">
+          <div class="tag-group-name">${g.name}</div>
+          <div class="tag-list">
+            ${tags.map(t => `
+              <span class="tag-chip ${selectedTags.has(t) ? 'selected' : ''}" data-tag="${t}">${t}</span>
+            `).join('')}
+          </div>
+        </div>`;
+      });
+      jcCol3El.innerHTML = html || '<div style="padding:20px;color:#bbb;font-size:13px;">暂无数据</div>';
+      jcCol3El.querySelectorAll('.tag-chip').forEach(el => {
+        el.addEventListener('click', () => {
+          const tag = el.dataset.tag;
+          if (selectedTags.has(tag)) selectedTags.delete(tag);
+          else selectedTags.add(tag);
+          renderJcL3(jcSearch.value.trim() || undefined);
+          renderSelectedRow();
+        });
+      });
+    }
+
+    function renderSelectedRow() {
+      const tags = [...selectedTags];
+      jcSelRow.innerHTML = `<span class="jc-selected-label">已选类别：</span>` +
+        tags.map(t => `<span class="jc-sel-tag">${t}<span class="rm" data-tag="${t}">×</span></span>`).join('');
+      jcSelRow.querySelectorAll('.rm').forEach(el => {
+        el.addEventListener('click', () => {
+          selectedTags.delete(el.dataset.tag);
+          renderJcL3(jcSearch.value.trim() || undefined);
+          renderSelectedRow();
+        });
+      });
+    }
+
+    function openJcModal() {
+      renderJcL1(); renderJcL2(); renderJcL3();
+      renderSelectedRow();
+      jcOverlay.classList.add('open');
+    }
+
+    function closeJcModal() { jcOverlay.classList.remove('open'); }
+
+    jcTrigger.addEventListener('click', openJcModal);
+    jcClose.addEventListener('click', closeJcModal);
+    jcCancel.addEventListener('click', closeJcModal);
+
+    jcOverlay.addEventListener('click', (e) => {
+      if (e.target === jcOverlay) closeJcModal();
+    });
+
+    jcConfirm.addEventListener('click', () => {
+      const tags = [...selectedTags];
+      if (tags.length) {
+        jcTrigText.textContent = tags.join('、');
+        jcTrigger.classList.add('has-value');
+      } else {
+        jcTrigText.textContent = '请选择';
+        jcTrigger.classList.remove('has-value');
+      }
+      closeJcModal();
+      checkAICard();
+    });
+
+    jcSearch.addEventListener('input', () => {
+      const q = jcSearch.value.trim();
+      if (q) {
+        // search across all groups
+        let html = '';
+        jobData.forEach(l1 => l1.children.forEach(l2 => l2.groups.forEach(g => {
+          const tags = g.tags.filter(t => t.includes(q));
+          if (!tags.length) return;
+          html += `<div class="tag-group">
+            <div class="tag-group-name">${g.name}</div>
+            <div class="tag-list">
+              ${tags.map(t => `<span class="tag-chip ${selectedTags.has(t)?'selected':''}" data-tag="${t}">${t}</span>`).join('')}
+            </div></div>`;
+        })));
+        jcCol3El.innerHTML = html || '<div style="padding:20px;color:#bbb;font-size:13px;">未找到相关职位</div>';
+        jcCol3El.querySelectorAll('.tag-chip').forEach(el => {
+          el.addEventListener('click', () => {
+            const tag = el.dataset.tag;
+            if (selectedTags.has(tag)) selectedTags.delete(tag);
+            else selectedTags.add(tag);
+            el.classList.toggle('selected', selectedTags.has(tag));
+            renderSelectedRow();
+          });
+        });
+      } else {
+        renderJcL3();
+      }
+    });
+
+    /* ===== AI card state ===== */
+    const aiCardContent = document.getElementById('aiCardContent');
+
+    const tagSuggestMap = {
+      '电力': ['600MW机组','1000MW机组','运行经验5年以上','高压电工证','垃圾焚烧发电','持有特种作业证','熟悉DL/T标准'],
+      '检修': ['600MW机组','1000MW机组','运行经验5年以上','高压电工证','垃圾焚烧发电','持有特种作业证','熟悉DL/T标准'],
+      '运行': ['集控运行','机组启停经验','运行值班经验','安全运行记录','三级以上技能'],
+      '建筑': ['建造师证','施工经验5年以上','安全员B证','项目管理经验'],
+      '互联网': ['大厂经验','高并发系统','微服务架构','技术团队管理'],
+      '金融': ['CPA','CFA','金融从业资格','5年以上经验'],
+      '制造': ['ISO体系','精益生产','六西格玛','生产管理经验'],
+      '医疗': ['医师执照','三甲医院经验','专科证书','5年以上临床经验'],
+    };
+
+    function getExtraTags(industry, jobCat) {
+      const str = industry + jobCat;
+      for (const [key, tags] of Object.entries(tagSuggestMap)) {
+        if (str.includes(key)) return tags;
+      }
+      return ['相关资格证书','5年以上经验','团队管理经验','良好沟通能力'];
+    }
+
+    const jdTemplates = {
+      '检修': `岗位职责：\n1、负责设备日常巡检与维护，确保设备安全稳定运行；\n2、执行设备定期检修计划，进行故障诊断与处理；\n3、编写检修报告，记录设备运行状态及异常情况；\n4、参与设备改造和技术攻关，提出改进建议；\n5、配合生产部门做好设备停机检修协调工作。\n\n任职要求：\n1、大专及以上学历，机械、电气、热能动力等相关专业；\n2、具备3年以上相关设备检修工作经验；\n3、持有特种作业操作证者优先；\n4、具备较强的责任心和团队协作精神。`,
+      '销售': `岗位职责：\n1、负责公司产品的市场推广与销售工作，开拓新客户并维护现有客户关系；\n2、根据公司销售策略，完成个人销售目标及团队协作任务；\n3、收集并分析市场信息及客户反馈，为产品优化提供支持；\n4、执行销售合同签订、订单跟进、回款催收等全流程销售工作。\n\n任职要求：\n1、对销售工作有热情，具备良好的沟通表达能力和服务意识；\n2、能适应较高节奏工作环境，具备较强的学习能力和抗压能力；\n3、有同行业销售经验者优先，应届生亦可。`,
+      '运行': `岗位职责：\n1、负责机组日常运行操作与监控，确保设备安全经济运行；\n2、按规程执行机组启停操作，处理运行中的异常情况；\n3、做好运行记录，按时完成交接班工作；\n4、参与运行分析和技术改进，提高机组效率；\n5、遵守安全生产规章制度，做好防火防爆工作。\n\n任职要求：\n1、大专及以上学历，热能动力、电气工程等相关专业；\n2、具备2年以上电厂运行工作经验；\n3、持有电工操作证，熟悉DCS操作系统；\n4、具备良好的责任心和应急处理能力。`,
+      'default': `岗位职责：\n1、负责本岗位日常工作任务的执行与完成；\n2、配合团队完成部门目标，积极参与项目推进；\n3、做好工作记录与汇报，及时反馈工作进展；\n4、遵守公司规章制度，维护良好的工作秩序；\n5、完成上级交代的其他工作。\n\n任职要求：\n1、大专及以上学历，相关专业优先；\n2、具备1-3年相关工作经验；\n3、工作认真负责，具备良好的沟通协调能力；\n4、能够适应工作压力，有较强的执行力。`,
+    };
+
+    function getMockJD(jobName, jobCat) {
+      const key = Object.keys(jdTemplates).find(k => (jobName + jobCat).includes(k));
+      return jdTemplates[key] || jdTemplates['default'];
+    }
+
+    function renderDefaultAICard() {
+      document.getElementById('aiCard').classList.remove('expanded');
+      document.querySelector('.ai-card-title').textContent = 'AI帮写JD助手';
+      document.querySelector('.ai-card-subtitle').textContent = '智能职位描述生成';
+      aiCardContent.innerHTML = `
+        <div class="ai-card-body">您好，我是您的AI帮写助手<br>填写行业类别、职位类别、职位名称后，我可以帮您高效生成职位描述哦~</div>`;
+    }
+
+    function renderExpandedAICard(industry, jobCat, jobName) {
+      const el = aiCardContent;
+      const sysTags = getExtraTags(industry, jobCat);
+      document.getElementById('aiCard').classList.add('expanded');
+      // Restore header to config state
+      document.querySelector('.ai-card-title').textContent = 'AI帮写JD助手';
+      document.querySelector('.ai-card-subtitle').textContent = '智能职位描述生成';
+      // Save context; reset tags only when context changes
+      if (aiCtx.industry !== industry || aiCtx.jobCat !== jobCat || aiCtx.jobName !== jobName) {
+        aiSelectedSys = new Set();
+        aiCustomList  = [];
+        aiCtx = { industry, jobCat, jobName };
+      }
+      const selectedSys = aiSelectedSys;
+      const customList  = aiCustomList;
+
+      function getAllSel() {
+        return [
+          ...Array.from(selectedSys).map(t => ({ text: t, type: 'sys' })),
+          ...customList.filter(c => c.selected).map(c => ({ text: c.text, type: 'cust' }))
+        ];
+      }
+
+      function buildHtml() {
+        const allSel = getAllSel();
+        const hasAny = allSel.length > 0;
+        const sysHtml = sysTags.map(t => {
+          const s = selectedSys.has(t);
+          return `<span class="aitc sys${s?' sel':''}" data-tag="${t}" data-type="sys"><span class="aitc-icon">${s?'✓':'+'}</span>${t}</span>`;
+        }).join('');
+        const custHtml = customList.map((c, i) =>
+          `<span class="aitc cust${c.selected?' csel':''}" data-idx="${i}" data-type="cust"><span class="aitc-icon">${c.selected?'✓':'+'}</span>${c.text}</span>`
+        ).join('');
+        const paramsHtml = hasAny ? `
+          <div class="ai-params-box">
+            <div class="ai-params-title">已选参数（将注入AI生成）</div>
+            <div class="ai-params-list">
+              ${allSel.map(s => `<span class="ai-param ${s.type}" data-ptag="${s.text}" data-ptype="${s.type}">${s.text}<span class="px"> ×</span></span>`).join('')}
+            </div>
+          </div>` : '';
+        return `
+          <div class="ai-summary">
+            已为您锁定行业为<em>【${industry}】</em>，职位类别<em>【${jobCat}】</em>，职位名称<em>【${jobName}】</em>。<br>
+            为生成更精准的JD，您可选择以下硬性标签补充更多细节：
+          </div>
+          <div class="ai-sec-label">系统推荐标签（可多选）</div>
+          <div class="ai-tag-grid">${sysHtml}${custHtml}</div>
+          <div class="ai-custom-label">自定义补充（可选）</div>
+          <div class="ai-input-box">
+            <input id="aiCustIn" class="ai-cust-in" placeholder="输入后按回车添加，最多20字" maxlength="20" />
+            <button id="aiCustConfirm" class="ai-cust-confirm">✓</button>
+          </div>
+          <div class="ai-input-tip">⊕ 按回车或点击 ✓ 添加；虚线边框为自定义标签</div>
+          ${paramsHtml}
+          <button id="aiGenBtn" class="ai-gen-btn">✧ 开始生成JD</button>`;
+      }
+
+      function addCustomTag() {
+        const inp = document.getElementById('aiCustIn');
+        const val = inp ? inp.value.trim() : '';
+        if (!val) return;
+        const exists = customList.find(c => c.text === val);
+        if (exists) { exists.selected = true; } else { customList.push({ text: val, selected: true }); }
+        rerender();
+      }
+
+      function attach() {
+        el.querySelectorAll('.aitc.sys').forEach(tag => {
+          tag.addEventListener('click', () => {
+            const t = tag.dataset.tag;
+            selectedSys.has(t) ? selectedSys.delete(t) : selectedSys.add(t);
+            rerender();
+          });
+        });
+        el.querySelectorAll('.aitc.cust').forEach(tag => {
+          tag.addEventListener('click', () => {
+            const i = +tag.dataset.idx;
+            customList[i].selected = !customList[i].selected;
+            rerender();
+          });
+        });
+        const inp = document.getElementById('aiCustIn');
+        const confirmBtn = document.getElementById('aiCustConfirm');
+        if (inp && confirmBtn) {
+          inp.addEventListener('input', () => {
+            confirmBtn.style.display = inp.value.trim() ? 'flex' : 'none';
+          });
+          inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCustomTag(); } });
+          confirmBtn.addEventListener('click', addCustomTag);
+        }
+        el.querySelectorAll('.px').forEach(rm => {
+          rm.addEventListener('click', e => {
+            e.stopPropagation();
+            const param = rm.closest('[data-ptag]');
+            const ptag = param.dataset.ptag, ptype = param.dataset.ptype;
+            if (ptype === 'sys') { selectedSys.delete(ptag); }
+            else { const idx = customList.findIndex(c => c.text === ptag); if (idx >= 0) customList[idx].selected = false; }
+            rerender();
+          });
+        });
+        const genBtn = document.getElementById('aiGenBtn');
+        if (genBtn) {
+          genBtn.addEventListener('click', () => renderGeneratedAICard(industry, jobCat, jobName));
+        }
+      }
+
+      function rerender() { el.innerHTML = buildHtml(); attach(); }
+      rerender();
+    }
+
+    function fillEditor(text) {
+      const placeholder = document.querySelector('.editor-placeholder');
+      if (placeholder) { placeholder.textContent = text; placeholder.style.color = '#333'; }
+    }
+
+    function renderGeneratedAICard(industry, jobCat, jobName) {
+      const jd = getMockJD(jobName, jobCat);
+      const charCount = jd.replace(/<[^>]*>/g, '').length;
+      document.getElementById('aiCard').classList.add('expanded');
+      document.querySelector('.ai-card-title').textContent = '已为你生成职位描述';
+      document.querySelector('.ai-card-subtitle').textContent = 'AI生成内容仅供您参考，请根据实际情况调整';
+
+      const actionBtns = jdEverFilled
+        ? `<button class="ai-append-btn" id="aiAppendBtn">填到内容下方</button>
+           <button class="ai-replace-btn" id="aiReplaceBtn">替换原内容</button>`
+        : `<button class="ai-use-btn" id="aiUseBtn">填到内容区</button>`;
+
+      aiCardContent.innerHTML = `
+        <div class="ai-generated-scroll">${jd}</div>
+        <div class="ai-foot-info">
+          <span class="ai-foot-disc">内容由AI生成，仅供参考</span>
+          <span class="ai-foot-count">${charCount}/3000</span>
+        </div>
+        <div class="ai-action-row">
+          <button class="ai-regen-btn" id="aiRegenBtn">↻ 重新生成</button>
+          ${actionBtns}
+        </div>`;
+
+      const backToConfig = () => renderExpandedAICard(aiCtx.industry, aiCtx.jobCat, aiCtx.jobName);
+
+      if (!jdEverFilled) {
+        document.getElementById('aiUseBtn').addEventListener('click', () => {
+          fillEditor(jd); jdEverFilled = true; backToConfig();
+        });
+      } else {
+        document.getElementById('aiAppendBtn').addEventListener('click', () => {
+          const el = document.querySelector('.editor-placeholder');
+          const existing = el ? el.textContent.trim() : '';
+          fillEditor(existing ? existing + '\n\n' + jd : jd);
+          backToConfig();
+        });
+        document.getElementById('aiReplaceBtn').addEventListener('click', () => {
+          fillEditor(jd); backToConfig();
+        });
+      }
+
+      document.getElementById('aiRegenBtn').addEventListener('click', () => {
+        renderGeneratedAICard(industry, jobCat, jobName);
+      });
+    }
+
+    function checkAICard() {
+      const industry = document.getElementById('industryText').textContent.trim();
+      const jobCat   = document.getElementById('jcTriggerText').textContent.trim();
+      const jobName  = document.getElementById('jobNameInput').value.trim();
+      if (industry !== '请选择' && jobCat !== '请选择' && jobName) {
+        renderExpandedAICard(industry, jobCat, jobName);
+      } else {
+        renderDefaultAICard();
+      }
+    }
+
+    /* hook industry leaf selection */
+    const _origClosePanel = closePanel;
+    // watch industryText for content changes via MutationObserver
+    new MutationObserver(checkAICard).observe(
+      document.getElementById('industryText'), { childList: true, characterData: true, subtree: true }
+    );
+
+    /* hook job name input */
+    document.getElementById('jobNameInput').addEventListener('input', checkAICard);
+  </script>
+</body>
+</html>
